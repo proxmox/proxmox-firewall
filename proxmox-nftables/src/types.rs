@@ -8,6 +8,12 @@ use crate::{Expression, Statement};
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::address::Family;
+
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::ipset::IpsetName;
+
+#[cfg(feature = "config-ext")]
 use proxmox_ve_config::guest::types::Vmid;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -31,6 +37,15 @@ impl TableFamily {
             TableFamily::Ip => vec![IpFamily::Ip],
             TableFamily::Ip6 => vec![IpFamily::Ip6],
             _ => vec![IpFamily::Ip, IpFamily::Ip6],
+        }
+    }
+
+    #[cfg(feature = "config-ext")]
+    pub fn families(&self) -> Vec<Family> {
+        match self {
+            TableFamily::Ip => vec![Family::V4],
+            TableFamily::Ip6 => vec![Family::V6],
+            _ => vec![Family::V4, Family::V6],
         }
     }
 }
@@ -155,6 +170,21 @@ pub enum RateTimescale {
     Minute,
     Hour,
     Day,
+}
+
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::log::LogRateLimitTimescale;
+
+#[cfg(feature = "config-ext")]
+impl From<LogRateLimitTimescale> for RateTimescale {
+    fn from(value: LogRateLimitTimescale) -> Self {
+        match value {
+            LogRateLimitTimescale::Second => RateTimescale::Second,
+            LogRateLimitTimescale::Minute => RateTimescale::Minute,
+            LogRateLimitTimescale::Hour => RateTimescale::Hour,
+            LogRateLimitTimescale::Day => RateTimescale::Day,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -586,6 +616,44 @@ impl SetName {
             name: name.into(),
         }
     }
+
+    pub fn name(&self) -> &str {
+        self.name.as_ref()
+    }
+
+    #[cfg(feature = "config-ext")]
+    pub fn ipset_name(
+        family: Family,
+        name: &IpsetName,
+        vmid: Option<Vmid>,
+        nomatch: bool,
+    ) -> String {
+        use proxmox_ve_config::firewall::types::ipset::IpsetScope;
+
+        let prefix = match family {
+            Family::V4 => "v4",
+            Family::V6 => "v6",
+        };
+
+        let name = match name.scope() {
+            IpsetScope::Datacenter => name.to_string(),
+            IpsetScope::Guest => {
+                if let Some(vmid) = vmid {
+                    format!("guest-{vmid}/{}", name.name())
+                } else {
+                    log::warn!("Creating IPSet for guest without vmid parameter!");
+                    name.to_string()
+                }
+            }
+        };
+
+        let suffix = match nomatch {
+            true => "-nomatch",
+            false => "",
+        };
+
+        format!("{prefix}-{name}{suffix}")
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -788,7 +856,17 @@ pub enum L3Protocol {
     Ip6,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[cfg(feature = "config-ext")]
+impl From<Family> for L3Protocol {
+    fn from(value: Family) -> Self {
+        match value {
+            Family::V4 => L3Protocol::Ip,
+            Family::V6 => L3Protocol::Ip6,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CtHelperProtocol {
     TCP,

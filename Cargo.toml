@@ -1,4 +1,5 @@
 [workspace]
 members = [
     "proxmox-ve-config",
+    "proxmox-nftables",
 ]

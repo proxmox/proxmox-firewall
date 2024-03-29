@@ -1,0 +1,16 @@
+[package]
+name = "proxmox-nftables"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Wolfgang Bumiller <w.bumiller@proxmox.com>",
+    "Stefan Hanreich <s.hanreich@proxmox.com>",
+    "Proxmox Support Team <support@proxmox.com>",
+]
+description = "Proxmox VE nftables"
+license = "AGPL-3"
+
+[dependencies]
+log = "0.4"
+
+proxmox-ve-config = { path = "../proxmox-ve-config", optional = true }

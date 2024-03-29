@@ -11,6 +11,8 @@ description = "Proxmox VE nftables firewall implementation"
 license = "AGPL-3"
 
 [dependencies]
+log = "0.4"
+env_logger = "0.10"
 anyhow = "1"
 
 proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }

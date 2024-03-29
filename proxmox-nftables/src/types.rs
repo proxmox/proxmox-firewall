@@ -30,6 +30,23 @@ impl Display for Verdict {
     }
 }
 
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+pub enum RateUnit {
+    Packets,
+    Bytes,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, Default)]
+#[cfg_attr(test, derive(Eq, PartialEq))]
+#[serde(rename_all = "lowercase")]
+pub enum RateTimescale {
+    #[default]
+    Second,
+    Minute,
+    Hour,
+    Day,
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ElemConfig {
     timeout: Option<i64>,
@@ -50,4 +67,3 @@ impl ElemConfig {
         }
     }
 }
-

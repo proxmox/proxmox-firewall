@@ -57,6 +57,10 @@ impl Expression {
     pub fn concat(expressions: impl IntoIterator<Item = Expression>) -> Self {
         Expression::Concat(Vec::from_iter(expressions))
     }
+
+    pub fn set_name(name: &str) -> Self {
+        Expression::String(format!("@{name}"))
+    }
 }
 
 impl From<bool> for Expression {

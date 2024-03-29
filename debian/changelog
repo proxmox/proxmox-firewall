@@ -1,0 +1,5 @@
+proxmox-firewall (0.1.0) bookworm; urgency=medium
+
+  * Initial release.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 18 Apr 2024 21:07:32 +0200

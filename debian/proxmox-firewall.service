@@ -1,0 +1,14 @@
+[Unit]
+Description=Proxmox nftables firewall
+Wants=pve-cluster.service pvefw-logger.service
+After=pvefw-logger.service pve-cluster.service network.target systemd-modules-load.service
+
+[Service]
+ExecStart=/usr/libexec/proxmox/proxmox-firewall
+PIDFile=/run/proxmox-firewall.pid
+Environment="RUST_LOG_STYLE=SYSTEMD"
+Environment="RUST_LOG=warn"
+
+[Install]
+WantedBy=multi-user.target
+

@@ -2,4 +2,5 @@
 members = [
     "proxmox-ve-config",
     "proxmox-nftables",
+    "proxmox-firewall",
 ]

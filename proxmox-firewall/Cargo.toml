@@ -1,0 +1,17 @@
+[package]
+name = "proxmox-firewall"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Wolfgang Bumiller <w.bumiller@proxmox.com>",
+    "Stefan Hanreich <s.hanreich@proxmox.com>",
+    "Proxmox Support Team <support@proxmox.com>",
+]
+description = "Proxmox VE nftables firewall implementation"
+license = "AGPL-3"
+
+[dependencies]
+anyhow = "1"
+
+proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }
+proxmox-ve-config = { path = "../proxmox-ve-config" }

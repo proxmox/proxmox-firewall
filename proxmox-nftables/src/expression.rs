@@ -2,7 +2,14 @@ use crate::types::{ElemConfig, Verdict};
 use serde::{Deserialize, Serialize};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
-use crate::helper::NfVec;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::address::{Family, IpEntry, IpList};
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::port::{PortEntry, PortList};
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::rule_match::{IcmpCode, IcmpType, Icmpv6Code, Icmpv6Type};
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::Cidr;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -147,11 +154,88 @@ impl From<&Ipv4Addr> for Expression {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum IpFamily {
-    Ip,
-    Ip6,
+#[cfg(feature = "config-ext")]
+impl From<&IpList> for Expression {
+    fn from(value: &IpList) -> Self {
+        if value.len() == 1 {
+            return Expression::from(value.first().unwrap());
+        }
+
+        Expression::set(value.iter().map(Expression::from))
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&IpEntry> for Expression {
+    fn from(value: &IpEntry) -> Self {
+        match value {
+            IpEntry::Cidr(cidr) => Expression::from(Prefix::from(cidr)),
+            IpEntry::Range(beg, end) => Expression::Range(Box::new((beg.into(), end.into()))),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&IcmpType> for Expression {
+    fn from(value: &IcmpType) -> Self {
+        match value {
+            IcmpType::Numeric(id) => Expression::from(*id),
+            IcmpType::Named(name) => Expression::from(*name),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&IcmpCode> for Expression {
+    fn from(value: &IcmpCode) -> Self {
+        match value {
+            IcmpCode::Numeric(id) => Expression::from(*id),
+            IcmpCode::Named(name) => Expression::from(*name),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&Icmpv6Type> for Expression {
+    fn from(value: &Icmpv6Type) -> Self {
+        match value {
+            Icmpv6Type::Numeric(id) => Expression::from(*id),
+            Icmpv6Type::Named(name) => Expression::from(*name),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&Icmpv6Code> for Expression {
+    fn from(value: &Icmpv6Code) -> Self {
+        match value {
+            Icmpv6Code::Numeric(id) => Expression::from(*id),
+            Icmpv6Code::Named(name) => Expression::from(*name),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&PortEntry> for Expression {
+    fn from(value: &PortEntry) -> Self {
+        match value {
+            PortEntry::Port(port) => Expression::from(*port),
+            PortEntry::Range(beg, end) => {
+                Expression::Range(Box::new(((*beg).into(), (*end).into())))
+            }
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&PortList> for Expression {
+    fn from(value: &PortList) -> Self {
+        if value.len() == 1 {
+            return Expression::from(value.first().unwrap());
+        }
+
+        Expression::set(value.iter().map(Expression::from))
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -197,6 +281,24 @@ pub enum CtDirection {
     Reply,
 }
 serde_plain::derive_display_from_serialize!(CtDirection);
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum IpFamily {
+    Ip,
+    Ip6,
+}
+
+#[cfg(feature = "config-ext")]
+impl From<Family> for IpFamily {
+    fn from(value: Family) -> Self {
+        match value {
+            Family::V4 => IpFamily::Ip,
+            Family::V6 => IpFamily::Ip6,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum Payload {
@@ -256,6 +358,16 @@ impl Prefix {
         Self {
             addr: Box::new(addr.into()),
             len,
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&Cidr> for Prefix {
+    fn from(value: &Cidr) -> Self {
+        match value {
+            Cidr::Ipv4(cidr) => Self::new(cidr.address(), cidr.mask()),
+            Cidr::Ipv6(cidr) => Self::new(cidr.address(), cidr.mask()),
         }
     }
 }

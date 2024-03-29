@@ -1,0 +1,305 @@
+#!/usr/sbin/nft -f
+
+define ipv6_mask = ffff:ffff:ffff:ffff::
+
+add table inet proxmox-firewall
+add table bridge proxmox-firewall-guests
+
+add chain inet proxmox-firewall do-reject
+add chain inet proxmox-firewall accept-management
+add chain inet proxmox-firewall block-synflood
+add chain inet proxmox-firewall log-drop-invalid-tcp
+add chain inet proxmox-firewall block-invalid-tcp
+add chain inet proxmox-firewall allow-ndp-in
+add chain inet proxmox-firewall block-ndp-in
+add chain inet proxmox-firewall allow-ndp-out
+add chain inet proxmox-firewall block-ndp-out
+add chain inet proxmox-firewall block-conntrack-invalid
+add chain inet proxmox-firewall block-smurfs
+add chain inet proxmox-firewall log-drop-smurfs
+add chain inet proxmox-firewall default-in
+add chain inet proxmox-firewall default-out
+add chain inet proxmox-firewall input {type filter hook input priority filter; policy drop;}
+add chain inet proxmox-firewall output {type filter hook output priority filter; policy accept;}
+
+add chain bridge proxmox-firewall-guests allow-dhcp-in
+add chain bridge proxmox-firewall-guests allow-dhcp-out
+add chain bridge proxmox-firewall-guests block-dhcp-in
+add chain bridge proxmox-firewall-guests block-dhcp-out
+add chain bridge proxmox-firewall-guests allow-ndp-in
+add chain bridge proxmox-firewall-guests block-ndp-in
+add chain bridge proxmox-firewall-guests allow-ndp-out
+add chain bridge proxmox-firewall-guests block-ndp-out
+add chain bridge proxmox-firewall-guests allow-ra-out
+add chain bridge proxmox-firewall-guests block-ra-out
+add chain bridge proxmox-firewall-guests after-vm-in
+add chain bridge proxmox-firewall-guests do-reject
+add chain bridge proxmox-firewall-guests vm-out {type filter hook prerouting priority 0; policy accept;}
+add chain bridge proxmox-firewall-guests vm-in {type filter hook postrouting priority 0; policy accept;}
+
+flush chain inet proxmox-firewall do-reject
+flush chain inet proxmox-firewall accept-management
+flush chain inet proxmox-firewall block-synflood
+flush chain inet proxmox-firewall log-drop-invalid-tcp
+flush chain inet proxmox-firewall block-invalid-tcp
+flush chain inet proxmox-firewall allow-ndp-in
+flush chain inet proxmox-firewall block-ndp-in
+flush chain inet proxmox-firewall allow-ndp-out
+flush chain inet proxmox-firewall block-ndp-out
+flush chain inet proxmox-firewall block-conntrack-invalid
+flush chain inet proxmox-firewall block-smurfs
+flush chain inet proxmox-firewall log-drop-smurfs
+flush chain inet proxmox-firewall default-in
+flush chain inet proxmox-firewall default-out
+flush chain inet proxmox-firewall input
+flush chain inet proxmox-firewall output
+
+flush chain bridge proxmox-firewall-guests allow-dhcp-in
+flush chain bridge proxmox-firewall-guests allow-dhcp-out
+flush chain bridge proxmox-firewall-guests block-dhcp-in
+flush chain bridge proxmox-firewall-guests block-dhcp-out
+flush chain bridge proxmox-firewall-guests allow-ndp-in
+flush chain bridge proxmox-firewall-guests block-ndp-in
+flush chain bridge proxmox-firewall-guests allow-ndp-out
+flush chain bridge proxmox-firewall-guests block-ndp-out
+flush chain bridge proxmox-firewall-guests allow-ra-out
+flush chain bridge proxmox-firewall-guests block-ra-out
+flush chain bridge proxmox-firewall-guests after-vm-in
+flush chain bridge proxmox-firewall-guests do-reject
+flush chain bridge proxmox-firewall-guests vm-out
+flush chain bridge proxmox-firewall-guests vm-in
+
+table inet proxmox-firewall {
+    chain do-reject {
+        meta pkttype broadcast drop
+        ip saddr 224.0.0.0/4 drop
+
+        meta l4proto tcp reject with tcp reset
+        meta l4proto icmp reject with icmp type port-unreachable
+        reject with icmp type host-prohibited
+    }
+
+    set v4-dc/management {
+        type ipv4_addr; flags interval; auto-merge
+    }
+
+    set v4-dc/management-nomatch {
+        type ipv4_addr; flags interval; auto-merge
+    }
+
+    set v6-dc/management {
+        type ipv6_addr; flags interval; auto-merge
+    }
+
+    set v6-dc/management-nomatch {
+        type ipv6_addr; flags interval; auto-merge
+    }
+
+    chain accept-management {
+        ip saddr @v4-dc/management ip saddr != @v4-dc/management-nomatch accept
+        ip6 saddr @v6-dc/management ip6 saddr != @v6-dc/management-nomatch accept
+    }
+
+    set v4-synflood-limit {
+        type ipv4_addr
+        timeout 60s
+        flags dynamic
+    }
+
+    set v6-synflood-limit {
+        type ipv6_addr
+        timeout 60s
+        flags dynamic
+    }
+
+    chain ratelimit-synflood {
+
+    }
+
+    # todo: move to prerouting
+    chain block-synflood {
+        tcp flags & (fin|syn|rst|ack) != syn return
+        jump ratelimit-synflood
+        drop
+    }
+
+    chain log-invalid-tcp {}
+
+    chain log-drop-invalid-tcp {
+        # looks weird but that way we can just flush the other chain
+        # when regenerating from the config
+        jump log-invalid-tcp
+        drop
+    }
+
+    chain block-invalid-tcp {
+        tcp flags & (fin|syn|rst|psh|ack|urg) == fin|psh|urg goto log-drop-invalid-tcp
+        tcp flags & (fin|syn|rst|psh|ack|urg) == 0x0 goto log-drop-invalid-tcp
+        tcp flags & (syn|rst) == syn|rst goto log-drop-invalid-tcp
+        tcp flags & (fin|syn) == fin|syn goto log-drop-invalid-tcp
+        tcp sport 0 tcp flags & (fin|syn|rst|ack) == syn goto log-drop-invalid-tcp
+    }
+
+    chain allow-ndp-in {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert, nd-redirect } accept
+    }
+
+    chain block-ndp-in {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert, nd-redirect } drop
+    }
+
+    chain allow-ndp-out {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-neighbor-advert } accept
+    }
+
+    chain block-ndp-out {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-neighbor-advert } drop
+    }
+
+    chain block-conntrack-invalid {
+        ct state invalid drop
+    }
+
+    chain block-smurfs {
+        ip saddr 0.0.0.0/32 return
+        meta pkttype broadcast goto log-drop-smurfs
+        ip saddr 224.0.0.0/4 goto log-drop-smurfs
+    }
+
+    chain log-smurfs {}
+
+    chain log-drop-smurfs {
+        # looks weird but that way we can just flush the other chain
+        # when regenerating from the config
+        jump log-smurfs
+        drop
+    }
+
+    chain default-in {
+        iifname "lo" accept
+
+        ct state related,established accept
+
+        meta l4proto igmp accept
+
+        tcp dport { 8006, 5900-5999, 3128, 22 } jump accept-management
+        udp dport 5405-5412 accept
+
+        meta l4proto icmp icmp type { destination-unreachable, time-exceeded } accept
+
+        # Drop Microsoft SMB noise
+        udp dport { 135, 137-139, 445 } goto do-reject
+        udp sport 137 udp dport 1024-65535 goto do-reject
+        tcp dport { 135, 139, 445 } goto do-reject
+        udp dport 1900 drop
+
+        # Drop new/NotSyn traffic so that it doesn't get logged
+        # tcp flags & (fin | syn | rst | ack) == syn drop
+
+        # Drop DNS replies
+        udp sport 53 drop
+    }
+
+    chain default-out {
+        oifname "lo" accept
+
+        ct state vmap { invalid : drop, established : accept, related : accept }
+    }
+
+    chain option-in {}
+    chain option-out {}
+
+    chain input {
+        type filter hook input priority filter; policy accept;
+        jump default-in
+        jump ct-in
+        jump option-in
+        jump host-in
+        jump cluster-in
+    }
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+        jump default-out
+        jump option-out
+        jump host-out
+        jump cluster-out
+    }
+
+    chain cluster-in {}
+    chain cluster-out {}
+
+    chain host-in {}
+    chain host-out {}
+
+    chain ct-in {}
+}
+
+table bridge proxmox-firewall-guests {
+    map vm-map-in {
+        typeof oifname : verdict
+    }
+
+    map vm-map-out {
+        typeof iifname : verdict
+    }
+
+    chain allow-dhcp-in {
+        udp sport . udp dport { 67 . 68, 547 . 546 } accept
+    }
+
+    chain block-dhcp-in {
+        udp sport . udp dport { 67 . 68, 547 . 546 } drop
+    }
+
+    chain allow-dhcp-out {
+        udp sport . udp dport { 68 . 67, 546 . 547 } accept
+    }
+
+    chain block-dhcp-out {
+        udp sport . udp dport { 68 . 67, 546 . 547 } drop
+    }
+
+    chain allow-ndp-in {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert, nd-redirect } accept
+    }
+
+    chain block-ndp-in {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert, nd-redirect } drop
+    }
+
+    chain allow-ndp-out {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-neighbor-advert } accept
+    }
+
+    chain block-ndp-out {
+        icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-neighbor-advert } drop
+    }
+
+    chain allow-ra-out {
+        icmpv6 type { nd-router-advert, nd-redirect } accept
+    }
+
+    chain block-ra-out {
+        icmpv6 type { nd-router-advert, nd-redirect } drop
+    }
+
+    chain do-reject {
+        drop
+    }
+
+    chain after-vm-in {
+        ct state established,related accept
+        ether type != arp ct state invalid drop
+    }
+
+    chain vm-out {
+        type filter hook prerouting priority 0; policy accept;
+        iifname vmap @vm-map-out
+    }
+
+    chain vm-in {
+        type filter hook postrouting priority 0; policy accept;
+        oifname vmap @vm-map-in
+    }
+}

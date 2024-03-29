@@ -52,6 +52,26 @@ pub fn match_non_whitespace(line: &str) -> Option<(&str, &str)> {
         Some((text, rest))
     }
 }
+
+/// parses out all digits and returns the remainder
+///
+/// returns [`None`] if the digit part would be empty
+///
+/// Returns a tuple with the digits and the remainder (not trimmed).
+pub fn match_digits(line: &str) -> Option<(&str, &str)> {
+    let split_position = line.as_bytes().iter().position(|&b| !b.is_ascii_digit());
+
+    let (digits, rest) = match split_position {
+        Some(pos) => line.split_at(pos),
+        None => (line, ""),
+    };
+
+    if !digits.is_empty() {
+        return Some((digits, rest));
+    }
+
+    None
+}
 pub fn parse_bool(value: &str) -> Result<bool, Error> {
     Ok(
         if value == "0"

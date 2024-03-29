@@ -74,6 +74,26 @@ pub fn match_digits(line: &str) -> Option<(&str, &str)> {
 
     None
 }
+
+/// Separate a `key: value` line, trimming whitespace.
+///
+/// Returns `None` if the `key` would be empty.
+pub fn split_key_value(line: &str) -> Option<(&str, &str)> {
+    line.split_once(':')
+        .map(|(key, value)| (key.trim(), value.trim()))
+}
+
+/// Parse a boolean.
+///
+/// values that parse as [`false`]: 0, false, off, no
+/// values that parse as [`true`]: 1, true, on, yes
+///
+/// # Examples
+/// ```ignore
+/// assert_eq!(parse_bool("false"), Ok(false));
+/// assert_eq!(parse_bool("on"), Ok(true));
+/// assert!(parse_bool("proxmox").is_err());
+/// ```
 pub fn parse_bool(value: &str) -> Result<bool, Error> {
     Ok(
         if value == "0"
@@ -92,6 +112,196 @@ pub fn parse_bool(value: &str) -> Result<bool, Error> {
             bail!("not a boolean: {value:?}");
         },
     )
+}
+
+/// Parse the *remainder* of a section line, that is `<whitespace>NAME] #optional comment`.
+/// The `kind` parameter is used for error messages and should be the section type.
+///
+/// Return the name and the optional comment.
+pub fn parse_named_section_tail<'a>(
+    kind: &'static str,
+    line: &'a str,
+) -> Result<(&'a str, Option<&'a str>), Error> {
+    if line.is_empty() || !line.as_bytes()[0].is_ascii_whitespace() {
+        bail!("incomplete {kind} section");
+    }
+
+    let line = line.trim_start();
+    let (name, line) = match_name(line)
+        .ok_or_else(|| format_err!("expected a name for the {kind} at {line:?}"))?;
+
+    let line = line
+        .strip_prefix(']')
+        .ok_or_else(|| format_err!("expected closing ']' in {kind} section header"))?
+        .trim_start();
+
+    Ok(match line.strip_prefix('#') {
+        Some(comment) => (name, Some(comment.trim())),
+        None if !line.is_empty() => bail!("trailing characters after {kind} section: {line:?}"),
+        None => (name, None),
+    })
+}
+
+// parses a number from a string OR number
+pub mod serde_option_number {
+    use std::fmt;
+
+    use serde::de::{Deserializer, Error, Visitor};
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Option<i64>, D::Error> {
+        struct V;
+
+        impl<'de> Visitor<'de> for V {
+            type Value = Option<i64>;
+
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("a numerical value")
+            }
+
+            fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
+                v.parse().map_err(E::custom).map(Some)
+            }
+
+            fn visit_none<E: Error>(self) -> Result<Self::Value, E> {
+                Ok(None)
+            }
+
+            fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
+                deserializer.deserialize_any(self)
+            }
+        }
+
+        deserializer.deserialize_any(V)
+    }
+}
+
+// parses a bool from a string OR bool
+pub mod serde_option_bool {
+    use std::fmt;
+
+    use serde::de::{Deserializer, Error, Visitor};
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Option<bool>, D::Error> {
+        struct V;
+
+        impl<'de> Visitor<'de> for V {
+            type Value = Option<bool>;
+
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("a boolean-like value")
+            }
+
+            fn visit_bool<E: Error>(self, v: bool) -> Result<Self::Value, E> {
+                Ok(Some(v))
+            }
+
+            fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
+                super::parse_bool(v).map_err(E::custom).map(Some)
+            }
+
+            fn visit_none<E: Error>(self) -> Result<Self::Value, E> {
+                Ok(None)
+            }
+
+            fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
+                deserializer.deserialize_any(self)
+            }
+        }
+
+        deserializer.deserialize_any(V)
+    }
+}
+
+// parses a comma_separated list of strings
+pub mod serde_option_conntrack_helpers {
+    use std::fmt;
+
+    use serde::de::{Deserializer, Error, Visitor};
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Option<Vec<String>>, D::Error> {
+        struct V;
+
+        impl<'de> Visitor<'de> for V {
+            type Value = Option<Vec<String>>;
+
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("A list of conntrack helpers")
+            }
+
+            fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
+                if v.is_empty() {
+                    return Ok(None);
+                }
+
+                Ok(Some(v.split(',').map(String::from).collect()))
+            }
+
+            fn visit_none<E: Error>(self) -> Result<Self::Value, E> {
+                Ok(None)
+            }
+
+            fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
+                deserializer.deserialize_any(self)
+            }
+        }
+
+        deserializer.deserialize_any(V)
+    }
+}
+
+// parses a log_ratelimit string: '[enable=]<1|0> [,burst=<integer>] [,rate=<rate>]'
+pub mod serde_option_log_ratelimit {
+    use std::fmt;
+
+    use serde::de::{Deserializer, Error, Visitor};
+
+    use crate::firewall::types::log::LogRateLimit;
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Option<LogRateLimit>, D::Error> {
+        struct V;
+
+        impl<'de> Visitor<'de> for V {
+            type Value = Option<LogRateLimit>;
+
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("a boolean-like value")
+            }
+
+            fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
+                v.parse().map_err(E::custom).map(Some)
+            }
+
+            fn visit_none<E: Error>(self) -> Result<Self::Value, E> {
+                Ok(None)
+            }
+
+            fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
+                deserializer.deserialize_any(self)
+            }
+        }
+
+        deserializer.deserialize_any(V)
+    }
 }
 
 /// `&str` deserializer which also accepts an `Option`.

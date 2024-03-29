@@ -1,5 +1,6 @@
 pub mod cluster;
 pub mod common;
+pub mod ct_helper;
 pub mod fw_macros;
 pub mod guest;
 pub mod host;

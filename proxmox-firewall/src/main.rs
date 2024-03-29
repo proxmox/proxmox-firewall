@@ -1,6 +1,7 @@
 use anyhow::Error;
 
 mod config;
+mod firewall;
 mod object;
 mod rule;
 

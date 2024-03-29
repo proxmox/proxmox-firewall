@@ -1,3 +1,5 @@
+use std::fmt;
+
 use anyhow::{bail, format_err, Error};
 
 /// Parses out a "name" which can be alphanumeric and include dashes.
@@ -90,4 +92,187 @@ pub fn parse_bool(value: &str) -> Result<bool, Error> {
             bail!("not a boolean: {value:?}");
         },
     )
+}
+
+/// `&str` deserializer which also accepts an `Option`.
+///
+/// Serde's `StringDeserializer` does not.
+#[derive(Clone, Copy, Debug)]
+pub struct SomeStrDeserializer<'a, E>(serde::de::value::StrDeserializer<'a, E>);
+
+impl<'de, 'a, E> serde::de::Deserializer<'de> for SomeStrDeserializer<'a, E>
+where
+    E: serde::de::Error,
+{
+    type Error = E;
+
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_any(visitor)
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_some(self.0)
+    }
+
+    fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_str(visitor)
+    }
+
+    fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_string(visitor)
+    }
+
+    fn deserialize_enum<V>(
+        self,
+        _name: &str,
+        _variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_enum(self.0)
+    }
+
+    serde::forward_to_deserialize_any! {
+        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char
+        bytes byte_buf unit unit_struct newtype_struct seq tuple
+        tuple_struct map struct identifier ignored_any
+    }
+}
+
+/// `&str` wrapper which implements `IntoDeserializer` via `SomeStrDeserializer`.
+#[derive(Clone, Debug)]
+pub struct SomeStr<'a>(pub &'a str);
+
+impl<'a> From<&'a str> for SomeStr<'a> {
+    fn from(s: &'a str) -> Self {
+        Self(s)
+    }
+}
+
+impl<'de, 'a, E> serde::de::IntoDeserializer<'de, E> for SomeStr<'a>
+where
+    E: serde::de::Error,
+{
+    type Deserializer = SomeStrDeserializer<'a, E>;
+
+    fn into_deserializer(self) -> Self::Deserializer {
+        SomeStrDeserializer(self.0.into_deserializer())
+    }
+}
+
+/// `String` deserializer which also accepts an `Option`.
+///
+/// Serde's `StringDeserializer` does not.
+#[derive(Clone, Debug)]
+pub struct SomeStringDeserializer<E>(serde::de::value::StringDeserializer<E>);
+
+impl<'de, E> serde::de::Deserializer<'de> for SomeStringDeserializer<E>
+where
+    E: serde::de::Error,
+{
+    type Error = E;
+
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_any(visitor)
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_some(self.0)
+    }
+
+    fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_str(visitor)
+    }
+
+    fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        self.0.deserialize_string(visitor)
+    }
+
+    fn deserialize_enum<V>(
+        self,
+        _name: &str,
+        _variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_enum(self.0)
+    }
+
+    serde::forward_to_deserialize_any! {
+        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char
+        bytes byte_buf unit unit_struct newtype_struct seq tuple
+        tuple_struct map struct identifier ignored_any
+    }
+}
+
+/// `&str` wrapper which implements `IntoDeserializer` via `SomeStringDeserializer`.
+#[derive(Clone, Debug)]
+pub struct SomeString(pub String);
+
+impl From<&str> for SomeString {
+    fn from(s: &str) -> Self {
+        Self::from(s.to_string())
+    }
+}
+
+impl From<String> for SomeString {
+    fn from(s: String) -> Self {
+        Self(s)
+    }
+}
+
+impl<'de, E> serde::de::IntoDeserializer<'de, E> for SomeString
+where
+    E: serde::de::Error,
+{
+    type Deserializer = SomeStringDeserializer<E>;
+
+    fn into_deserializer(self) -> Self::Deserializer {
+        SomeStringDeserializer(self.0.into_deserializer())
+    }
+}
+
+#[derive(Debug)]
+pub struct SerdeStringError(String);
+
+impl std::error::Error for SerdeStringError {}
+
+impl fmt::Display for SerdeStringError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl serde::de::Error for SerdeStringError {
+    fn custom<T: fmt::Display>(msg: T) -> Self {
+        Self(msg.to_string())
+    }
 }

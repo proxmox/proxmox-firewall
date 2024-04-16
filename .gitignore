@@ -7,3 +7,4 @@ proxmox-firewall-*/
 *.build
 *.buildinfo
 *.changes
+*.snap.new

@@ -1,0 +1,19 @@
+[OPTIONS]
+
+ndp: 0
+enable: 1
+dhcp: 1
+radv: 0
+policy_out: ACCEPT
+
+[ALIASES]
+
+analias 123.123.123.123
+
+[IPSET testing]
+
+
+[RULES]
+
+IN ACCEPT -source guest/analias -dest dc/network2 -log nolog
+

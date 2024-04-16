@@ -1,0 +1,23 @@
+[OPTIONS]
+
+log_level_out: notice
+tcpflags: 1
+nftables: 1
+tcp_flags_log_level: err
+log_level_in: info
+enable: 1
+smurf_log_level: alert
+ndp: 1
+protection_synflood: 1
+protection_synflood_burst: 1337
+protection_synflood_rate: 400
+nosmurfs: 1
+nf_conntrack_helpers: amanda,ftp,irc,netbios-ns,pptp,sane,sip,snmp,tftp
+
+
+[RULES]
+
+IN DNS(ACCEPT) -source dc/network1 -log nolog
+IN DHCPv6(ACCEPT) -log nolog
+IN DHCPfwd(ACCEPT) -log nolog
+

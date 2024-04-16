@@ -1,0 +1,427 @@
+{
+  "nftables": [
+    {
+      "metainfo": {
+        "version": "1.0.6",
+        "release_name": "Lester Gooch #5",
+        "json_schema_version": 1
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "do-reject",
+        "handle": 1
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "accept-management",
+        "handle": 2
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-synflood",
+        "handle": 3
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "log-drop-invalid-tcp",
+        "handle": 4
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-invalid-tcp",
+        "handle": 5
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "allow-ndp-in",
+        "handle": 6
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-ndp-in",
+        "handle": 7
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "allow-ndp-out",
+        "handle": 8
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-ndp-out",
+        "handle": 9
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-conntrack-invalid",
+        "handle": 10
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "block-smurfs",
+        "handle": 11
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "log-drop-smurfs",
+        "handle": 12
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "default-in",
+        "handle": 13
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "default-out",
+        "handle": 14
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "input",
+        "handle": 15,
+        "type": "filter",
+        "hook": "input",
+        "prio": 0,
+        "policy": "accept"
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "output",
+        "handle": 16,
+        "type": "filter",
+        "hook": "output",
+        "prio": 0,
+        "policy": "accept"
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "ratelimit-synflood",
+        "handle": 17
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "log-invalid-tcp",
+        "handle": 18
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "log-smurfs",
+        "handle": 19
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "option-in",
+        "handle": 20
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "option-out",
+        "handle": 21
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "cluster-in",
+        "handle": 22
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "cluster-out",
+        "handle": 23
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "host-in",
+        "handle": 24
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "host-out",
+        "handle": 25
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "ct-in",
+        "handle": 26
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "group-network1-in",
+        "handle": 95
+      }
+    },
+    {
+      "chain": {
+        "family": "inet",
+        "table": "proxmox-firewall",
+        "name": "group-network1-out",
+        "handle": 97
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "allow-dhcp-in",
+        "handle": 1
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "allow-dhcp-out",
+        "handle": 2
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "block-dhcp-in",
+        "handle": 3
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "block-dhcp-out",
+        "handle": 4
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "allow-ndp-in",
+        "handle": 5
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "block-ndp-in",
+        "handle": 6
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "allow-ndp-out",
+        "handle": 7
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "block-ndp-out",
+        "handle": 8
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "allow-ra-out",
+        "handle": 9
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "block-ra-out",
+        "handle": 10
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "after-vm-in",
+        "handle": 11
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "do-reject",
+        "handle": 12
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "vm-out",
+        "handle": 13,
+        "type": "filter",
+        "hook": "prerouting",
+        "prio": 0,
+        "policy": "accept"
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "vm-in",
+        "handle": 14,
+        "type": "filter",
+        "hook": "postrouting",
+        "prio": 0,
+        "policy": "accept"
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "group-network1-in",
+        "handle": 6138
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "group-network1-out",
+        "handle": 6140
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-90002-in",
+        "handle": 6141
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-90002-out",
+        "handle": 6142
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-90001-in",
+        "handle": 6158
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-90001-out",
+        "handle": 6159
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-800001-in",
+        "handle": 6179
+      }
+    },
+    {
+      "chain": {
+        "family": "bridge",
+        "table": "proxmox-firewall-guests",
+        "name": "guest-800001-out",
+        "handle": 6180
+      }
+    }
+  ]
+}

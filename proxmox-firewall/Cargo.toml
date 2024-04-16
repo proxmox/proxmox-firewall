@@ -22,3 +22,7 @@ signal-hook = "0.3"
 
 proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }
 proxmox-ve-config = { path = "../proxmox-ve-config" }
+
+[dev-dependencies]
+insta = { version = "1.21", features = ["json"] }
+proxmox-sys = "0.5.3"

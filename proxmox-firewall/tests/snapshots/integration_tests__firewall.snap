@@ -1,0 +1,3530 @@
+---
+source: proxmox-firewall/tests/integration_tests.rs
+expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
+---
+{
+  "nftables": [
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "cluster-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "cluster-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "host-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "host-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "option-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "host-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "host-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "option-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "map": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "vm-map-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "map": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "vm-map-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "ct-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "ratelimit-synflood"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "log-invalid-tcp"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "log-smurfs"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-800001-in"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-800001-out"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-90001-in"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-90001-out"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-90002-in"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-90002-out"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "delete": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/management",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/management"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/management-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/management-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/management",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "127.0.0.1",
+                "len": 8
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/management",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/management"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/management-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/management-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/network1",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/network1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/network1-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/network1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-dc/network1",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "172.16.100.0",
+                "len": 24
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/network1",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/network1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/network1-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-dc/network1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "group-network1-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":0:6:cluster-in: DROP: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-out",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":0:5:cluster-out: ACCEPT: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-out",
+          "expr": [
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-amanda-udp",
+          "type": "amanda",
+          "protocol": "udp",
+          "l3proto": null
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 10080
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 10080
+              }
+            },
+            {
+              "ct helper": "helper-amanda-udp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper"
+                  }
+                },
+                "right": "amanda"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-ftp-tcp",
+          "type": "ftp",
+          "protocol": "tcp",
+          "l3proto": null
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 21
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 21
+              }
+            },
+            {
+              "ct helper": "helper-ftp-tcp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper"
+                  }
+                },
+                "right": "ftp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-irc-tcp",
+          "type": "irc",
+          "protocol": "tcp",
+          "l3proto": "ip"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 6667
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 6667
+              }
+            },
+            {
+              "ct helper": "helper-irc-tcp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper",
+                    "family": "ip"
+                  }
+                },
+                "right": "irc"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-netbios-ns-udp",
+          "type": "netbios-ns",
+          "protocol": "udp",
+          "l3proto": "ip"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 137
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 137
+              }
+            },
+            {
+              "ct helper": "helper-netbios-ns-udp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper",
+                    "family": "ip"
+                  }
+                },
+                "right": "netbios-ns"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-pptp-tcp",
+          "type": "pptp",
+          "protocol": "tcp",
+          "l3proto": "ip"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 1723
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 1723
+              }
+            },
+            {
+              "ct helper": "helper-pptp-tcp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper",
+                    "family": "ip"
+                  }
+                },
+                "right": "pptp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-sane-tcp",
+          "type": "sane",
+          "protocol": "tcp",
+          "l3proto": null
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 6566
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 6566
+              }
+            },
+            {
+              "ct helper": "helper-sane-tcp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper"
+                  }
+                },
+                "right": "sane"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-sip-udp",
+          "type": "sip",
+          "protocol": "udp",
+          "l3proto": null
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 5060
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 5060
+              }
+            },
+            {
+              "ct helper": "helper-sip-udp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper"
+                  }
+                },
+                "right": "sip"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-snmp-udp",
+          "type": "snmp",
+          "protocol": "udp",
+          "l3proto": "ip"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 161
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 161
+              }
+            },
+            {
+              "ct helper": "helper-snmp-udp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper",
+                    "family": "ip"
+                  }
+                },
+                "right": "snmp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "ct helper": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "helper-tftp-udp",
+          "type": "tftp",
+          "protocol": "udp",
+          "l3proto": null
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 69
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "state"
+                  }
+                },
+                "right": [
+                  "new",
+                  "established"
+                ]
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 69
+              }
+            },
+            {
+              "ct helper": "helper-tftp-udp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ct-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "ct": {
+                    "key": "helper"
+                  }
+                },
+                "right": "tftp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-ndp-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-ndp-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-synflood"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ratelimit-synflood",
+          "expr": [
+            {
+              "set": {
+                "op": "update",
+                "elem": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "set": "@v4-synflood-limit",
+                "stmt": {
+                  "limit": {
+                    "rate": 400,
+                    "per": "second",
+                    "burst": 1337,
+                    "inv": true
+                  }
+                }
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "ratelimit-synflood",
+          "expr": [
+            {
+              "set": {
+                "op": "update",
+                "elem": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "set": "@v6-synflood-limit",
+                "stmt": {
+                  "limit": {
+                    "rate": 400,
+                    "per": "second",
+                    "burst": 1337,
+                    "inv": true
+                  }
+                }
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-invalid-tcp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "log-invalid-tcp",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":0:3:log-invalid-tcp: DROP: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-smurfs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "log-smurfs",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":0:1:log-smurfs: DROP: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "option-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-conntrack-invalid"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 53
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 53
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "sport"
+                  }
+                },
+                "right": {
+                  "range": [
+                    546,
+                    547
+                  ]
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": {
+                  "range": [
+                    546,
+                    547
+                  ]
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "sport"
+                  }
+                },
+                "right": {
+                  "range": [
+                    67,
+                    68
+                  ]
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": {
+                  "range": [
+                    67,
+                    68
+                  ]
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/management",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/management"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/management-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/management-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/management",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "127.0.0.1",
+                "len": 8
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/management",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/management"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/management-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/management-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/network1",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/network1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/network1-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/network1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-dc/network1",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "172.16.100.0",
+                "len": 24
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/network1",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/network1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/network1-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-dc/network1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "group-network1-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-100-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-100-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-100-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-100-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net1",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net1-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net1",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "172.16.100.0",
+                "len": 24
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net1",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net1"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net1-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net1-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "oifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "arp",
+                    "field": "daddr ip"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net1"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net1"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net1-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-guest-100/ipfilter-net1"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-guest-100/ipfilter-net1-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "arp",
+                    "field": "saddr ip"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net1"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-dhcp-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-dhcp-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-ndp-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-ndp-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-ra-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ether",
+                    "field": "type"
+                  }
+                },
+                "right": "arp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "oifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "jump": {
+                "target": "group-network1-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "tcp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "sport"
+                  }
+                },
+                "right": 80
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": {
+                  "set": [
+                    123,
+                    {
+                      "range": [
+                        222,
+                        333
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "set": [
+                    {
+                      "prefix": {
+                        "addr": "192.168.0.1",
+                        "len": 24
+                      }
+                    },
+                    {
+                      "range": [
+                        "127.0.0.1",
+                        "127.255.255.0"
+                      ]
+                    },
+                    {
+                      "prefix": {
+                        "addr": "172.16.0.1",
+                        "len": 32
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": "echo-request"
+              }
+            },
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":100:6:guest-100-in: DROP: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": "echo-request"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "vm-map-in",
+          "elem": [
+            [
+              "veth100i1",
+              {
+                "goto": {
+                  "target": "guest-100-in"
+                }
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "after-vm-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":100:2:guest-100-in: DROP: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
+              "jump": {
+                "target": "group-network1-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "vm-map-out",
+          "elem": [
+            [
+              "veth100i1",
+              {
+                "goto": {
+                  "target": "guest-100-out"
+                }
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":100:1:guest-100-out: REJECT: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-101-in"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-101-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-101-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "guest-101-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-101/testing",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-101/testing"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-101/testing-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-101/testing-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-101/testing",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-101/testing"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-101/testing-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-101/testing-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-dhcp-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "allow-dhcp-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-ndp-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-ndp-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "block-ra-out"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ether",
+                    "field": "type"
+                  }
+                },
+                "right": "arp"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "123.123.123.123",
+                    "len": 32
+                  }
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.200.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "after-vm-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

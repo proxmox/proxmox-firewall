@@ -1,0 +1,22 @@
+[OPTIONS]
+
+enable: 1
+ndp: 1
+ipfilter: 1
+dhcp: 1
+log_level_in: crit
+log_level_out: alert
+policy_in: DROP
+policy_out: REJECT
+macfilter: 0
+
+[IPSET ipfilter-net1]
+
+dc/network1
+
+[RULES]
+
+GROUP network1 -i net1
+IN ACCEPT -source 192.168.0.1/24,127.0.0.1-127.255.255.0,172.16.0.1 -dport 123,222:333 -sport http -p tcp
+IN DROP --icmp-type echo-request --proto icmp --log info
+

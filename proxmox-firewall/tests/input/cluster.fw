@@ -1,0 +1,26 @@
+[OPTIONS]
+
+log_ratelimit: burst=12,enable=1,rate=2/second
+enable: 1
+
+[ALIASES]
+
+network1 172.16.100.0/24
+network2 172.16.200.0/24
+
+[IPSET network1]
+
+dc/network1
+
+[IPSET management]
+
+127.0.0.1/8
+
+[RULES]
+
+IN ACCEPT -log nolog
+
+[group network1]
+
+IN ACCEPT -source dc/network1 -dest dc/network1 -log nolog
+

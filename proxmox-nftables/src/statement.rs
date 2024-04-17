@@ -1,6 +1,15 @@
 use anyhow::{bail, Error};
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::log::LogLevel as ConfigLogLevel;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::log::LogRateLimit;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::rule::Verdict as ConfigVerdict;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::guest::types::Vmid;
+
 use crate::expression::Meta;
 use crate::helper::{NfVec, Null};
 use crate::types::{RateTimescale, RateUnit, Verdict};
@@ -104,7 +113,18 @@ impl<T: Into<Limit>> From<T> for Statement {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[cfg(feature = "config-ext")]
+impl From<ConfigVerdict> for Statement {
+    fn from(value: ConfigVerdict) -> Self {
+        match value {
+            ConfigVerdict::Accept => Statement::make_accept(),
+            ConfigVerdict::Reject => Statement::make_drop(),
+            ConfigVerdict::Drop => Statement::make_drop(),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RejectType {
     #[serde(rename = "tcp reset")]
@@ -145,6 +165,22 @@ pub struct Log {
 }
 
 impl Log {
+    #[cfg(feature = "config-ext")]
+    pub fn generate_prefix(
+        vmid: impl Into<Option<Vmid>>,
+        log_level: LogLevel,
+        chain_name: &str,
+        verdict: ConfigVerdict,
+    ) -> String {
+        format!(
+            ":{}:{}:{}: {}: ",
+            vmid.into().unwrap_or(Vmid::new(0)),
+            log_level.nflog_level(),
+            chain_name,
+            verdict,
+        )
+    }
+
     pub fn new_nflog(prefix: String, group: i64) -> Self {
         Self {
             prefix: Some(prefix),
@@ -166,6 +202,25 @@ pub enum LogLevel {
     Info,
     Debug,
     Audit,
+}
+
+#[cfg(feature = "config-ext")]
+impl TryFrom<ConfigLogLevel> for LogLevel {
+    type Error = Error;
+
+    fn try_from(value: ConfigLogLevel) -> Result<Self, Self::Error> {
+        match value {
+            ConfigLogLevel::Emergency => Ok(LogLevel::Emerg),
+            ConfigLogLevel::Alert => Ok(LogLevel::Alert),
+            ConfigLogLevel::Critical => Ok(LogLevel::Crit),
+            ConfigLogLevel::Error => Ok(LogLevel::Err),
+            ConfigLogLevel::Warning => Ok(LogLevel::Warn),
+            ConfigLogLevel::Notice => Ok(LogLevel::Notice),
+            ConfigLogLevel::Info => Ok(LogLevel::Info),
+            ConfigLogLevel::Debug => Ok(LogLevel::Debug),
+            _ => bail!("cannot convert config log level to nftables"),
+        }
+    }
 }
 
 impl LogLevel {
@@ -229,6 +284,20 @@ pub struct AnonymousLimit {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inv: Option<bool>,
+}
+
+#[cfg(feature = "config-ext")]
+impl From<LogRateLimit> for AnonymousLimit {
+    fn from(config: LogRateLimit) -> Self {
+        AnonymousLimit {
+            rate: config.rate(),
+            per: config.per().into(),
+            rate_unit: None,
+            burst: Some(config.burst()),
+            burst_unit: None,
+            inv: None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

@@ -34,10 +34,10 @@ $(BUILDDIR):
 
 .PHONY: deb
 deb: $(DEB)
-$(HELPER_DEB) $(DBG_DEB) $(HELPER_DBG_DEB) $(DOC_DEB): $(DEB)
+$(DBG_DEB): $(DEB)
 $(DEB): $(BUILDDIR)
 	cd $(BUILDDIR); dpkg-buildpackage -b -us -uc
-	lintian $(DEB) $(DOC_DEB) $(HELPER_DEB)
+	lintian $(DEB)
 
 .PHONY: test
 test:
@@ -56,7 +56,7 @@ sbuild: $(DSC)
 
 .PHONY: dinstall
 dinstall: $(DEB)
-	dpkg -i $(DEB) $(DBG_DEB) $(DOC_DEB)
+	dpkg -i $(DEB)
 
 .PHONY: distclean
 distclean: clean

@@ -67,3 +67,8 @@ clean:
 	rm -f *.deb *.build *.buildinfo *.changes *.dsc $(PACKAGE)*.tar*
 	rm -rf $(PACKAGE)-[0-9]*/
 	find . -name '*~' -exec rm {} ';'
+
+.PHONY: upload
+upload: UPLOAD_DIST ?= $(DEB_DISTRIBUTION)
+upload: $(DEB) $(DBG_DEB)
+	tar cf - $(DEB) $(DBG_DEB) | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist $(UPLOAD_DIST)

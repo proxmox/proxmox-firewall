@@ -36,35 +36,15 @@ impl NftClient {
             return Err(NftError::from(error));
         };
 
-        let mut error_output = String::new();
+        let output = child.wait_with_output().map_err(NftError::from)?;
 
-        match child
-            .stderr
-            .take()
-            .expect("can get stderr")
-            .read_to_string(&mut error_output)
-        {
-            Ok(_) if !error_output.is_empty() => {
-                return Err(NftError::Command(error_output));
-            }
-            Err(error) => {
-                return Err(NftError::from(error));
-            }
-            _ => (),
-        };
-
-        let mut output = String::new();
-
-        if let Err(error) = child
-            .stdout
-            .take()
-            .expect("can get stdout")
-            .read_to_string(&mut output)
-        {
-            return Err(NftError::from(error));
-        };
-
-        Ok(output)
+        if output.status.success() {
+            Ok(String::from_utf8(output.stdout).expect("output is valid utf-8"))
+        } else {
+            Err(NftError::Command(
+                String::from_utf8(output.stderr).expect("output is valid utf-8"),
+            ))
+        }
     }
 
     pub fn run_json_commands(commands: &Commands) -> Result<Option<CommandOutput>, NftError> {

@@ -1,3 +1,12 @@
+proxmox-firewall (0.2.0) bookworm; urgency=medium
+
+  * firewall: wait for nft process to avoid left-over zombie processes
+
+  * firewall: change systemd unit file to type simple and drop PID file, not
+    relevant here
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 19 Apr 2024 19:42:26 +0200
+
 proxmox-firewall (0.1.0) bookworm; urgency=medium
 
   * Initial release.

@@ -1,3 +1,9 @@
+proxmox-firewall (0.3.0) bookworm; urgency=medium
+
+  * firewall: improve handling REJECT rules
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 23 Apr 2024 18:33:38 +0200
+
 proxmox-firewall (0.2.1) bookworm; urgency=medium
 
   * firewall: properly cleanup tables when firewall is inactive

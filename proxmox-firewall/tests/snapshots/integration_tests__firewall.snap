@@ -2155,6 +2155,84 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 443
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 443
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "set": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -3049,6 +3127,43 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 443
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "element": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -3149,6 +3264,45 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "l4proto"
+                  }
+                },
+                "right": "udp"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "th",
+                    "field": "dport"
+                  }
+                },
+                "right": 443
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "element": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -3198,7 +3352,9 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "guest-100-out",
           "expr": [
             {
-              "drop": null
+              "jump": {
+                "target": "do-reject"
+              }
             }
           ]
         }

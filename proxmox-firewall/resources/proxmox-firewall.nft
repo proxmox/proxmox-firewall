@@ -285,7 +285,12 @@ table bridge proxmox-firewall-guests {
     }
 
     chain do-reject {
-        drop
+        meta pkttype broadcast drop
+        ip saddr 224.0.0.0/4 drop
+
+        meta l4proto tcp reject with tcp reset
+        meta l4proto icmp reject with icmp type port-unreachable
+        reject with icmp type host-prohibited
     }
 
     chain after-vm-in {

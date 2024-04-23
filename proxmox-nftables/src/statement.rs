@@ -39,6 +39,10 @@ impl Statement {
         Statement::Verdict(Verdict::Accept(Null))
     }
 
+    pub fn make_reject() -> Self {
+        Statement::Reject(Reject::default())
+    }
+
     pub const fn make_drop() -> Self {
         Statement::Verdict(Verdict::Drop(Null))
     }
@@ -118,7 +122,7 @@ impl From<ConfigVerdict> for Statement {
     fn from(value: ConfigVerdict) -> Self {
         match value {
             ConfigVerdict::Accept => Statement::make_accept(),
-            ConfigVerdict::Reject => Statement::make_drop(),
+            ConfigVerdict::Reject => Statement::make_reject(),
             ConfigVerdict::Drop => Statement::make_drop(),
         }
     }

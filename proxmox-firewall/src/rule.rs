@@ -4,7 +4,7 @@ use anyhow::{format_err, Error};
 use proxmox_nftables::{
     expression::{Ct, IpFamily, Meta, Payload, Prefix},
     statement::{Log, LogLevel, Match, Operator},
-    types::{AddRule, ChainPart, SetName},
+    types::{AddRule, ChainPart, SetName, TableFamily, TablePart},
     Expression, Statement,
 };
 use proxmox_ve_config::{
@@ -16,7 +16,7 @@ use proxmox_ve_config::{
             alias::AliasName,
             ipset::{Ipfilter, IpsetName},
             log::LogRateLimit,
-            rule::{Direction, Kind, RuleGroup},
+            rule::{Direction, Kind, RuleGroup, Verdict as ConfigVerdict},
             rule_match::{
                 Icmp, Icmpv6, IpAddrMatch, IpMatch, Ports, Protocol, RuleMatch, Sctp, Tcp, Udp,
             },
@@ -146,6 +146,14 @@ impl NftRuleEnv<'_> {
     fn contains_family(&self, family: Family) -> bool {
         self.chain.table().family().families().contains(&family)
     }
+
+    fn table(&self) -> &TablePart {
+        self.chain.table()
+    }
+
+    fn direction(&self) -> Direction {
+        self.direction
+    }
 }
 
 pub(crate) trait ToNftRules {
@@ -204,6 +212,14 @@ impl ToNftRules for RuleGroup {
     }
 }
 
+pub(crate) fn generate_verdict(verdict: ConfigVerdict, env: &NftRuleEnv) -> Statement {
+    match (env.table().family(), env.direction(), verdict) {
+        (TableFamily::Bridge, Direction::In, ConfigVerdict::Reject) => Statement::make_drop(),
+        (_, _, ConfigVerdict::Reject) => Statement::jump("do-reject"),
+        _ => Statement::from(verdict),
+    }
+}
+
 impl ToNftRules for RuleMatch {
     fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
         if env.direction != self.direction() {
@@ -230,7 +246,7 @@ impl ToNftRules for RuleMatch {
             }
         }
 
-        rules.push(NftRule::new(Statement::from(self.verdict())));
+        rules.push(NftRule::new(generate_verdict(self.verdict(), env)));
 
         if let Some(name) = &self.iface() {
             handle_iface(rules, env, name)?;

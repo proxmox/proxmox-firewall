@@ -28,7 +28,7 @@ use proxmox_ve_config::guest::types::Vmid;
 
 use crate::config::FirewallConfig;
 use crate::object::{NftObjectEnv, ToNftObjects};
-use crate::rule::{NftRule, NftRuleEnv};
+use crate::rule::{generate_verdict, NftRule, NftRuleEnv};
 
 static CLUSTER_TABLE_NAME: &str = "proxmox-firewall";
 static HOST_TABLE_NAME: &str = "proxmox-firewall";
@@ -715,7 +715,10 @@ impl Firewall {
             None,
         )?;
 
-        commands.push(Add::rule(AddRule::from_statement(chain, default_policy)));
+        commands.push(Add::rule(AddRule::from_statement(
+            chain,
+            generate_verdict(default_policy, &env),
+        )));
 
         Ok(())
     }
@@ -827,7 +830,7 @@ impl Firewall {
 
         commands.push(Add::rule(AddRule::from_statement(
             chain,
-            config.default_policy(direction),
+            generate_verdict(config.default_policy(direction), &env),
         )));
 
         Ok(())

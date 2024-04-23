@@ -20,4 +20,6 @@ nf_conntrack_helpers: amanda,ftp,irc,netbios-ns,pptp,sane,sip,snmp,tftp
 IN DNS(ACCEPT) -source dc/network1 -log nolog
 IN DHCPv6(ACCEPT) -log nolog
 IN DHCPfwd(ACCEPT) -log nolog
+IN REJECT -p udp --dport 443
+OUT REJECT -p udp --dport 443
 

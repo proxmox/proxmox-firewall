@@ -12,11 +12,12 @@ const RULE_BASE: &str = include_str!("../../resources/proxmox-firewall.nft");
 
 fn remove_firewall() -> Result<(), std::io::Error> {
     log::info!("removing existing firewall rules");
-    let commands = Firewall::remove_commands();
 
-    // can ignore other errors, since it fails when tables do not exist
-    if let Err(NftError::Io(err)) = NftClient::run_json_commands(&commands) {
-        return Err(err);
+    for command in Firewall::remove_commands() {
+        // can ignore other errors, since it fails when tables do not exist
+        if let Err(NftError::Io(err)) = NftClient::run_json_commands(&command) {
+            return Err(err);
+        }
     }
 
     Ok(())

@@ -157,11 +157,11 @@ impl Firewall {
         }
     }
 
-    pub fn remove_commands() -> Commands {
-        Commands::new(vec![
-            Delete::table(Self::cluster_table()),
-            Delete::table(Self::guest_table()),
-        ])
+    pub fn remove_commands() -> Vec<Commands> {
+        vec![
+            Commands::new(vec![Delete::table(Self::cluster_table())]),
+            Commands::new(vec![Delete::table(Self::guest_table())]),
+        ]
     }
 
     fn create_management_ipset(&self, commands: &mut Commands) -> Result<(), Error> {

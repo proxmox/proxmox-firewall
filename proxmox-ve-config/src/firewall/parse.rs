@@ -2,6 +2,8 @@ use std::fmt;
 
 use anyhow::{bail, format_err, Error};
 
+const NAME_SPECIAL_CHARACTERS: [u8; 2] = [b'-', b'_'];
+
 /// Parses out a "name" which can be alphanumeric and include dashes.
 ///
 /// Returns `None` if the name part would be empty.
@@ -16,10 +18,14 @@ use anyhow::{bail, format_err, Error};
 /// assert_eq!(match_name(" someremainder"), None);
 /// ```
 pub fn match_name(line: &str) -> Option<(&str, &str)> {
+    if !line.starts_with(|c: char| c.is_ascii_alphabetic()) {
+        return None;
+    }
+
     let end = line
         .as_bytes()
         .iter()
-        .position(|&b| !(b.is_ascii_alphanumeric() || b == b'-'));
+        .position(|&b| !(b.is_ascii_alphanumeric() || NAME_SPECIAL_CHARACTERS.contains(&b)));
 
     let (name, rest) = match end {
         Some(end) => line.split_at(end),

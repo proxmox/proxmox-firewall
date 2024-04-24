@@ -148,6 +148,20 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_parse_alias() {
+        for alias in [
+            "local_network 10.0.0.0/32",
+            "test-_123-___-a---- 10.0.0.1/32",
+        ] {
+            alias.parse::<Alias>().expect("valid alias");
+        }
+
+        for alias in ["-- 10.0.0.1/32", "0asd 10.0.0.1/32", "__test 10.0.0.0/32"] {
+            alias.parse::<Alias>().expect_err("invalid alias");
+        }
+    }
+
+    #[test]
     fn test_parse_alias_name() {
         for name in ["dc/proxmox_123", "guest/proxmox-123"] {
             name.parse::<AliasName>().expect("valid alias name");

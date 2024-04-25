@@ -735,6 +735,15 @@
     ],
     "desc": "Spam Assassin SPAMD traffic"
   },
+  "SPICEproxy": {
+    "code": [
+      {
+        "dport": "3128",
+        "proto": "tcp"
+      }
+    ],
+    "desc": "Proxmox VE SPICE display proxy traffic"
+  },
   "SSH": {
     "code": [
       {

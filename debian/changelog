@@ -1,3 +1,13 @@
+proxmox-firewall (0.4.0) bookworm; urgency=medium
+
+  * config: macros: add SPICE-proxy macro
+
+  * config: nftables: add support for icmp-type any
+
+  * firewall: improve error handling of daemon
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 25 Apr 2024 19:29:47 +0200
+
 proxmox-firewall (0.3.1) bookworm; urgency=medium
 
   * fix #5410: config: fix naming scheme for aliases in firewall config, allow

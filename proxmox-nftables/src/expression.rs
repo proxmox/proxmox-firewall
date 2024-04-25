@@ -185,6 +185,7 @@ impl From<&IcmpType> for Expression {
         match value {
             IcmpType::Numeric(id) => Expression::from(*id),
             IcmpType::Named(name) => Expression::from(*name),
+            IcmpType::Any => Expression::Range(Box::new((u8::MIN.into(), u8::MAX.into()))),
         }
     }
 }
@@ -205,6 +206,7 @@ impl From<&Icmpv6Type> for Expression {
         match value {
             Icmpv6Type::Numeric(id) => Expression::from(*id),
             Icmpv6Type::Named(name) => Expression::from(*name),
+            Icmpv6Type::Any => Expression::Range(Box::new((u8::MIN.into(), u8::MAX.into()))),
         }
     }
 }

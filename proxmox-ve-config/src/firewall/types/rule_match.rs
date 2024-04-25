@@ -511,6 +511,7 @@ impl FromStr for Icmp {
 pub enum IcmpType {
     Numeric(u8),
     Named(&'static str),
+    Any,
 }
 
 #[sortable]
@@ -536,6 +537,10 @@ impl std::str::FromStr for IcmpType {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Error> {
+        if s.eq_ignore_ascii_case("any") {
+            return Ok(Self::Any);
+        }
+
         if let Ok(ty) = s.trim().parse::<u8>() {
             return Ok(Self::Numeric(ty));
         }
@@ -553,6 +558,7 @@ impl fmt::Display for IcmpType {
         match self {
             IcmpType::Numeric(ty) => write!(f, "{ty}"),
             IcmpType::Named(ty) => write!(f, "{ty}"),
+            IcmpType::Any => write!(f, "any"),
         }
     }
 }
@@ -664,6 +670,7 @@ impl FromStr for Icmpv6 {
 pub enum Icmpv6Type {
     Numeric(u8),
     Named(&'static str),
+    Any,
 }
 
 #[sortable]
@@ -693,6 +700,10 @@ impl std::str::FromStr for Icmpv6Type {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Error> {
+        if s.eq_ignore_ascii_case("any") {
+            return Ok(Self::Any);
+        }
+
         if let Ok(ty) = s.trim().parse::<u8>() {
             return Ok(Self::Numeric(ty));
         }
@@ -710,6 +721,7 @@ impl fmt::Display for Icmpv6Type {
         match self {
             Icmpv6Type::Numeric(ty) => write!(f, "{ty}"),
             Icmpv6Type::Named(ty) => write!(f, "{ty}"),
+            Icmpv6Type::Any => write!(f, "any"),
         }
     }
 }

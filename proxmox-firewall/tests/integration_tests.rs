@@ -1,3 +1,4 @@
+use anyhow::{Context, Error};
 use std::collections::HashMap;
 
 use proxmox_firewall::config::{FirewallConfig, FirewallConfigLoader, NftConfigLoader};
@@ -16,15 +17,15 @@ impl MockFirewallConfigLoader {
 }
 
 impl FirewallConfigLoader for MockFirewallConfigLoader {
-    fn cluster(&self) -> Option<Box<dyn std::io::BufRead>> {
-        Some(Box::new(include_str!("input/cluster.fw").as_bytes()))
+    fn cluster(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
+        Ok(Some(Box::new(include_str!("input/cluster.fw").as_bytes())))
     }
 
-    fn host(&self) -> Option<Box<dyn std::io::BufRead>> {
-        Some(Box::new(include_str!("input/host.fw").as_bytes()))
+    fn host(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
+        Ok(Some(Box::new(include_str!("input/host.fw").as_bytes())))
     }
 
-    fn guest_list(&self) -> GuestMap {
+    fn guest_list(&self) -> Result<GuestMap, Error> {
         let hostname = nodename().to_string();
 
         let mut map = HashMap::new();
@@ -35,31 +36,38 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
         let entry = GuestEntry::new(hostname, GuestType::Ct);
         map.insert(100.into(), entry);
 
-        GuestMap::from(map)
+        Ok(GuestMap::from(map))
     }
 
-    fn guest_config(&self, vmid: &Vmid, _guest: &GuestEntry) -> Option<Box<dyn std::io::BufRead>> {
+    fn guest_config(
+        &self,
+        vmid: &Vmid,
+        _guest: &GuestEntry,
+    ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         if *vmid == Vmid::new(101) {
-            return Some(Box::new(include_str!("input/101.conf").as_bytes()));
+            return Ok(Some(Box::new(include_str!("input/101.conf").as_bytes())));
         }
 
         if *vmid == Vmid::new(100) {
-            return Some(Box::new(include_str!("input/100.conf").as_bytes()));
+            return Ok(Some(Box::new(include_str!("input/100.conf").as_bytes())));
         }
 
-        None
+        Ok(None)
     }
 
-    fn guest_firewall_config(&self, vmid: &Vmid) -> Option<Box<dyn std::io::BufRead>> {
+    fn guest_firewall_config(
+        &self,
+        vmid: &Vmid,
+    ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         if *vmid == Vmid::new(101) {
-            return Some(Box::new(include_str!("input/101.fw").as_bytes()));
+            return Ok(Some(Box::new(include_str!("input/101.fw").as_bytes())));
         }
 
         if *vmid == Vmid::new(100) {
-            return Some(Box::new(include_str!("input/100.fw").as_bytes()));
+            return Ok(Some(Box::new(include_str!("input/100.fw").as_bytes())));
         }
 
-        None
+        Ok(None)
     }
 }
 
@@ -72,19 +80,22 @@ impl MockNftConfigLoader {
 }
 
 impl NftConfigLoader for MockNftConfigLoader {
-    fn chains(&self) -> CommandOutput {
-        serde_json::from_str(include_str!("input/chains.json")).expect("valid chains.json")
+    fn chains(&self) -> Result<Option<CommandOutput>, Error> {
+        serde_json::from_str::<CommandOutput>(include_str!("input/chains.json"))
+            .map(Some)
+            .with_context(|| "invalid chains.json".to_string())
     }
 }
 
 #[test]
 fn test_firewall() {
     let firewall_config = FirewallConfig::new(
-        Box::new(MockFirewallConfigLoader::new()),
-        Box::new(MockNftConfigLoader::new()),
-    );
+        &MockFirewallConfigLoader::new(),
+        &MockNftConfigLoader::new(),
+    )
+    .expect("valid mock configuration");
 
-    let firewall = Firewall::from(firewall_config);
+    let firewall = Firewall::new(firewall_config);
 
     insta::assert_json_snapshot!(firewall.full_host_fw().expect("firewall can be generated"));
 }

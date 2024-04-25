@@ -41,7 +41,6 @@ static NF_CONNTRACK_TCP_TIMEOUT_SYN_RECV: &str =
     "/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_recv";
 static LOG_CONNTRACK_FILE: &str = "/var/lib/pve-firewall/log_nf_conntrack";
 
-#[derive(Default)]
 pub struct Firewall {
     config: FirewallConfig,
 }
@@ -53,10 +52,8 @@ impl From<FirewallConfig> for Firewall {
 }
 
 impl Firewall {
-    pub fn new() -> Self {
-        Self {
-            ..Default::default()
-        }
+    pub fn new(config: FirewallConfig) -> Self {
+        Self { config }
     }
 
     pub fn is_enabled(&self) -> bool {

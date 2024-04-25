@@ -5,6 +5,7 @@ use std::time::{Duration, Instant};
 
 use anyhow::{Context, Error};
 
+use proxmox_firewall::config::{FirewallConfig, PveFirewallConfigLoader, PveNftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
 use proxmox_nftables::{client::NftError, NftClient};
 
@@ -24,7 +25,9 @@ fn remove_firewall() -> Result<(), std::io::Error> {
 }
 
 fn handle_firewall() -> Result<(), Error> {
-    let firewall = Firewall::new();
+    let config = FirewallConfig::new(&PveFirewallConfigLoader::new(), &PveNftConfigLoader::new())?;
+
+    let firewall = Firewall::new(config);
 
     if !firewall.is_enabled() {
         return remove_firewall().with_context(|| "could not remove firewall tables".to_string());
@@ -84,7 +87,7 @@ fn main() -> Result<(), std::io::Error> {
         let start = Instant::now();
 
         if let Err(error) = handle_firewall() {
-            log::error!("error creating firewall rules: {error}");
+            log::error!("error updating firewall rules: {error}");
         }
 
         let duration = start.elapsed();

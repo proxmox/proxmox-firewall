@@ -85,6 +85,8 @@ fn main() -> Result<(), std::io::Error> {
     signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
     signal_hook::flag::register(signal_hook::consts::SIGINT, Arc::clone(&term))?;
 
+    // simple flag that is set by legacy pve-firewall and provides a side-channel to signal that
+    // we're disabled here without the need to parse the config, avoiding log-spam errors from that
     let force_disable_flag = std::path::Path::new(FORCE_DISABLE_FLAG_FILE);
 
     while !term.load(Ordering::Relaxed) {

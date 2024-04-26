@@ -1,3 +1,11 @@
+proxmox-firewall (0.4.1) bookworm; urgency=medium
+
+  * check for file flag in /run signaling that this service is disabled and
+    skip config parsing completely in that case to avoid logging errors even
+    if the user cannot be affected by them
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 26 Apr 2024 17:22:01 +0200
+
 proxmox-firewall (0.4.0) bookworm; urgency=medium
 
   * config: macros: add SPICE-proxy macro

@@ -75,8 +75,10 @@ table inet proxmox-firewall {
         ip saddr 224.0.0.0/4 drop
 
         meta l4proto tcp reject with tcp reset
-        meta l4proto icmp reject with icmp type port-unreachable
+        meta l4proto { icmp, ipv6-icmp } reject with icmpx type port-unreachable
         reject with icmp type host-prohibited
+        reject with icmpv6 type admin-prohibited
+        drop
     }
 
     set v4-dc/management {
@@ -289,8 +291,10 @@ table bridge proxmox-firewall-guests {
         ip saddr 224.0.0.0/4 drop
 
         meta l4proto tcp reject with tcp reset
-        meta l4proto icmp reject with icmp type port-unreachable
+        meta l4proto { icmp, ipv6-icmp } reject with icmpx type port-unreachable
         reject with icmp type host-prohibited
+        reject with icmpv6 type admin-prohibited
+        drop
     }
 
     chain after-vm-in {

@@ -516,7 +516,7 @@ impl Firewall {
 
         commands.append(&mut vec![
             Add::rule(AddRule::from_statement(
-                chain_in.clone(),
+                chain_in,
                 Statement::jump(ndp_chains.0),
             )),
             Add::rule(AddRule::from_statement(
@@ -532,17 +532,17 @@ impl Firewall {
         };
 
         commands.push(Add::rule(AddRule::from_statement(
-            chain_out,
+            chain_out.clone(),
             Statement::jump(ra_chain_out),
         )));
 
-        // we allow incoming ARP by default, except if blocked by any option above
+        // we allow outgoing ARP, except if blocked by the MAC filter above
         let arp_rule = vec![
             Match::new_eq(Payload::field("ether", "type"), Expression::from("arp")).into(),
             Statement::make_accept(),
         ];
 
-        commands.push(Add::rule(AddRule::from_statements(chain_in, arp_rule)));
+        commands.push(Add::rule(AddRule::from_statements(chain_out, arp_rule)));
 
         Ok(())
     }

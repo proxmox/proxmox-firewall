@@ -2923,7 +2923,7 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
         "rule": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
-          "chain": "guest-100-in",
+          "chain": "guest-100-out",
           "expr": [
             {
               "match": {
@@ -3569,7 +3569,7 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
         "rule": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
-          "chain": "guest-101-in",
+          "chain": "guest-101-out",
           "expr": [
             {
               "match": {

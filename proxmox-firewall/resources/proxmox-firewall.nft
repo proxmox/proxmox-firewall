@@ -309,6 +309,7 @@ table bridge proxmox-firewall-guests {
 
     chain vm-in {
         type filter hook postrouting priority 0; policy accept;
+        ether type arp accept
         oifname vmap @vm-map-in
     }
 }

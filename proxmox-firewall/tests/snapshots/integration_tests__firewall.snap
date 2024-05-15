@@ -3189,22 +3189,6 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "guest-100-in",
           "expr": [
             {
-              "jump": {
-                "target": "after-vm-in"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "add": {
-        "rule": {
-          "family": "bridge",
-          "table": "proxmox-firewall-guests",
-          "chain": "guest-100-in",
-          "expr": [
-            {
               "limit": {
                 "rate": 2,
                 "per": "second",
@@ -3633,22 +3617,6 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
             },
             {
               "accept": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "add": {
-        "rule": {
-          "family": "bridge",
-          "table": "proxmox-firewall-guests",
-          "chain": "guest-101-in",
-          "expr": [
-            {
-              "jump": {
-                "target": "after-vm-in"
-              }
             }
           ]
         }

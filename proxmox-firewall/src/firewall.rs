@@ -810,13 +810,6 @@ impl Firewall {
             )));
         }
 
-        if direction == Direction::In {
-            commands.push(Add::rule(AddRule::from_statement(
-                chain.clone(),
-                Statement::jump("after-vm-in"),
-            )));
-        }
-
         self.create_log_rule(
             commands,
             config.log_level(direction),

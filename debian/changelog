@@ -1,3 +1,15 @@
+proxmox-firewall (0.4.2) bookworm; urgency=medium
+
+  * rules: use proper ICMPv6 admin-prohibited type for rejecting IPv6 traffic,
+    host-prohibited only exist for IPv4
+
+  * guest out: fix handling ARP traffic with a default block/reject policy
+
+  * guest out: fix handling connection tracking with a default block/reject
+    policy
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 21 May 2024 15:43:51 +0200
+
 proxmox-firewall (0.4.1) bookworm; urgency=medium
 
   * check for file flag in /run signaling that this service is disabled and

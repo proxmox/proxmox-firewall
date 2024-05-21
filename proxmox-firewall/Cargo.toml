@@ -1,6 +1,6 @@
 [package]
 name = "proxmox-firewall"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2021"
 authors = [
     "Wolfgang Bumiller <w.bumiller@proxmox.com>",

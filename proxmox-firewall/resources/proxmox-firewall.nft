@@ -16,6 +16,7 @@ add chain inet proxmox-firewall allow-ndp-out
 add chain inet proxmox-firewall block-ndp-out
 add chain inet proxmox-firewall block-conntrack-invalid
 add chain inet proxmox-firewall block-smurfs
+add chain inet proxmox-firewall allow-icmp
 add chain inet proxmox-firewall log-drop-smurfs
 add chain inet proxmox-firewall default-in
 add chain inet proxmox-firewall default-out
@@ -32,6 +33,7 @@ add chain bridge proxmox-firewall-guests allow-ndp-out
 add chain bridge proxmox-firewall-guests block-ndp-out
 add chain bridge proxmox-firewall-guests allow-ra-out
 add chain bridge proxmox-firewall-guests block-ra-out
+add chain bridge proxmox-firewall-guests allow-icmp
 add chain bridge proxmox-firewall-guests do-reject
 add chain bridge proxmox-firewall-guests vm-out {type filter hook prerouting priority 0; policy accept;}
 add chain bridge proxmox-firewall-guests vm-in {type filter hook postrouting priority 0; policy accept;}
@@ -47,6 +49,7 @@ flush chain inet proxmox-firewall allow-ndp-out
 flush chain inet proxmox-firewall block-ndp-out
 flush chain inet proxmox-firewall block-conntrack-invalid
 flush chain inet proxmox-firewall block-smurfs
+flush chain inet proxmox-firewall allow-icmp
 flush chain inet proxmox-firewall log-drop-smurfs
 flush chain inet proxmox-firewall default-in
 flush chain inet proxmox-firewall default-out
@@ -63,6 +66,7 @@ flush chain bridge proxmox-firewall-guests allow-ndp-out
 flush chain bridge proxmox-firewall-guests block-ndp-out
 flush chain bridge proxmox-firewall-guests allow-ra-out
 flush chain bridge proxmox-firewall-guests block-ra-out
+flush chain bridge proxmox-firewall-guests allow-icmp
 flush chain bridge proxmox-firewall-guests do-reject
 flush chain bridge proxmox-firewall-guests vm-out
 flush chain bridge proxmox-firewall-guests vm-in
@@ -175,17 +179,22 @@ table inet proxmox-firewall {
         drop
     }
 
+    chain allow-icmp {
+        icmp type { destination-unreachable, source-quench, time-exceeded } accept
+        # based on RFC 4890 - NDP is handled separately
+        icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem } accept
+    }
+
     chain default-in {
         iifname "lo" accept
 
+        jump allow-icmp
         ct state related,established accept
 
         meta l4proto igmp accept
 
         tcp dport { 8006, 5900-5999, 3128, 22 } jump accept-management
         udp dport 5405-5412 accept
-
-        meta l4proto icmp icmp type { destination-unreachable, time-exceeded } accept
 
         # Drop Microsoft SMB noise
         udp dport { 135, 137-139, 445 } goto do-reject
@@ -203,6 +212,7 @@ table inet proxmox-firewall {
     chain default-out {
         oifname "lo" accept
 
+        jump allow-icmp
         ct state vmap { invalid : drop, established : accept, related : accept }
     }
 
@@ -284,6 +294,12 @@ table bridge proxmox-firewall-guests {
         icmpv6 type { nd-router-advert, nd-redirect } drop
     }
 
+    chain allow-icmp {
+        icmp type { destination-unreachable, source-quench, time-exceeded } accept
+        # based on RFC 4890 - NDP is handled separately
+        icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem } accept
+    }
+
     chain do-reject {
         meta pkttype broadcast drop
         ip saddr 224.0.0.0/4 drop
@@ -297,12 +313,14 @@ table bridge proxmox-firewall-guests {
 
     chain vm-out {
         type filter hook prerouting priority 0; policy accept;
+        jump allow-icmp
         ether type != arp ct state vmap { established : accept, related : accept, invalid : drop }
         iifname vmap @vm-map-out
     }
 
     chain vm-in {
         type filter hook postrouting priority 0; policy accept;
+        jump allow-icmp
         ether type != arp ct state vmap { established : accept, related : accept, invalid : drop }
         ether type arp accept
         oifname vmap @vm-map-in

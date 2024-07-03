@@ -25,4 +25,4 @@ proxmox-ve-config = { path = "../proxmox-ve-config" }
 
 [dev-dependencies]
 insta = { version = "1.21", features = ["json"] }
-proxmox-sys = "0.5.3"
+proxmox-sys = "0.6"

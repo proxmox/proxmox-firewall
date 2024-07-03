@@ -2961,9 +2961,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "match": {
                 "op": "==",
                 "left": {
-                  "payload": {
-                    "protocol": "ether",
-                    "field": "type"
+                  "meta": {
+                    "key": "protocol"
                   }
                 },
                 "right": "arp"
@@ -3623,9 +3622,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "match": {
                 "op": "==",
                 "left": {
-                  "payload": {
-                    "protocol": "ether",
-                    "field": "type"
+                  "meta": {
+                    "key": "protocol"
                   }
                 },
                 "right": "arp"

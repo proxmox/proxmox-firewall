@@ -538,7 +538,7 @@ impl Firewall {
 
         // we allow outgoing ARP, except if blocked by the MAC filter above
         let arp_rule = vec![
-            Match::new_eq(Payload::field("ether", "type"), Expression::from("arp")).into(),
+            Match::new_eq(Meta::new("protocol"), Expression::from("arp")).into(),
             Statement::make_accept(),
         ];
 

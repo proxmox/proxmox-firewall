@@ -35,7 +35,9 @@ add chain bridge proxmox-firewall-guests allow-ra-out
 add chain bridge proxmox-firewall-guests block-ra-out
 add chain bridge proxmox-firewall-guests allow-icmp
 add chain bridge proxmox-firewall-guests do-reject
+add chain bridge proxmox-firewall-guests pre-vm-out
 add chain bridge proxmox-firewall-guests vm-out {type filter hook prerouting priority 0; policy accept;}
+add chain bridge proxmox-firewall-guests pre-vm-in
 add chain bridge proxmox-firewall-guests vm-in {type filter hook postrouting priority 0; policy accept;}
 
 flush chain inet proxmox-firewall do-reject
@@ -68,7 +70,9 @@ flush chain bridge proxmox-firewall-guests allow-ra-out
 flush chain bridge proxmox-firewall-guests block-ra-out
 flush chain bridge proxmox-firewall-guests allow-icmp
 flush chain bridge proxmox-firewall-guests do-reject
+flush chain bridge proxmox-firewall-guests pre-vm-out
 flush chain bridge proxmox-firewall-guests vm-out
+flush chain bridge proxmox-firewall-guests pre-vm-in
 flush chain bridge proxmox-firewall-guests vm-in
 
 table inet proxmox-firewall {
@@ -311,18 +315,24 @@ table bridge proxmox-firewall-guests {
         drop
     }
 
+    chain pre-vm-out {
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+    }
+
     chain vm-out {
         type filter hook prerouting priority 0; policy accept;
         jump allow-icmp
-        ether type != arp ct state vmap { established : accept, related : accept, invalid : drop }
         iifname vmap @vm-map-out
+    }
+
+    chain pre-vm-in {
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+        meta protocol arp accept
     }
 
     chain vm-in {
         type filter hook postrouting priority 0; policy accept;
         jump allow-icmp
-        ether type != arp ct state vmap { established : accept, related : accept, invalid : drop }
-        ether type arp accept
         oifname vmap @vm-map-in
     }
 }

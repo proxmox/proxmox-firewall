@@ -2545,6 +2545,22 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "pre-vm-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "chain": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -2558,6 +2574,22 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "bridge",
           "table": "proxmox-firewall-guests",
           "name": "guest-100-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "pre-vm-out"
+              }
+            }
+          ]
         }
       }
     },
@@ -3364,6 +3396,22 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
+              "jump": {
+                "target": "pre-vm-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "chain": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -3377,6 +3425,22 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "bridge",
           "table": "proxmox-firewall-guests",
           "name": "guest-101-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "jump": {
+                "target": "pre-vm-out"
+              }
+            }
+          ]
         }
       }
     },

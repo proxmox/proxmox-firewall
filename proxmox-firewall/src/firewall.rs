@@ -758,7 +758,16 @@ impl Firewall {
 
         let chain = Self::guest_chain(direction, vmid);
 
-        commands.append(&mut vec![Add::chain(chain.clone()), Flush::chain(chain)]);
+        let pre_chain = match direction {
+            Direction::In => "pre-vm-in",
+            Direction::Out => "pre-vm-out",
+        };
+
+        commands.append(&mut vec![
+            Add::chain(chain.clone()),
+            Flush::chain(chain.clone()),
+            Add::rule(AddRule::from_statement(chain, Statement::jump(pre_chain))),
+        ]);
 
         Ok(())
     }

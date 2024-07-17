@@ -91,6 +91,10 @@ fn main() -> Result<(), std::io::Error> {
 
     while !term.load(Ordering::Relaxed) {
         if force_disable_flag.exists() {
+            if let Err(error) = remove_firewall() {
+                log::error!("unable to disable firewall: {error:?}");
+            }
+
             std::thread::sleep(Duration::from_secs(5));
             continue;
         }

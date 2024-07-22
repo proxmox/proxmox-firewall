@@ -1,3 +1,23 @@
+proxmox-firewall (0.5.0) bookworm; urgency=medium
+
+  * rules: allow vital ICMP(v6) types irregardless of any other rules, which
+    is particularly for ICMPv6 related ones. This follows RFC 4890.
+
+  * service: flush firewall rules on force disable to avoid a race condition
+    where the nftables rule-set never gets flushed and persists after
+    disabling.
+
+  * update to newer proxmox-sys and proxmox-schema dependencies
+
+  * conntrack: arp: move handling to guest chains in order to avoid affecting
+    bridged host interfaces.
+
+  * guest: match arp packets via 'meta' filter type to ensure that valid ARP
+    packets encapsulated in VLAN frames get through, as with the 'ether' type
+    ARP traffic inside VLANs always gets dropped.
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 22 Jul 2024 18:05:36 +0200
+
 proxmox-firewall (0.4.2) bookworm; urgency=medium
 
   * rules: use proper ICMPv6 admin-prohibited type for rejecting IPv6 traffic,

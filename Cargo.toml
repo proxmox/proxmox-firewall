@@ -4,3 +4,4 @@ members = [
     "proxmox-nftables",
     "proxmox-firewall",
 ]
+resolver = "2"

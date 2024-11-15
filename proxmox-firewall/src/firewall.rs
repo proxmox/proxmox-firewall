@@ -197,6 +197,27 @@ impl Firewall {
         self.reset_firewall(&mut commands);
 
         let cluster_host_table = Self::cluster_table();
+        let guest_table = Self::guest_table();
+
+        if let Some(sdn_config) = self.config.sdn() {
+            let ipsets = sdn_config
+                .ipsets(None)
+                .map(|ipset| (ipset.name().to_string(), ipset))
+                .collect();
+
+            self.create_ipsets(&mut commands, &ipsets, &cluster_host_table, None)?;
+            self.create_ipsets(&mut commands, &ipsets, &guest_table, None)?;
+        }
+
+        if let Some(ipam_config) = self.config.ipam() {
+            let ipsets = ipam_config
+                .ipsets(None)
+                .map(|ipset| (ipset.name().to_string(), ipset))
+                .collect();
+
+            self.create_ipsets(&mut commands, &ipsets, &cluster_host_table, None)?;
+            self.create_ipsets(&mut commands, &ipsets, &guest_table, None)?;
+        }
 
         if self.config.host().is_enabled() {
             log::info!("creating cluster / host configuration");
@@ -242,7 +263,6 @@ impl Firewall {
             commands.push(Delete::table(TableName::from(Self::cluster_table())));
         }
 
-        let guest_table = Self::guest_table();
         let enabled_guests: BTreeMap<&Vmid, &GuestConfig> = self
             .config
             .guests()

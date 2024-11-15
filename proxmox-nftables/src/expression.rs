@@ -1,4 +1,5 @@
 use crate::types::{ElemConfig, Verdict};
+use proxmox_ve_config::firewall::types::address::IpRange;
 use serde::{Deserialize, Serialize};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
@@ -50,6 +51,10 @@ pub enum Expression {
 }
 
 impl Expression {
+    pub fn range(start: impl Into<Expression>, last: impl Into<Expression>) -> Self {
+        Expression::Range(Box::new((start.into(), last.into())))
+    }
+
     pub fn set(expressions: impl IntoIterator<Item = Expression>) -> Self {
         Expression::Set(Vec::from_iter(expressions))
     }
@@ -170,11 +175,21 @@ impl From<&IpList> for Expression {
 }
 
 #[cfg(feature = "config-ext")]
+impl From<&IpRange> for Expression {
+    fn from(value: &IpRange) -> Self {
+        match value {
+            IpRange::V4(range) => Expression::range(range.start(), range.last()),
+            IpRange::V6(range) => Expression::range(range.start(), range.last()),
+        }
+    }
+}
+
+#[cfg(feature = "config-ext")]
 impl From<&IpEntry> for Expression {
     fn from(value: &IpEntry) -> Self {
         match value {
             IpEntry::Cidr(cidr) => Expression::from(Prefix::from(cidr)),
-            IpEntry::Range(beg, end) => Expression::Range(Box::new((beg.into(), end.into()))),
+            IpEntry::Range(range) => Expression::from(range),
         }
     }
 }

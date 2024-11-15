@@ -72,19 +72,36 @@ impl ToNftObjects for Ipset {
             let mut nomatch_elements = Vec::new();
 
             for element in self.iter() {
-                let cidr = match &element.address {
-                    IpsetAddress::Cidr(cidr) => cidr,
-                    IpsetAddress::Alias(alias) => env
-                        .alias(alias)
-                        .ok_or(format_err!("could not find alias {alias} in environment"))?
-                        .address(),
+                let expression = match &element.address {
+                    IpsetAddress::Range(range) => {
+                        if family != range.family() {
+                            continue;
+                        }
+
+                        Expression::from(range)
+                    }
+                    IpsetAddress::Cidr(cidr) => {
+                        if family != cidr.family() {
+                            continue;
+                        }
+
+                        Expression::from(Prefix::from(cidr))
+                    }
+                    IpsetAddress::Alias(alias) => {
+                        let cidr = env
+                            .alias(alias)
+                            .ok_or_else(|| {
+                                format_err!("could not find alias {alias} in environment")
+                            })?
+                            .address();
+
+                        if family != cidr.family() {
+                            continue;
+                        }
+
+                        Expression::from(Prefix::from(cidr))
+                    }
                 };
-
-                if family != cidr.family() {
-                    continue;
-                }
-
-                let expression = Expression::from(Prefix::from(cidr));
 
                 if element.nomatch {
                     nomatch_elements.push(expression);

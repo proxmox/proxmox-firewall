@@ -207,6 +207,1294 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
         "set": {
           "family": "inet",
           "table": "proxmox-firewall",
+          "name": "v4-sdn/public-all",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-all"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-all-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-all-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-all",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.0.0",
+                "len": 16
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-all",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-all"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-all-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-all-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-all",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::",
+                "len": 64
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-dhcp",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-dhcp"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-dhcp-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-dhcp-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-dhcp",
+          "elem": [
+            {
+              "range": [
+                "10.101.99.100",
+                "10.101.99.200"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-dhcp",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-dhcp"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-dhcp-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-dhcp-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-dhcp",
+          "elem": [
+            {
+              "range": [
+                "fd80::1000",
+                "fd80::ffff"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-gateway",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-gateway-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.1",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-gateway",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-gateway-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.0.0",
+                "len": 16
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/public-no-gateway-nomatch",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.1",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::",
+                "len": 64
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/public-no-gateway-nomatch",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-all",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-all"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-all-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-all-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-all",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.0.0",
+                "len": 16
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-all",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-all"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-all-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-all-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-all",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::",
+                "len": 64
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-dhcp",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-dhcp"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-dhcp-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-dhcp-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-dhcp",
+          "elem": [
+            {
+              "range": [
+                "10.101.99.100",
+                "10.101.99.200"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-dhcp",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-dhcp"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-dhcp-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-dhcp-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-dhcp",
+          "elem": [
+            {
+              "range": [
+                "fd80::1000",
+                "fd80::ffff"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-gateway",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-gateway-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.1",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-gateway",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-gateway-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.0.0",
+                "len": 16
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/public-no-gateway-nomatch",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.1",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::",
+                "len": 64
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/public-no-gateway-nomatch",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/guest-ipam-101",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/guest-ipam-101"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/guest-ipam-101-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/guest-ipam-101-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v4-sdn/guest-ipam-101",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.100",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/guest-ipam-101",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/guest-ipam-101"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/guest-ipam-101-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/guest-ipam-101-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "v6-sdn/guest-ipam-101",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1000",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/guest-ipam-101",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/guest-ipam-101"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/guest-ipam-101-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/guest-ipam-101-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-sdn/guest-ipam-101",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "10.101.1.100",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/guest-ipam-101",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/guest-ipam-101"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/guest-ipam-101-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/guest-ipam-101-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-sdn/guest-ipam-101",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fd80::1000",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "inet",
+          "table": "proxmox-firewall",
           "name": "v4-dc/management",
           "type": "ipv4_addr",
           "flags": [

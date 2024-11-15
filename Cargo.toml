@@ -1,7 +1,9 @@
 [workspace]
 members = [
-    "proxmox-ve-config",
     "proxmox-nftables",
     "proxmox-firewall",
 ]
 resolver = "2"
+
+[workspace.dependencies]
+proxmox-ve-config = { version = "0.2.0" }

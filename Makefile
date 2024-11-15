@@ -29,7 +29,7 @@ cargo-build:
 build: $(BUILDDIR)
 $(BUILDDIR):
 	rm -rf $@ $@.tmp; mkdir $@.tmp
-	cp -a proxmox-firewall proxmox-nftables proxmox-ve-config debian Cargo.toml Makefile defines.mk $@.tmp/
+	cp -a proxmox-firewall proxmox-nftables debian Cargo.toml Makefile defines.mk $@.tmp/
 	mv $@.tmp $@
 
 .PHONY: deb

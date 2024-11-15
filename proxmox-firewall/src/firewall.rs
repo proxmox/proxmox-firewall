@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-use anyhow::Error;
+use anyhow::{bail, Error};
 
 use proxmox_nftables::command::{Add, Commands, Delete, Flush};
 use proxmox_nftables::expression::{Meta, Payload};
@@ -13,6 +13,9 @@ use proxmox_nftables::types::{
 };
 use proxmox_nftables::{Expression, Statement};
 
+use proxmox_ve_config::host::types::BridgeName;
+
+use proxmox_ve_config::firewall::bridge::Config as BridgeConfig;
 use proxmox_ve_config::firewall::ct_helper::get_cthelper;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
@@ -112,6 +115,14 @@ impl Firewall {
         ChainPart::new(Self::host_table(), "log-smurfs")
     }
 
+    fn bridge_vmap(table: TablePart) -> SetName {
+        SetName::new(table, "bridge-map")
+    }
+
+    fn bridge_chain(table: TablePart, bridge_name: &BridgeName) -> ChainPart {
+        ChainPart::new(table, format!("bridge-{bridge_name}"))
+    }
+
     fn default_log_limit(&self) -> Option<LogRateLimit> {
         self.config.cluster().log_ratelimit()
     }
@@ -120,14 +131,18 @@ impl Firewall {
         commands.append(&mut vec![
             Flush::chain(Self::cluster_chain(Direction::In)),
             Flush::chain(Self::cluster_chain(Direction::Out)),
+            Flush::chain(Self::cluster_chain(Direction::Forward)),
             Add::chain(Self::host_chain(Direction::In)),
             Flush::chain(Self::host_chain(Direction::In)),
             Flush::chain(Self::host_option_chain(Direction::In)),
             Add::chain(Self::host_chain(Direction::Out)),
             Flush::chain(Self::host_chain(Direction::Out)),
             Flush::chain(Self::host_option_chain(Direction::Out)),
+            Flush::chain(Self::host_chain(Direction::Forward)),
             Flush::map(Self::guest_vmap(Direction::In)),
             Flush::map(Self::guest_vmap(Direction::Out)),
+            Flush::map(Self::bridge_vmap(Self::guest_table())),
+            Flush::map(Self::bridge_vmap(Self::host_table())),
             Flush::chain(Self::host_conntrack_chain()),
             Flush::chain(Self::synflood_limit_chain()),
             Flush::chain(Self::log_invalid_tcp_chain()),
@@ -144,8 +159,8 @@ impl Firewall {
         }
         */
 
-        // we need to remove guest chains before group chains
-        for prefix in ["guest-", "group-"] {
+        // we need to remove guest & bridge chains before group chains
+        for prefix in ["guest-", "bridge-", "group-"] {
             for (name, chain) in self.config.nft_chains() {
                 if name.starts_with(prefix) {
                     commands.push(Delete::chain(chain.clone()))
@@ -246,10 +261,18 @@ impl Firewall {
                     name,
                     Direction::Out,
                 )?;
+                self.create_group_chain(
+                    &mut commands,
+                    &cluster_host_table,
+                    group,
+                    name,
+                    Direction::Forward,
+                )?;
             }
 
             self.create_cluster_rules(&mut commands, Direction::In)?;
             self.create_cluster_rules(&mut commands, Direction::Out)?;
+            self.create_cluster_rules(&mut commands, Direction::Forward)?;
 
             log::debug!("Generating host firewall config");
 
@@ -259,6 +282,7 @@ impl Firewall {
 
             self.create_host_rules(&mut commands, Direction::In)?;
             self.create_host_rules(&mut commands, Direction::Out)?;
+            self.create_host_rules(&mut commands, Direction::Forward)?;
         } else {
             commands.push(Delete::table(TableName::from(Self::cluster_table())));
         }
@@ -270,7 +294,14 @@ impl Firewall {
             .filter(|(_, config)| config.is_enabled())
             .collect();
 
-        if !enabled_guests.is_empty() {
+        let enabled_bridges: BTreeMap<&BridgeName, &BridgeConfig> = self
+            .config
+            .bridges()
+            .iter()
+            .filter(|(_, config)| config.enabled())
+            .collect();
+
+        if !(enabled_guests.is_empty() && enabled_bridges.is_empty()) {
             log::info!("creating guest configuration");
 
             self.create_ipsets(
@@ -283,6 +314,13 @@ impl Firewall {
             for (name, group) in self.config.cluster().groups() {
                 self.create_group_chain(&mut commands, &guest_table, group, name, Direction::In)?;
                 self.create_group_chain(&mut commands, &guest_table, group, name, Direction::Out)?;
+                self.create_group_chain(
+                    &mut commands,
+                    &guest_table,
+                    group,
+                    name,
+                    Direction::Forward,
+                )?;
             }
         } else {
             commands.push(Delete::table(TableName::from(Self::guest_table())));
@@ -302,7 +340,82 @@ impl Firewall {
             self.create_guest_rules(&mut commands, *vmid, config, Direction::Out)?;
         }
 
+        for (bridge_name, bridge_config) in enabled_bridges {
+            self.create_bridge_chain(&mut commands, bridge_name, bridge_config)?;
+        }
+
         Ok(commands)
+    }
+
+    fn create_bridge_chain(
+        &self,
+        commands: &mut Commands,
+        name: &BridgeName,
+        config: &BridgeConfig,
+    ) -> Result<(), Error> {
+        for table in [Self::host_table(), Self::guest_table()] {
+            log::info!("creating bridge chain {name} in table {}", table.table());
+
+            let chain = Self::bridge_chain(table.clone(), name);
+
+            commands.append(&mut vec![
+                Add::chain(chain.clone()),
+                Flush::chain(chain.clone()),
+                Add::rule(AddRule::from_statement(
+                    chain.clone(),
+                    Statement::jump("before-bridge"),
+                )),
+            ]);
+
+            let env = NftRuleEnv {
+                chain: chain.clone(),
+                direction: Direction::Forward,
+                firewall_config: &self.config,
+                vmid: None,
+            };
+
+            for config_rule in config.rules() {
+                for rule in NftRule::from_config_rule(config_rule, &env)? {
+                    commands.push(Add::rule(rule.into_add_rule(chain.clone())));
+                }
+            }
+
+            let default_policy = config.policy_forward();
+
+            self.create_log_rule(
+                commands,
+                config.log_level_forward(),
+                chain.clone(),
+                default_policy,
+                None,
+            )?;
+
+            commands.push(Add::rule(AddRule::from_statement(
+                chain.clone(),
+                default_policy,
+            )));
+
+            let key = if table == Self::host_table() {
+                name.into()
+            } else {
+                Expression::concat([name.into(), name.into()])
+            };
+
+            let map_element = AddElement::map_from_expressions(
+                Self::bridge_vmap(table),
+                [(
+                    key,
+                    MapValue::from(Verdict::Jump {
+                        target: chain.name().to_string(),
+                    }),
+                )]
+                .to_vec(),
+            );
+
+            commands.push(Add::element(map_element));
+        }
+
+        Ok(())
     }
 
     fn handle_host_options(&self, commands: &mut Commands) -> Result<(), Error> {
@@ -781,6 +894,7 @@ impl Firewall {
         let pre_chain = match direction {
             Direction::In => "pre-vm-in",
             Direction::Out => "pre-vm-out",
+            Direction::Forward => bail!("cannot create guest_chain in direction forward"),
         };
 
         commands.append(&mut vec![

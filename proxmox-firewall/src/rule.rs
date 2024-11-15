@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use anyhow::{format_err, Error};
+use anyhow::{bail, format_err, Error};
 use proxmox_nftables::{
     expression::{Ct, IpFamily, Meta, Payload, Prefix},
     statement::{Log, LogLevel, Match, Operator},
@@ -179,6 +179,7 @@ fn handle_iface(rules: &mut [NftRule], env: &NftRuleEnv, name: &str) -> Result<(
         (Some(_), Direction::Out) => "iifname",
         (None, Direction::In) => "iifname",
         (None, Direction::Out) => "oifname",
+        (_, Direction::Forward) => bail!("cannot define interfaces for forward direction"),
     };
 
     let iface_name = env.iface_name(name);
@@ -693,8 +694,8 @@ impl ToNftRules for Ipfilter<'_> {
                     rules.push(base_rule);
                 }
             }
+            Direction::Forward => bail!("cannot generate IP filter for direction forward"),
         }
-
         Ok(())
     }
 }

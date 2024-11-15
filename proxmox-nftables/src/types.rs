@@ -742,6 +742,12 @@ impl AddElement {
     }
 }
 
+impl From<AddMapElement> for AddElement {
+    fn from(value: AddMapElement) -> Self {
+        AddElement::Map(value)
+    }
+}
+
 impl From<AddSetElement> for AddElement {
     fn from(value: AddSetElement) -> Self {
         AddElement::Set(value)

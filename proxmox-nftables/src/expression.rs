@@ -1,5 +1,6 @@
 use crate::types::{ElemConfig, Verdict};
 use proxmox_ve_config::firewall::types::address::IpRange;
+use proxmox_ve_config::host::types::BridgeName;
 use serde::{Deserialize, Serialize};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
@@ -256,6 +257,13 @@ impl From<&PortList> for Expression {
         }
 
         Expression::set(value.iter().map(Expression::from))
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<&BridgeName> for Expression {
+    fn from(value: &BridgeName) -> Self {
+        Expression::String(value.name().to_string())
     }
 }
 

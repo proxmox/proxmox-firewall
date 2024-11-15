@@ -20,8 +20,12 @@ add chain inet proxmox-firewall allow-icmp
 add chain inet proxmox-firewall log-drop-smurfs
 add chain inet proxmox-firewall default-in
 add chain inet proxmox-firewall default-out
+add chain inet proxmox-firewall before-bridge
+add chain inet proxmox-firewall host-bridge-input {type filter hook input priority filter - 1; policy accept;}
+add chain inet proxmox-firewall host-bridge-output {type filter hook output priority filter + 1; policy accept;}
 add chain inet proxmox-firewall input {type filter hook input priority filter; policy drop;}
 add chain inet proxmox-firewall output {type filter hook output priority filter; policy accept;}
+add chain inet proxmox-firewall forward {type filter hook forward priority filter; policy accept;}
 
 add chain bridge proxmox-firewall-guests allow-dhcp-in
 add chain bridge proxmox-firewall-guests allow-dhcp-out
@@ -39,6 +43,8 @@ add chain bridge proxmox-firewall-guests pre-vm-out
 add chain bridge proxmox-firewall-guests vm-out {type filter hook prerouting priority 0; policy accept;}
 add chain bridge proxmox-firewall-guests pre-vm-in
 add chain bridge proxmox-firewall-guests vm-in {type filter hook postrouting priority 0; policy accept;}
+add chain bridge proxmox-firewall-guests before-bridge
+add chain bridge proxmox-firewall-guests forward {type filter hook forward priority 0; policy accept;}
 
 flush chain inet proxmox-firewall do-reject
 flush chain inet proxmox-firewall accept-management
@@ -55,8 +61,12 @@ flush chain inet proxmox-firewall allow-icmp
 flush chain inet proxmox-firewall log-drop-smurfs
 flush chain inet proxmox-firewall default-in
 flush chain inet proxmox-firewall default-out
+flush chain inet proxmox-firewall before-bridge
+flush chain inet proxmox-firewall host-bridge-input
+flush chain inet proxmox-firewall host-bridge-output
 flush chain inet proxmox-firewall input
 flush chain inet proxmox-firewall output
+flush chain inet proxmox-firewall forward
 
 flush chain bridge proxmox-firewall-guests allow-dhcp-in
 flush chain bridge proxmox-firewall-guests allow-dhcp-out
@@ -74,6 +84,8 @@ flush chain bridge proxmox-firewall-guests pre-vm-out
 flush chain bridge proxmox-firewall-guests vm-out
 flush chain bridge proxmox-firewall-guests pre-vm-in
 flush chain bridge proxmox-firewall-guests vm-in
+flush chain bridge proxmox-firewall-guests before-bridge
+flush chain bridge proxmox-firewall-guests forward
 
 table inet proxmox-firewall {
     chain do-reject {
@@ -223,6 +235,25 @@ table inet proxmox-firewall {
     chain option-in {}
     chain option-out {}
 
+    map bridge-map {
+        type ifname : verdict
+    }
+
+    chain before-bridge {
+        meta protocol arp accept
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+    }
+
+    chain host-bridge-input {
+        type filter hook input priority filter - 1; policy accept;
+        meta iifname vmap @bridge-map
+    }
+
+    chain host-bridge-output {
+        type filter hook output priority filter + 1; policy accept;
+        meta oifname vmap @bridge-map
+    }
+
     chain input {
         type filter hook input priority filter; policy accept;
         jump default-in
@@ -240,11 +271,20 @@ table inet proxmox-firewall {
         jump cluster-out
     }
 
+    chain forward {
+        type filter hook forward priority filter; policy accept;
+        jump host-forward
+        jump cluster-forward
+    }
+
     chain cluster-in {}
     chain cluster-out {}
 
     chain host-in {}
     chain host-out {}
+
+    chain cluster-forward {}
+    chain host-forward {}
 
     chain ct-in {}
 }
@@ -334,5 +374,19 @@ table bridge proxmox-firewall-guests {
         type filter hook postrouting priority 0; policy accept;
         jump allow-icmp
         oifname vmap @vm-map-in
+    }
+
+    map bridge-map {
+        type ifname . ifname : verdict
+    }
+
+    chain before-bridge {
+        meta protocol arp accept
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy accept;
+        meta ibrname . meta obrname vmap @bridge-map
     }
 }

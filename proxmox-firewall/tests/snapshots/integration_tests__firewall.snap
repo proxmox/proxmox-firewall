@@ -23,6 +23,15 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
       }
     },
     {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "cluster-forward"
+        }
+      }
+    },
+    {
       "add": {
         "chain": {
           "family": "inet",
@@ -78,6 +87,15 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "host-forward"
+        }
+      }
+    },
+    {
+      "flush": {
         "map": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -91,6 +109,24 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "bridge",
           "table": "proxmox-firewall-guests",
           "name": "vm-map-out"
+        }
+      }
+    },
+    {
+      "flush": {
+        "map": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "bridge-map"
+        }
+      }
+    },
+    {
+      "flush": {
+        "map": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "bridge-map"
         }
       }
     },
@@ -1786,6 +1822,24 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-forward"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "group-network1-forward"
+        }
+      }
+    },
+    {
+      "add": {
         "rule": {
           "family": "inet",
           "table": "proxmox-firewall",
@@ -1866,6 +1920,20 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "inet",
           "table": "proxmox-firewall",
           "chain": "cluster-out",
+          "expr": [
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-forward",
           "expr": [
             {
               "accept": null
@@ -3810,6 +3878,24 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "bridge",
           "table": "proxmox-firewall-guests",
           "name": "group-network1-out"
+        }
+      }
+    },
+    {
+      "add": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-forward"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "group-network1-forward"
         }
       }
     },

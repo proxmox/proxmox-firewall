@@ -1,0 +1,45 @@
+{
+  "subnets": {
+    "ids": {
+      "test-10.101.0.0-16": {
+        "gateway": "10.101.1.1",
+        "snat": 1,
+        "vnet": "public",
+        "dhcp-range": [
+          "start-address=10.101.99.100,end-address=10.101.99.200"
+        ],
+        "type": "subnet"
+      },
+      "test-fd80::-64": {
+        "snat": 1,
+        "gateway": "fd80::1",
+        "dhcp-range": [
+          "start-address=fd80::1000,end-address=fd80::ffff"
+        ],
+        "vnet": "public",
+        "type": "subnet"
+      }
+    }
+  },
+  "version": 49,
+  "vnets": {
+    "ids": {
+      "public": {
+        "zone": "test",
+        "type": "vnet"
+      }
+    }
+  },
+  "zones": {
+    "ids": {
+      "test": {
+        "dhcp": "dnsmasq",
+        "ipam": "pve",
+        "type": "simple"
+      }
+    }
+  },
+  "controllers": {
+    "ids": {}
+  }
+}

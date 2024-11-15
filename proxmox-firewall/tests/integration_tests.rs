@@ -69,6 +69,16 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
 
         Ok(None)
     }
+
+    fn sdn_running_config(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
+        Ok(Some(Box::new(
+            include_str!("input/.running-config.json").as_bytes(),
+        )))
+    }
+
+    fn ipam(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
+        Ok(Some(Box::new(include_str!("input/ipam.db").as_bytes())))
+    }
 }
 
 struct MockNftConfigLoader {}

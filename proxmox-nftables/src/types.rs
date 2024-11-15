@@ -636,7 +636,7 @@ impl SetName {
         };
 
         let name = match name.scope() {
-            IpsetScope::Datacenter => name.to_string(),
+            IpsetScope::Datacenter | IpsetScope::Sdn => name.to_string(),
             IpsetScope::Guest => {
                 if let Some(vmid) = vmid {
                     format!("guest-{vmid}/{}", name.name())

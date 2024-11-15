@@ -16,6 +16,10 @@ use proxmox_ve_config::guest::{GuestEntry, GuestMap};
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
 use proxmox_nftables::NftClient;
+use proxmox_ve_config::sdn::{
+    config::{RunningConfig, SdnConfig},
+    ipam::{Ipam, IpamJson},
+};
 
 pub trait FirewallConfigLoader {
     fn cluster(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
@@ -27,6 +31,8 @@ pub trait FirewallConfigLoader {
         guest: &GuestEntry,
     ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn guest_firewall_config(&self, vmid: &Vmid) -> Result<Option<Box<dyn io::BufRead>>, Error>;
+    fn sdn_running_config(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
+    fn ipam(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
 }
 
 #[derive(Default)]
@@ -57,6 +63,9 @@ fn open_config_file(path: &str) -> Result<Option<File>, Error> {
 
 const CLUSTER_CONFIG_PATH: &str = "/etc/pve/firewall/cluster.fw";
 const HOST_CONFIG_PATH: &str = "/etc/pve/local/host.fw";
+
+const SDN_RUNNING_CONFIG_PATH: &str = "/etc/pve/sdn/.running-config";
+const SDN_IPAM_PATH: &str = "/etc/pve/priv/ipam.db";
 
 impl FirewallConfigLoader for PveFirewallConfigLoader {
     fn cluster(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
@@ -119,6 +128,32 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
 
         Ok(None)
     }
+
+    fn sdn_running_config(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
+        log::info!("loading SDN running-config");
+
+        let fd = open_config_file(SDN_RUNNING_CONFIG_PATH)?;
+
+        if let Some(file) = fd {
+            let buf_reader = Box::new(BufReader::new(file)) as Box<dyn io::BufRead>;
+            return Ok(Some(buf_reader));
+        }
+
+        Ok(None)
+    }
+
+    fn ipam(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
+        log::info!("loading IPAM config");
+
+        let fd = open_config_file(SDN_IPAM_PATH)?;
+
+        if let Some(file) = fd {
+            let buf_reader = Box::new(BufReader::new(file)) as Box<dyn io::BufRead>;
+            return Ok(Some(buf_reader));
+        }
+
+        Ok(None)
+    }
 }
 
 pub trait NftConfigLoader {
@@ -150,6 +185,8 @@ pub struct FirewallConfig {
     host_config: HostConfig,
     guest_config: BTreeMap<Vmid, GuestConfig>,
     nft_config: BTreeMap<String, ListChain>,
+    sdn_config: Option<SdnConfig>,
+    ipam_config: Option<Ipam>,
 }
 
 impl FirewallConfig {
@@ -207,6 +244,28 @@ impl FirewallConfig {
         Ok(guests)
     }
 
+    pub fn parse_sdn(
+        firewall_loader: &dyn FirewallConfigLoader,
+    ) -> Result<Option<SdnConfig>, Error> {
+        Ok(match firewall_loader.sdn_running_config()? {
+            Some(data) => {
+                let running_config: RunningConfig = serde_json::from_reader(data)?;
+                Some(SdnConfig::try_from(running_config)?)
+            }
+            _ => None,
+        })
+    }
+
+    pub fn parse_ipam(firewall_loader: &dyn FirewallConfigLoader) -> Result<Option<Ipam>, Error> {
+        Ok(match firewall_loader.ipam()? {
+            Some(data) => {
+                let raw_ipam: IpamJson = serde_json::from_reader(data)?;
+                Some(Ipam::try_from(raw_ipam)?)
+            }
+            _ => None,
+        })
+    }
+
     pub fn parse_nft(
         nft_loader: &dyn NftConfigLoader,
     ) -> Result<BTreeMap<String, ListChain>, Error> {
@@ -233,6 +292,8 @@ impl FirewallConfig {
             cluster_config: Self::parse_cluster(firewall_loader)?,
             host_config: Self::parse_host(firewall_loader)?,
             guest_config: Self::parse_guests(firewall_loader)?,
+            sdn_config: Self::parse_sdn(firewall_loader)?,
+            ipam_config: Self::parse_ipam(firewall_loader)?,
             nft_config: Self::parse_nft(nft_loader)?,
         })
     }
@@ -251,6 +312,14 @@ impl FirewallConfig {
 
     pub fn nft_chains(&self) -> &BTreeMap<String, ListChain> {
         &self.nft_config
+    }
+
+    pub fn sdn(&self) -> Option<&SdnConfig> {
+        self.sdn_config.as_ref()
+    }
+
+    pub fn ipam(&self) -> Option<&Ipam> {
+        self.ipam_config.as_ref()
     }
 
     pub fn is_enabled(&self) -> bool {

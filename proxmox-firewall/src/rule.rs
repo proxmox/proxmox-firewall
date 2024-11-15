@@ -764,7 +764,7 @@ impl ToNftRules for FwMacro {
     fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
         log::trace!("applying macro: {self:?}");
 
-        let initial_rules: Vec<NftRule> = rules.drain(..).collect();
+        let initial_rules: Vec<NftRule> = std::mem::take(rules);
 
         for protocol in &self.code {
             let mut new_rules = initial_rules.to_vec();

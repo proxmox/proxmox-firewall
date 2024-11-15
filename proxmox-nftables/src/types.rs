@@ -16,10 +16,10 @@ use proxmox_ve_config::firewall::types::ipset::IpsetName;
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::guest::types::Vmid;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord, Deserialize, Serialize)]
 pub struct Handle(i32);
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum TableFamily {
     Ip,
@@ -187,7 +187,7 @@ impl From<LogRateLimitTimescale> for RateTimescale {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TableName {
     family: TableFamily,
     name: String,
@@ -210,7 +210,7 @@ impl TableName {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TablePart {
     family: TableFamily,
     table: String,

@@ -1,10 +1,11 @@
 use std::collections::BTreeMap;
 use std::default::Default;
-use std::fs::File;
+use std::fs::{self, DirEntry, File, ReadDir};
 use std::io::{self, BufReader};
 
-use anyhow::{format_err, Context, Error};
+use anyhow::{bail, format_err, Context, Error};
 
+use proxmox_ve_config::firewall::bridge::Config as BridgeConfig;
 use proxmox_ve_config::firewall::cluster::Config as ClusterConfig;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
@@ -12,6 +13,7 @@ use proxmox_ve_config::firewall::types::alias::{Alias, AliasName, AliasScope};
 
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
+use proxmox_ve_config::host::types::BridgeName;
 
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
@@ -33,6 +35,11 @@ pub trait FirewallConfigLoader {
     fn guest_firewall_config(&self, vmid: &Vmid) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn sdn_running_config(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn ipam(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
+    fn bridge_list(&self) -> Result<Vec<BridgeName>, Error>;
+    fn bridge_firewall_config(
+        &self,
+        bridge_name: &BridgeName,
+    ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
 }
 
 #[derive(Default)]
@@ -61,8 +68,31 @@ fn open_config_file(path: &str) -> Result<Option<File>, Error> {
     }
 }
 
+fn open_config_folder(path: &str) -> Result<Option<ReadDir>, Error> {
+    match fs::read_dir(path) {
+        Ok(paths) => Ok(Some(paths)),
+        Err(err) if err.kind() == io::ErrorKind::NotFound => {
+            log::info!("SDN config folder {path} does not exist");
+            Ok(None)
+        }
+        Err(err) => {
+            let context = format!("unable to open configuration folder at {BRIDGE_CONFIG_PATH}");
+            Err(anyhow::Error::new(err).context(context))
+        }
+    }
+}
+
+fn fw_name(dir_entry: DirEntry) -> Option<String> {
+    dir_entry
+        .file_name()
+        .to_str()?
+        .strip_suffix(".fw")
+        .map(str::to_string)
+}
+
 const CLUSTER_CONFIG_PATH: &str = "/etc/pve/firewall/cluster.fw";
 const HOST_CONFIG_PATH: &str = "/etc/pve/local/host.fw";
+const BRIDGE_CONFIG_PATH: &str = "/etc/pve/sdn/firewall";
 
 const SDN_RUNNING_CONFIG_PATH: &str = "/etc/pve/sdn/.running-config";
 const SDN_IPAM_PATH: &str = "/etc/pve/priv/ipam.db";
@@ -154,6 +184,38 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
 
         Ok(None)
     }
+
+    fn bridge_list(&self) -> Result<Vec<BridgeName>, Error> {
+        let mut bridges = Vec::new();
+
+        if let Some(files) = open_config_folder(BRIDGE_CONFIG_PATH)? {
+            for file in files {
+                let bridge_name = fw_name(file?).map(BridgeName::new).transpose()?;
+
+                if let Some(bridge_name) = bridge_name {
+                    bridges.push(bridge_name);
+                }
+            }
+        }
+
+        Ok(bridges)
+    }
+
+    fn bridge_firewall_config(
+        &self,
+        bridge_name: &BridgeName,
+    ) -> Result<Option<Box<dyn io::BufRead>>, Error> {
+        log::info!("loading firewall config for bridge {bridge_name}");
+
+        let fd = open_config_file(&format!("/etc/pve/sdn/firewall/{bridge_name}.fw"))?;
+
+        if let Some(file) = fd {
+            let buf_reader = Box::new(BufReader::new(file)) as Box<dyn io::BufRead>;
+            return Ok(Some(buf_reader));
+        }
+
+        Ok(None)
+    }
 }
 
 pub trait NftConfigLoader {
@@ -184,6 +246,7 @@ pub struct FirewallConfig {
     cluster_config: ClusterConfig,
     host_config: HostConfig,
     guest_config: BTreeMap<Vmid, GuestConfig>,
+    bridge_config: BTreeMap<BridgeName, BridgeConfig>,
     nft_config: BTreeMap<String, ListChain>,
     sdn_config: Option<SdnConfig>,
     ipam_config: Option<Ipam>,
@@ -284,6 +347,22 @@ impl FirewallConfig {
         Ok(chains)
     }
 
+    pub fn parse_bridges(
+        firewall_loader: &dyn FirewallConfigLoader,
+    ) -> Result<BTreeMap<BridgeName, BridgeConfig>, Error> {
+        let mut bridge_config = BTreeMap::new();
+
+        for bridge_name in firewall_loader.bridge_list()? {
+            if let Some(config) = firewall_loader.bridge_firewall_config(&bridge_name)? {
+                bridge_config.insert(bridge_name, BridgeConfig::parse(config)?);
+            } else {
+                bail!("Could not read config for {bridge_name}")
+            }
+        }
+
+        Ok(bridge_config)
+    }
+
     pub fn new(
         firewall_loader: &dyn FirewallConfigLoader,
         nft_loader: &dyn NftConfigLoader,
@@ -292,6 +371,7 @@ impl FirewallConfig {
             cluster_config: Self::parse_cluster(firewall_loader)?,
             host_config: Self::parse_host(firewall_loader)?,
             guest_config: Self::parse_guests(firewall_loader)?,
+            bridge_config: Self::parse_bridges(firewall_loader)?,
             sdn_config: Self::parse_sdn(firewall_loader)?,
             ipam_config: Self::parse_ipam(firewall_loader)?,
             nft_config: Self::parse_nft(nft_loader)?,
@@ -308,6 +388,10 @@ impl FirewallConfig {
 
     pub fn guests(&self) -> &BTreeMap<Vmid, GuestConfig> {
         &self.guest_config
+    }
+
+    pub fn bridges(&self) -> &BTreeMap<BridgeName, BridgeConfig> {
+        &self.bridge_config
     }
 
     pub fn nft_chains(&self) -> &BTreeMap<String, ListChain> {

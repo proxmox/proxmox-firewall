@@ -7,6 +7,7 @@ use proxmox_nftables::command::CommandOutput;
 use proxmox_sys::nodename;
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap, GuestType};
+use proxmox_ve_config::host::types::BridgeName;
 
 struct MockFirewallConfigLoader {}
 
@@ -78,6 +79,17 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
 
     fn ipam(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         Ok(Some(Box::new(include_str!("input/ipam.db").as_bytes())))
+    }
+
+    fn bridge_list(&self) -> Result<Vec<BridgeName>, Error> {
+        Ok(Vec::new())
+    }
+
+    fn bridge_firewall_config(
+        &self,
+        bridge_name: &BridgeName,
+    ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
+        Ok(None)
     }
 }
 

@@ -1,6 +1,7 @@
 ---
 source: proxmox-firewall/tests/integration_tests.rs
 expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
+snapshot_kind: text
 ---
 {
   "nftables": [
@@ -91,6 +92,15 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "inet",
           "table": "proxmox-firewall",
           "name": "host-forward"
+        }
+      }
+    },
+    {
+      "flush": {
+        "chain": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "invalid-conntrack"
         }
       }
     },
@@ -3278,6 +3288,20 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "jump": {
                 "target": "block-conntrack-invalid"
               }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "invalid-conntrack",
+          "expr": [
+            {
+              "drop": null
             }
           ]
         }

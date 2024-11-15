@@ -365,8 +365,10 @@ table bridge proxmox-firewall-guests {
         iifname vmap @vm-map-out
     }
 
+    chain invalid-conntrack { }
+
     chain pre-vm-in {
-        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
         meta protocol arp accept
     }
 

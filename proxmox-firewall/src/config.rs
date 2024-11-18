@@ -95,7 +95,8 @@ const HOST_CONFIG_PATH: &str = "/etc/pve/local/host.fw";
 const BRIDGE_CONFIG_PATH: &str = "/etc/pve/sdn/firewall";
 
 const SDN_RUNNING_CONFIG_PATH: &str = "/etc/pve/sdn/.running-config";
-const SDN_IPAM_PATH: &str = "/etc/pve/priv/ipam.db";
+const SDN_IPAM_PATH: &str = "/etc/pve/sdn/pve-ipam-state.json";
+const SDN_IPAM_PATH_LEGACY: &str = "/etc/pve/priv/ipam.db"; // TODO: remove with PVE 9+
 
 impl FirewallConfigLoader for PveFirewallConfigLoader {
     fn cluster(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
@@ -175,7 +176,11 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
     fn ipam(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
         log::info!("loading IPAM config");
 
-        let fd = open_config_file(SDN_IPAM_PATH)?;
+        let fd = match open_config_file(SDN_IPAM_PATH)? {
+            // fallback to legacy path for compat transition
+            None => open_config_file(SDN_IPAM_PATH_LEGACY)?,
+            Some(file) => Some(file),
+        };
 
         if let Some(file) = fd {
             let buf_reader = Box::new(BufReader::new(file)) as Box<dyn io::BufRead>;

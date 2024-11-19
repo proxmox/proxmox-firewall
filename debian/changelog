@@ -1,3 +1,17 @@
+proxmox-firewall (0.6.0) bookworm; urgency=medium
+
+  * ipsets: autogenerate ipsets for vnets and ipam
+
+  * sdn: add support for loading vnet-level firewall config
+
+  * sdn: create forward firewall rules
+
+  * firewall: apply `nt_conntrack_allow_invalid` option to guest table
+
+  * config: fallback to legacy path when reading PVE IPAM state
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 19 Nov 2024 16:46:26 +0100
+
 proxmox-firewall (0.5.0) bookworm; urgency=medium
 
   * rules: allow vital ICMP(v6) types irregardless of any other rules, which

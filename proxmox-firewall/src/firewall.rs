@@ -96,7 +96,7 @@ impl Firewall {
     }
 
     fn guest_invalid_conntrack_chain() -> ChainPart {
-        ChainPart::new(Self::guest_table(), format!("invalid-conntrack"))
+        ChainPart::new(Self::guest_table(), "invalid-conntrack".to_string())
     }
 
     fn host_conntrack_chain() -> ChainPart {

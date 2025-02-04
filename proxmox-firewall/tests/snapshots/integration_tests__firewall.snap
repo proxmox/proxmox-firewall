@@ -3604,6 +3604,62 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "match": {
                 "op": "==",
                 "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": "echo-request"
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmpv6",
+                    "field": "type"
+                  }
+                },
+                "right": "echo-request"
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
                   "meta": {
                     "key": "l4proto"
                   }

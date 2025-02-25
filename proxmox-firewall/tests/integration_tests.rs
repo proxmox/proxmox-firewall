@@ -87,7 +87,7 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
 
     fn bridge_firewall_config(
         &self,
-        bridge_name: &BridgeName,
+        _bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         Ok(None)
     }

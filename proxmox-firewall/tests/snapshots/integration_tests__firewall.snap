@@ -105,6 +105,15 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "flush": {
+        "chain": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "name": "invalid-conntrack"
+        }
+      }
+    },
+    {
+      "flush": {
         "map": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -3333,14 +3342,12 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     {
       "add": {
         "rule": {
-          "family": "inet",
-          "table": "proxmox-firewall",
-          "chain": "option-in",
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "invalid-conntrack",
           "expr": [
             {
-              "jump": {
-                "target": "block-conntrack-invalid"
-              }
+              "drop": null
             }
           ]
         }
@@ -3349,8 +3356,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     {
       "add": {
         "rule": {
-          "family": "bridge",
-          "table": "proxmox-firewall-guests",
+          "family": "inet",
+          "table": "proxmox-firewall",
           "chain": "invalid-conntrack",
           "expr": [
             {

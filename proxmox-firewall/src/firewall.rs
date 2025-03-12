@@ -99,6 +99,10 @@ impl Firewall {
         ChainPart::new(Self::guest_table(), "invalid-conntrack".to_string())
     }
 
+    fn host_invalid_conntrack_chain() -> ChainPart {
+        ChainPart::new(Self::host_table(), "invalid-conntrack".to_string())
+    }
+
     fn host_conntrack_chain() -> ChainPart {
         ChainPart::new(Self::host_table(), "ct-in".to_string())
     }
@@ -144,6 +148,7 @@ impl Firewall {
             Flush::chain(Self::host_option_chain(Direction::Out)),
             Flush::chain(Self::host_chain(Direction::Forward)),
             Flush::chain(Self::guest_invalid_conntrack_chain()),
+            Flush::chain(Self::host_invalid_conntrack_chain()),
             Flush::map(Self::guest_vmap(Direction::In)),
             Flush::map(Self::guest_vmap(Direction::Out)),
             Flush::map(Self::bridge_vmap(Self::guest_table())),
@@ -533,12 +538,12 @@ impl Firewall {
             log::debug!("set block_invalid_conntrack");
 
             commands.push(Add::rule(AddRule::from_statement(
-                chain_in,
-                Statement::jump("block-conntrack-invalid"),
+                Self::guest_invalid_conntrack_chain(),
+                Statement::make_drop(),
             )));
 
             commands.push(Add::rule(AddRule::from_statement(
-                Self::guest_invalid_conntrack_chain(),
+                Self::host_invalid_conntrack_chain(),
                 Statement::make_drop(),
             )));
         }

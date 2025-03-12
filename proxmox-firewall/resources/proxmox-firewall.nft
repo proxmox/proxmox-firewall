@@ -14,7 +14,6 @@ add chain inet proxmox-firewall allow-ndp-in
 add chain inet proxmox-firewall block-ndp-in
 add chain inet proxmox-firewall allow-ndp-out
 add chain inet proxmox-firewall block-ndp-out
-add chain inet proxmox-firewall block-conntrack-invalid
 add chain inet proxmox-firewall block-smurfs
 add chain inet proxmox-firewall allow-icmp
 add chain inet proxmox-firewall log-drop-smurfs
@@ -55,7 +54,6 @@ flush chain inet proxmox-firewall allow-ndp-in
 flush chain inet proxmox-firewall block-ndp-in
 flush chain inet proxmox-firewall allow-ndp-out
 flush chain inet proxmox-firewall block-ndp-out
-flush chain inet proxmox-firewall block-conntrack-invalid
 flush chain inet proxmox-firewall block-smurfs
 flush chain inet proxmox-firewall allow-icmp
 flush chain inet proxmox-firewall log-drop-smurfs
@@ -176,10 +174,6 @@ table inet proxmox-firewall {
         icmpv6 type { nd-router-solicit, nd-neighbor-solicit, nd-neighbor-advert } drop
     }
 
-    chain block-conntrack-invalid {
-        ct state invalid drop
-    }
-
     chain block-smurfs {
         ip saddr 0.0.0.0/32 return
         meta pkttype broadcast goto log-drop-smurfs
@@ -205,7 +199,7 @@ table inet proxmox-firewall {
         iifname "lo" accept
 
         jump allow-icmp
-        ct state related,established accept
+        ct state vmap { invalid : jump invalid-conntrack, established : accept, related : accept }
 
         meta l4proto igmp accept
 
@@ -229,7 +223,7 @@ table inet proxmox-firewall {
         oifname "lo" accept
 
         jump allow-icmp
-        ct state vmap { invalid : drop, established : accept, related : accept }
+        ct state vmap { invalid : jump invalid-conntrack, established : accept, related : accept }
     }
 
     chain option-in {}
@@ -241,7 +235,7 @@ table inet proxmox-firewall {
 
     chain before-bridge {
         meta protocol arp accept
-        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
     }
 
     chain host-bridge-input {
@@ -284,9 +278,12 @@ table inet proxmox-firewall {
     chain host-out {}
 
     chain cluster-forward {}
-    chain host-forward {}
+    chain host-forward {
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
+    }
 
     chain ct-in {}
+    chain invalid-conntrack { }
 }
 
 table bridge proxmox-firewall-guests {

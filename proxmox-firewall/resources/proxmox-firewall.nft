@@ -356,7 +356,7 @@ table bridge proxmox-firewall-guests {
     }
 
     chain pre-vm-out {
-        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
     }
 
     chain vm-out {
@@ -384,7 +384,7 @@ table bridge proxmox-firewall-guests {
 
     chain before-bridge {
         meta protocol arp accept
-        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : drop }
+        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
     }
 
     chain forward {

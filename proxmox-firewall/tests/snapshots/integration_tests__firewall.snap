@@ -1,7 +1,6 @@
 ---
 source: proxmox-firewall/tests/integration_tests.rs
 expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
-snapshot_kind: text
 ---
 {
   "nftables": [
@@ -1856,6 +1855,33 @@ snapshot_kind: text
           "chain": "cluster-in",
           "expr": [
             {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "eth0"
+              }
+            },
+            {
+              "jump": {
+                "target": "group-network1-in"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
               "accept": null
             }
           ]
@@ -1895,6 +1921,33 @@ snapshot_kind: text
           "expr": [
             {
               "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "oifname"
+                  }
+                },
+                "right": "eth0"
+              }
+            },
+            {
+              "jump": {
+                "target": "group-network1-out"
+              }
             }
           ]
         }

@@ -201,6 +201,10 @@ fn handle_iface(rules: &mut [NftRule], env: &NftRuleEnv, name: &str) -> Result<(
 
 impl ToNftRules for RuleGroup {
     fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
+        if env.direction == Direction::Forward && self.iface().is_some() {
+            return Ok(());
+        }
+
         let chain_name = format!("group-{}-{}", self.group(), env.direction);
 
         rules.push(NftRule::new(Statement::jump(chain_name)));

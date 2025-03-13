@@ -595,6 +595,7 @@ impl Firewall {
                 .network_config()
                 .network_devices()
                 .iter()
+                .filter(|(_, device)| device.has_firewall())
                 .map(|(index, device)| {
                     Expression::concat([
                         Expression::from(config.iface_name_by_index(*index)),

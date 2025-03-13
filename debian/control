@@ -5,7 +5,7 @@ Maintainer: Proxmox Support Team <support@proxmox.com>
 Build-Depends: cargo:native,
                debhelper-compat (= 13),
                librust-anyhow-1+default-dev,
-               librust-env-logger-0.10+default-dev,
+               librust-env-logger-0.11+default-dev,
                librust-insta-1+default-dev (>= 1.21-~~),
                librust-insta-1+json-dev (>= 1.21-~~),
                librust-log-0.4+default-dev,

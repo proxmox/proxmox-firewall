@@ -806,11 +806,11 @@ impl Firewall {
                     ipset.push(cidr.into());
 
                     if let Some(ip_address) = network_device.ip() {
-                        ipset.push(IpsetEntry::from(*ip_address));
+                        ipset.push(IpsetEntry::from(ip_address));
                     }
 
                     if let Some(ip6_address) = network_device.ip6() {
-                        ipset.push(IpsetEntry::from(*ip6_address));
+                        ipset.push(IpsetEntry::from(ip6_address));
                     }
 
                     commands.append(&mut ipset.to_nft_objects(&env)?);

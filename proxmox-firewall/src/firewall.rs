@@ -786,6 +786,10 @@ impl Firewall {
             let network_devices = cfg.network_config().network_devices();
 
             for (index, network_device) in network_devices {
+                if !network_device.has_firewall() {
+                    continue;
+                }
+
                 let ipfilter_name = Ipfilter::name_for_index(*index);
 
                 if let Some(ipset) = ipsets.get(&ipfilter_name) {

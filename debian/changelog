@@ -1,3 +1,21 @@
+proxmox-firewall (0.7.0) bookworm; urgency=medium
+
+  * security groups: skip in forward chain when interface is specified.
+
+  * apply `nf_conntrack_allow_invalid` to all chains on the guest table.
+
+  * apply `nf_conntrack_allow_invalid` option to host table on all chains that
+    check for ct state.
+
+  * partially fix #6176: correctly honor default value for enable-firewall
+    setting from guest config.
+
+  * firewall macros: fix macros using ICMP protocol.
+
+  * fix #6108: firewall macros: Add missing ICMPv6 statements
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 07 Apr 2025 15:08:21 +0200
+
 proxmox-firewall (0.6.0) bookworm; urgency=medium
 
   * ipsets: autogenerate ipsets for vnets and ipam

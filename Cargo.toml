@@ -6,4 +6,4 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-proxmox-ve-config = { version = "0.2.2" }
+proxmox-ve-config = { version = "0.2.3" }

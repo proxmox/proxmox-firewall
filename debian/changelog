@@ -1,3 +1,10 @@
+proxmox-firewall (0.7.1) bookworm; urgency=medium
+
+  * guest: do not try to create map entries if there are no devices that have
+    the firewall enabled
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 08 Apr 2025 15:54:01 +0200
+
 proxmox-firewall (0.7.0) bookworm; urgency=medium
 
   * security groups: skip in forward chain when interface is specified.

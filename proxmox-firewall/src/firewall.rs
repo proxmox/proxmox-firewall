@@ -955,7 +955,7 @@ impl Firewall {
         let network_devices = config.network_config().network_devices();
 
         if !network_devices.is_empty() {
-            let map_elements = network_devices
+            let map_elements: Vec<(Expression, MapValue)> = network_devices
                 .iter()
                 .filter(|(_, device)| device.has_firewall())
                 .map(|(index, _)| {
@@ -965,12 +965,15 @@ impl Firewall {
                             target: chain.name().to_string(),
                         }),
                     )
-                });
+                })
+                .collect();
 
-            commands.push(Add::element(AddElement::map_from_expressions(
-                Self::guest_vmap(direction),
-                map_elements,
-            )));
+            if !map_elements.is_empty() {
+                commands.push(Add::element(AddElement::map_from_expressions(
+                    Self::guest_vmap(direction),
+                    map_elements,
+                )));
+            }
         }
 
         self.create_log_rule(

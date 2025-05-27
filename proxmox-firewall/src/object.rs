@@ -1,4 +1,6 @@
 use anyhow::{format_err, Error};
+
+use proxmox_log as log;
 use proxmox_nftables::{
     command::{Add, Flush},
     expression::Prefix,

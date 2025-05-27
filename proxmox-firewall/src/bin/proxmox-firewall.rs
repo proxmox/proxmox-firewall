@@ -1,4 +1,3 @@
-use std::io::Write;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -7,6 +6,8 @@ use anyhow::{Context, Error};
 
 use proxmox_firewall::config::{FirewallConfig, PveFirewallConfigLoader, PveNftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
+use proxmox_log as log;
+use proxmox_log::{LevelFilter, Logger};
 use proxmox_nftables::{client::NftError, NftClient};
 
 const RULE_BASE: &str = include_str!("../../resources/proxmox-firewall.nft");
@@ -54,31 +55,14 @@ fn handle_firewall() -> Result<(), Error> {
     Ok(())
 }
 
-fn init_logger() {
-    match std::env::var("RUST_LOG_STYLE") {
-        Ok(s) if s == "SYSTEMD" => env_logger::builder()
-            .format(|buf, record| {
-                writeln!(
-                    buf,
-                    "<{}>{}: {}",
-                    match record.level() {
-                        log::Level::Error => 3,
-                        log::Level::Warn => 4,
-                        log::Level::Info => 6,
-                        log::Level::Debug => 7,
-                        log::Level::Trace => 7,
-                    },
-                    record.target(),
-                    record.args()
-                )
-            })
-            .init(),
-        _ => env_logger::init(),
-    };
+fn init_logger() -> Result<(), Error> {
+    Logger::from_env("PVE_LOG", LevelFilter::WARN)
+        .journald()
+        .init()
 }
 
-fn main() -> Result<(), std::io::Error> {
-    init_logger();
+fn main() -> Result<(), Error> {
+    init_logger()?;
 
     let term = Arc::new(AtomicBool::new(false));
 
@@ -110,5 +94,5 @@ fn main() -> Result<(), std::io::Error> {
         std::thread::sleep(Duration::from_secs(5));
     }
 
-    remove_firewall()
+    remove_firewall().with_context(|| "Could not remove firewall rules")
 }

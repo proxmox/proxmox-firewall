@@ -5,6 +5,8 @@ use std::io::{self, BufReader};
 
 use anyhow::{bail, format_err, Context, Error};
 
+use proxmox_log as log;
+
 use proxmox_ve_config::firewall::bridge::Config as BridgeConfig;
 use proxmox_ve_config::firewall::cluster::Config as ClusterConfig;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;

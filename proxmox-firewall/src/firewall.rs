@@ -3,6 +3,8 @@ use std::fs;
 
 use anyhow::{bail, Error};
 
+use proxmox_log as log;
+
 use proxmox_nftables::command::{Add, Commands, Delete, Flush};
 use proxmox_nftables::expression::{Meta, Payload};
 use proxmox_nftables::helper::NfVec;

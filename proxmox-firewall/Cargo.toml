@@ -11,8 +11,6 @@ description = "Proxmox VE nftables firewall implementation"
 license = "AGPL-3"
 
 [dependencies]
-log = "0.4"
-env_logger = "0.11"
 anyhow = "1"
 
 serde = { version = "1", features = [ "derive" ] }
@@ -20,6 +18,7 @@ serde_json = "1"
 
 signal-hook = "0.3"
 
+proxmox-log = "1"
 proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }
 proxmox-network-types = { workspace = true }
 proxmox-ve-config = { workspace = true }

@@ -1,6 +1,8 @@
 use std::ops::{Deref, DerefMut};
 
 use anyhow::{bail, format_err, Error};
+
+use proxmox_log as log;
 use proxmox_nftables::{
     expression::{Ct, IpFamily, Meta, Payload, Prefix},
     statement::{Log, LogLevel, Match, Operator},

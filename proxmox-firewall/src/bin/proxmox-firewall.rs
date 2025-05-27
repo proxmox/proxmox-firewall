@@ -10,6 +10,7 @@ use proxmox_firewall::firewall::Firewall;
 use proxmox_log as log;
 use proxmox_log::{LevelFilter, Logger};
 use proxmox_nftables::{client::NftError, NftClient};
+use proxmox_ve_config::firewall::host::Config as HostConfig;
 
 const HELP: &str = r#"
 USAGE:
@@ -20,6 +21,7 @@ COMMANDS:
   skeleton          Prints the firewall rule skeleton as accepted by 'nft -f -'
   compile           Compile and print firewall rules as accepted by 'nft -j -f -'
   start             Execute proxmox-firewall service in foreground
+  localnet          Print the contents of the management ipset
 "#;
 
 const RULE_BASE: &str = include_str!("../../resources/proxmox-firewall.nft");
@@ -122,6 +124,7 @@ pub enum Command {
     Help,
     Skeleton,
     Start,
+    Localnet,
 }
 
 impl std::str::FromStr for Command {
@@ -133,6 +136,7 @@ impl std::str::FromStr for Command {
             "compile" => Command::Compile,
             "skeleton" => Command::Skeleton,
             "start" => Command::Start,
+            "localnet" => Command::Localnet,
             cmd => {
                 bail!("{cmd} is not a valid command")
             }
@@ -157,6 +161,14 @@ fn run_command(command: Command) -> Result<(), Error> {
             println!("{}", RULE_BASE);
         }
         Command::Start => run_firewall()?,
+        Command::Localnet => {
+            let management_ips = HostConfig::management_ips()?;
+
+            println!("Management IPSet:");
+            for ip in management_ips {
+                println!("{ip}");
+            }
+        }
     };
 
     Ok(())

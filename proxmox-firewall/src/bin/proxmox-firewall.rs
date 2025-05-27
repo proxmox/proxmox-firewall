@@ -2,13 +2,25 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use anyhow::{Context, Error};
+use anyhow::{bail, format_err, Context, Error};
+use pico_args::Arguments;
 
 use proxmox_firewall::config::{FirewallConfig, PveFirewallConfigLoader, PveNftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
 use proxmox_log as log;
 use proxmox_log::{LevelFilter, Logger};
 use proxmox_nftables::{client::NftError, NftClient};
+
+const HELP: &str = r#"
+USAGE:
+  proxmox-firewall <COMMAND>
+
+COMMANDS:
+  help              Prints this help message.
+  skeleton          Prints the firewall rule skeleton as accepted by 'nft -f -'
+  compile           Compile and print firewall rules as accepted by 'nft -j -f -'
+  start             Execute proxmox-firewall service in foreground
+"#;
 
 const RULE_BASE: &str = include_str!("../../resources/proxmox-firewall.nft");
 
@@ -27,10 +39,13 @@ fn remove_firewall() -> Result<(), std::io::Error> {
     Ok(())
 }
 
-fn handle_firewall() -> Result<(), Error> {
+fn create_firewall_instance() -> Result<Firewall, Error> {
     let config = FirewallConfig::new(&PveFirewallConfigLoader::new(), &PveNftConfigLoader::new())?;
+    Ok(Firewall::new(config))
+}
 
-    let firewall = Firewall::new(config);
+fn handle_firewall() -> Result<(), Error> {
+    let firewall = create_firewall_instance()?;
 
     if !firewall.is_enabled() {
         return remove_firewall().with_context(|| "could not remove firewall tables".to_string());
@@ -55,15 +70,19 @@ fn handle_firewall() -> Result<(), Error> {
     Ok(())
 }
 
-fn init_logger() -> Result<(), Error> {
-    Logger::from_env("PVE_LOG", LevelFilter::WARN)
-        .journald()
-        .init()
+fn init_logger(command: Command) -> Result<(), Error> {
+    let mut logger = Logger::from_env("PVE_LOG", LevelFilter::WARN);
+
+    if command == Command::Start {
+        logger = logger.journald();
+    } else {
+        logger = logger.stderr_pve();
+    }
+
+    logger.init()
 }
 
-fn main() -> Result<(), Error> {
-    init_logger()?;
-
+fn run_firewall() -> Result<(), Error> {
     let term = Arc::new(AtomicBool::new(false));
 
     signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
@@ -95,4 +114,66 @@ fn main() -> Result<(), Error> {
     }
 
     remove_firewall().with_context(|| "Could not remove firewall rules")
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Command {
+    Compile,
+    Help,
+    Skeleton,
+    Start,
+}
+
+impl std::str::FromStr for Command {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Ok(match value {
+            "help" => Command::Help,
+            "compile" => Command::Compile,
+            "skeleton" => Command::Skeleton,
+            "start" => Command::Start,
+            cmd => {
+                bail!("{cmd} is not a valid command")
+            }
+        })
+    }
+}
+
+fn run_command(command: Command) -> Result<(), Error> {
+    init_logger(command)?;
+
+    match command {
+        Command::Help => {
+            println!("{}", HELP);
+        }
+        Command::Compile => {
+            let commands = create_firewall_instance()?.full_host_fw()?;
+            let json = serde_json::to_string_pretty(&commands)?;
+
+            println!("{json}");
+        }
+        Command::Skeleton => {
+            println!("{}", RULE_BASE);
+        }
+        Command::Start => run_firewall()?,
+    };
+
+    Ok(())
+}
+
+fn main() -> Result<(), Error> {
+    let mut args = Arguments::from_env();
+
+    let parsed_command = args
+        .subcommand()?
+        .ok_or_else(|| format_err!("No subcommand specified!\n{}", HELP))?
+        .parse();
+
+    if let Ok(command) = parsed_command {
+        run_command(command)
+    } else {
+        eprintln!("Invalid command specified!\n{}", HELP);
+        std::process::exit(1);
+    }
 }

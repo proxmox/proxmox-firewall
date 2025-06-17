@@ -34,8 +34,7 @@ $(BUILDDIR):
 
 .PHONY: deb
 deb: $(DEB)
-$(DBG_DEB): $(DEB)
-$(DEB): $(BUILDDIR)
+$(DEB) $(DBG_DEB) &: $(BUILDDIR)
 	cd $(BUILDDIR); dpkg-buildpackage -b -us -uc
 	lintian $(DEB)
 

@@ -25,4 +25,4 @@ proxmox-ve-config = { workspace = true }
 
 [dev-dependencies]
 insta = { version = "1.21", features = ["json"] }
-proxmox-sys = "0.6"
+proxmox-sys = "1"

@@ -16,7 +16,7 @@ config-ext = ["dep:proxmox-ve-config"]
 [dependencies]
 log = "0.4"
 anyhow = "1"
-thiserror = "1"
+thiserror = "2"
 
 serde = { version = "1", features = [ "derive" ] }
 serde_json = "1"

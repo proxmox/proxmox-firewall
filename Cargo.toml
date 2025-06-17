@@ -3,7 +3,7 @@ members = [
     "proxmox-nftables",
     "proxmox-firewall",
 ]
-resolver = "2"
+resolver = "3"
 
 [workspace.dependencies]
 proxmox-ve-config = { version = "0.2.3" }

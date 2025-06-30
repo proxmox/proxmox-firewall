@@ -101,7 +101,7 @@ fn main() -> Result<(), std::io::Error> {
         let start = Instant::now();
 
         if let Err(error) = handle_firewall() {
-            log::error!("error updating firewall rules: {error}");
+            log::error!("error updating firewall rules: {error:#}");
         }
 
         let duration = start.elapsed();

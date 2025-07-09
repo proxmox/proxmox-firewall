@@ -1,4 +1,5 @@
 use anyhow::{Context, Error};
+use proxmox_ve_config::host::network::InterfaceMapping;
 use std::collections::HashMap;
 
 use proxmox_firewall::config::{FirewallConfig, FirewallConfigLoader, NftConfigLoader};
@@ -90,6 +91,12 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
         _bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         Ok(None)
+    }
+
+    fn interface_mapping(
+        &self,
+    ) -> Result<proxmox_ve_config::host::network::InterfaceMapping, Error> {
+        Ok(InterfaceMapping::from_iter(vec![]))
     }
 }
 

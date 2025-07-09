@@ -135,7 +135,11 @@ impl NftRuleEnv<'_> {
 
                 rule_iface.to_string()
             }
-            None => rule_iface.to_string(),
+            None => self
+                .firewall_config
+                .interface_mapping(rule_iface)
+                .map(|iface_name| iface_name.to_string())
+                .unwrap_or_else(|| rule_iface.to_string()),
         }
     }
 

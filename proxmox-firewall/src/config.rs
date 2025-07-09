@@ -13,6 +13,8 @@ use proxmox_ve_config::firewall::types::alias::{Alias, AliasName, AliasScope};
 
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
+use proxmox_ve_config::host::network::InterfaceMapping;
+use proxmox_ve_config::host::network::IpLink;
 use proxmox_ve_config::host::types::BridgeName;
 
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
@@ -40,6 +42,7 @@ pub trait FirewallConfigLoader {
         &self,
         bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
+    fn interface_mapping(&self) -> Result<InterfaceMapping, Error>;
 }
 
 #[derive(Default)]
@@ -221,6 +224,26 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
 
         Ok(None)
     }
+
+    fn interface_mapping(&self) -> Result<InterfaceMapping, Error> {
+        let output = std::process::Command::new("ip")
+            .arg("-details")
+            .arg("-json")
+            .arg("link")
+            .arg("show")
+            .stdout(std::process::Stdio::piped())
+            .output()
+            .with_context(|| "could not obtain ip link output")?;
+
+        if !output.status.success() {
+            bail!("ip link returned non-zero exit code")
+        }
+
+        Ok(serde_json::from_slice::<Vec<IpLink>>(&output.stdout)
+            .with_context(|| "could not deserialize ip link output")?
+            .into_iter()
+            .collect())
+    }
 }
 
 pub trait NftConfigLoader {
@@ -255,6 +278,7 @@ pub struct FirewallConfig {
     nft_config: BTreeMap<String, ListChain>,
     sdn_config: Option<SdnConfig>,
     ipam_config: Option<Ipam>,
+    interface_mapping: InterfaceMapping,
 }
 
 impl FirewallConfig {
@@ -380,6 +404,7 @@ impl FirewallConfig {
             sdn_config: Self::parse_sdn(firewall_loader)?,
             ipam_config: Self::parse_ipam(firewall_loader)?,
             nft_config: Self::parse_nft(nft_loader)?,
+            interface_mapping: firewall_loader.interface_mapping()?,
         })
     }
 
@@ -413,6 +438,10 @@ impl FirewallConfig {
 
     pub fn is_enabled(&self) -> bool {
         self.cluster().is_enabled() && self.host().nftables()
+    }
+
+    pub fn interface_mapping(&self, iface_name: &str) -> Option<&str> {
+        self.interface_mapping.get(iface_name).map(|x| x.as_str())
     }
 
     pub fn alias(&self, name: &AliasName, vmid: Option<Vmid>) -> Option<&Alias> {

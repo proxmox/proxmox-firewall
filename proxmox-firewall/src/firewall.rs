@@ -20,7 +20,7 @@ use proxmox_ve_config::firewall::ct_helper::get_cthelper;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
-use proxmox_ve_config::firewall::types::address::Ipv6Cidr;
+use proxmox_network_types::ip_address::{Cidr, Ipv6Cidr};
 use proxmox_ve_config::firewall::types::ipset::{
     Ipfilter, Ipset, IpsetEntry, IpsetName, IpsetScope,
 };
@@ -808,14 +808,14 @@ impl Firewall {
                     let cidr =
                         Ipv6Cidr::from(network_device.mac_address().eui64_link_local_address());
 
-                    ipset.push(cidr.into());
+                    ipset.push(IpsetEntry::from(Cidr::from(cidr)));
 
                     if let Some(ip_address) = network_device.ip() {
-                        ipset.push(IpsetEntry::from(ip_address));
+                        ipset.push(IpsetEntry::from(Cidr::from(ip_address)));
                     }
 
                     if let Some(ip6_address) = network_device.ip6() {
-                        ipset.push(IpsetEntry::from(ip6_address));
+                        ipset.push(IpsetEntry::from(Cidr::from(ip6_address)));
                     }
 
                     commands.append(&mut ipset.to_nft_objects(&env)?);

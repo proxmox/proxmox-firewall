@@ -1,17 +1,16 @@
 use crate::types::{ElemConfig, Verdict};
-use proxmox_ve_config::firewall::types::address::IpRange;
 use proxmox_ve_config::host::types::BridgeName;
 use serde::{Deserialize, Serialize};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 #[cfg(feature = "config-ext")]
-use proxmox_ve_config::firewall::types::address::{Family, IpEntry, IpList};
+use proxmox_network_types::ip_address::{Cidr, Family, IpRange};
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::firewall::types::address::{IpEntry, IpList};
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::firewall::types::port::{PortEntry, PortList};
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::firewall::types::rule_match::{IcmpCode, IcmpType, Icmpv6Code, Icmpv6Type};
-#[cfg(feature = "config-ext")]
-use proxmox_ve_config::firewall::types::Cidr;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]

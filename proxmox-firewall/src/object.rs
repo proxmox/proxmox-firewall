@@ -11,10 +11,12 @@ use proxmox_nftables::{
 use proxmox_ve_config::{
     firewall::{
         ct_helper::CtHelperMacro,
-        types::{address::Family, alias::AliasName, ipset::IpsetAddress, Alias, Ipset},
+        types::{alias::AliasName, ipset::IpsetAddress, Alias, Ipset},
     },
     guest::types::Vmid,
 };
+
+use proxmox_network_types::ip_address::Family;
 
 use crate::config::FirewallConfig;
 

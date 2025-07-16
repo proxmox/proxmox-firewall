@@ -12,7 +12,6 @@ use proxmox_ve_config::{
         ct_helper::CtHelperMacro,
         fw_macros::{get_macro, FwMacro},
         types::{
-            address::Family,
             alias::AliasName,
             ipset::{Ipfilter, IpsetName},
             log::LogRateLimit,
@@ -25,6 +24,8 @@ use proxmox_ve_config::{
     },
     guest::types::Vmid,
 };
+
+use proxmox_network_types::ip_address::Family;
 
 use crate::config::FirewallConfig;
 

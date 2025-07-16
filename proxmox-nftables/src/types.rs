@@ -8,7 +8,7 @@ use crate::{Expression, Statement};
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "config-ext")]
-use proxmox_ve_config::firewall::types::address::Family;
+use proxmox_network_types::ip_address::Family;
 
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::firewall::types::ipset::IpsetName;

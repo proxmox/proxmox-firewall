@@ -21,6 +21,7 @@ serde_json = "1"
 signal-hook = "0.3"
 
 proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }
+proxmox-network-types = { workspace = true }
 proxmox-ve-config = { workspace = true }
 
 [dev-dependencies]

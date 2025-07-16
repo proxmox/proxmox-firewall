@@ -6,4 +6,5 @@ members = [
 resolver = "3"
 
 [workspace.dependencies]
+proxmox-network-types = { version = "0.1" }
 proxmox-ve-config = { version = "0.3.1" }

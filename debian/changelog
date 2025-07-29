@@ -1,3 +1,18 @@
+proxmox-firewall (1.1.0) trixie; urgency=medium
+
+  * add subcommands for:
+    - starting proxmox-firewall in the foreground
+    - printing the rule skeleton that is included in the binary.
+    - printing the nft commands generated from the firewall configuration
+      files
+
+  * add localnet subcommand to query the currently used IPs in the management
+    IP set.
+
+  * use common proxmox-log crate for all logging.
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 29 Jul 2025 08:27:33 +0200
+
 proxmox-firewall (1.0.1) trixie; urgency=medium
 
   * add transparent altname support for firewall rules.

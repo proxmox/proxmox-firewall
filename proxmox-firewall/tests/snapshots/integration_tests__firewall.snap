@@ -4497,6 +4497,27 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "guest-100-in",
           "expr": [
             {
+              "mangle": {
+                "key": {
+                  "ct": {
+                    "key": "mark"
+                  }
+                },
+                "value": 100
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
               "match": {
                 "op": "==",
                 "left": {
@@ -4759,6 +4780,27 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "expr": [
             {
               "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "mangle": {
+                "key": {
+                  "ct": {
+                    "key": "mark"
+                  }
+                },
+                "value": 100
+              }
             }
           ]
         }
@@ -5158,6 +5200,27 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "guest-101-in",
           "expr": [
             {
+              "mangle": {
+                "key": {
+                  "ct": {
+                    "key": "mark"
+                  }
+                },
+                "value": 101
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-in",
+          "expr": [
+            {
               "match": {
                 "op": "==",
                 "left": {
@@ -5207,6 +5270,27 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "expr": [
             {
               "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-101-out",
+          "expr": [
+            {
+              "mangle": {
+                "key": {
+                  "ct": {
+                    "key": "mark"
+                  }
+                },
+                "value": 101
+              }
             }
           ]
         }

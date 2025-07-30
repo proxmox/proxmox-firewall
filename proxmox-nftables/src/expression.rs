@@ -11,6 +11,8 @@ use proxmox_ve_config::firewall::types::address::{IpEntry, IpList};
 use proxmox_ve_config::firewall::types::port::{PortEntry, PortList};
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::firewall::types::rule_match::{IcmpCode, IcmpType, Icmpv6Code, Icmpv6Type};
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::guest::types::Vmid;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -263,6 +265,13 @@ impl From<&PortList> for Expression {
 impl From<&BridgeName> for Expression {
     fn from(value: &BridgeName) -> Self {
         Expression::String(value.name().to_string())
+    }
+}
+
+#[cfg(feature = "config-ext")]
+impl From<Vmid> for Expression {
+    fn from(value: Vmid) -> Self {
+        Expression::Number(value.raw_value().into())
     }
 }
 

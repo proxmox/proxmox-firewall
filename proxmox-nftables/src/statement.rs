@@ -10,6 +10,7 @@ use proxmox_ve_config::firewall::types::rule::Verdict as ConfigVerdict;
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::guest::types::Vmid;
 
+use crate::expression::Ct;
 use crate::expression::Meta;
 use crate::helper::{NfVec, Null};
 use crate::types::{RateTimescale, RateUnit, Verdict};
@@ -370,9 +371,16 @@ pub struct Mangle {
 }
 
 impl Mangle {
-    pub fn set_mark(value: impl Into<Expression>) -> Self {
+    pub fn meta_mark(value: impl Into<Expression>) -> Self {
         Self {
             key: Meta::new("mark").into(),
+            value: value.into(),
+        }
+    }
+
+    pub fn ct_mark(value: impl Into<Expression>) -> Self {
+        Self {
+            key: Ct::new("mark", None).into(),
             value: value.into(),
         }
     }

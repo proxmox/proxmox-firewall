@@ -8,7 +8,9 @@ use proxmox_log as log;
 use proxmox_nftables::command::{Add, Commands, Delete, Flush};
 use proxmox_nftables::expression::{Meta, Payload};
 use proxmox_nftables::helper::NfVec;
-use proxmox_nftables::statement::{AnonymousLimit, Log, LogLevel, Match, Set, SetOperation};
+use proxmox_nftables::statement::{
+    AnonymousLimit, Log, LogLevel, Mangle, Match, Set, SetOperation,
+};
 use proxmox_nftables::types::{
     AddElement, AddRule, ChainPart, MapValue, RateTimescale, SetName, TableFamily, TableName,
     TablePart, Verdict,
@@ -946,7 +948,15 @@ impl Firewall {
             vmid: Some(vmid),
         };
 
-        commands.reserve(config.rules().len());
+        commands.reserve(config.rules().len() + 1);
+
+        // Add a CONNMARK to anything in/out the guest, to be able to later
+        // track/filter traffic per guest, e.g. in pve-dbus-vmstate.
+        // Need to be first, such that it is always applied.
+        commands.push(Add::rule(AddRule::from_statement(
+            chain.clone(),
+            Mangle::ct_mark(vmid),
+        )));
 
         for config_rule in config.rules() {
             for rule in NftRule::from_config_rule(config_rule, &env)? {

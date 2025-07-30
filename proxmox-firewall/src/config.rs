@@ -3,7 +3,7 @@ use std::default::Default;
 use std::fs::{self, DirEntry, File, ReadDir};
 use std::io::{self, BufReader};
 
-use anyhow::{bail, format_err, Context, Error};
+use anyhow::{Context, Error, bail, format_err};
 
 use proxmox_log as log;
 
@@ -19,9 +19,9 @@ use proxmox_ve_config::host::network::InterfaceMapping;
 use proxmox_ve_config::host::network::IpLink;
 use proxmox_ve_config::host::types::BridgeName;
 
+use proxmox_nftables::NftClient;
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
-use proxmox_nftables::NftClient;
 use proxmox_ve_config::sdn::{
     config::{RunningConfig, SdnConfig},
     ipam::{Ipam, IpamJson},

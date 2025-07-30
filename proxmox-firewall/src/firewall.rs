@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-use anyhow::{bail, Error};
+use anyhow::{Error, bail};
 
 use proxmox_log as log;
 
@@ -25,17 +25,17 @@ use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
 use proxmox_network_types::ip_address::{Cidr, Ipv6Cidr};
+use proxmox_ve_config::firewall::types::Group;
 use proxmox_ve_config::firewall::types::ipset::{
     Ipfilter, Ipset, IpsetEntry, IpsetName, IpsetScope,
 };
 use proxmox_ve_config::firewall::types::log::{LogLevel as ConfigLogLevel, LogRateLimit};
 use proxmox_ve_config::firewall::types::rule::{Direction, Verdict as ConfigVerdict};
-use proxmox_ve_config::firewall::types::Group;
 use proxmox_ve_config::guest::types::Vmid;
 
 use crate::config::FirewallConfig;
 use crate::object::{NftObjectEnv, ToNftObjects};
-use crate::rule::{generate_verdict, NftRule, NftRuleEnv};
+use crate::rule::{NftRule, NftRuleEnv, generate_verdict};
 
 static CLUSTER_TABLE_NAME: &str = "proxmox-firewall";
 static HOST_TABLE_NAME: &str = "proxmox-firewall";

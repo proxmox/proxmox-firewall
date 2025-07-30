@@ -1,4 +1,4 @@
-use anyhow::{bail, Error};
+use anyhow::{Error, bail};
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "config-ext")]
@@ -10,11 +10,11 @@ use proxmox_ve_config::firewall::types::rule::Verdict as ConfigVerdict;
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::guest::types::Vmid;
 
+use crate::Expression;
 use crate::expression::Ct;
 use crate::expression::Meta;
 use crate::helper::{NfVec, Null};
 use crate::types::{RateTimescale, RateUnit, Verdict};
-use crate::Expression;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]

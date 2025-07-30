@@ -1,15 +1,15 @@
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 
-use anyhow::{bail, format_err, Context, Error};
+use anyhow::{Context, Error, bail, format_err};
 use pico_args::Arguments;
 
 use proxmox_firewall::config::{FirewallConfig, PveFirewallConfigLoader, PveNftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
 use proxmox_log as log;
 use proxmox_log::{LevelFilter, Logger};
-use proxmox_nftables::{client::NftError, NftClient};
+use proxmox_nftables::{NftClient, client::NftError};
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
 const HELP: &str = r#"

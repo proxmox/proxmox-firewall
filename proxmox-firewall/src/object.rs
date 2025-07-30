@@ -1,19 +1,19 @@
-use anyhow::{format_err, Error};
+use anyhow::{Error, format_err};
 
 use proxmox_log as log;
 use proxmox_nftables::{
+    Command, Expression,
     command::{Add, Flush},
     expression::Prefix,
     types::{
         AddCtHelper, AddElement, CtHelperProtocol, ElementType, L3Protocol, SetConfig, SetFlag,
         SetName, TablePart,
     },
-    Command, Expression,
 };
 use proxmox_ve_config::{
     firewall::{
         ct_helper::CtHelperMacro,
-        types::{alias::AliasName, ipset::IpsetAddress, Alias, Ipset},
+        types::{Alias, Ipset, alias::AliasName, ipset::IpsetAddress},
     },
     guest::types::Vmid,
 };

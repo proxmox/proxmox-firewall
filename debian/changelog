@@ -1,3 +1,9 @@
+proxmox-firewall (1.1.1) trixie; urgency=medium
+
+  * firewall: add connmark rule with VMID to all guest chains.
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 30 Jul 2025 22:48:49 +0200
+
 proxmox-firewall (1.1.0) trixie; urgency=medium
 
   * add subcommands for:

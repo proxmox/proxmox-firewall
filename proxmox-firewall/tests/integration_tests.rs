@@ -1,9 +1,9 @@
 use anyhow::{Context, Error};
-use proxmox_ve_config::host::network::InterfaceMapping;
 use std::collections::HashMap;
 
 use proxmox_firewall::config::{FirewallConfig, FirewallConfigLoader, NftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
+use proxmox_network_api::AltnameMapping;
 use proxmox_nftables::command::CommandOutput;
 use proxmox_sys::nodename;
 use proxmox_ve_config::guest::types::Vmid;
@@ -93,10 +93,8 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
         Ok(None)
     }
 
-    fn interface_mapping(
-        &self,
-    ) -> Result<proxmox_ve_config::host::network::InterfaceMapping, Error> {
-        Ok(InterfaceMapping::from_iter(vec![]))
+    fn interface_mapping(&self) -> Result<AltnameMapping, Error> {
+        Ok(AltnameMapping::from_iter(vec![]))
     }
 }
 

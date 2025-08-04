@@ -3,7 +3,7 @@ use std::default::Default;
 use std::fs::{self, DirEntry, File, ReadDir};
 use std::io::{self, BufReader};
 
-use anyhow::{Context, Error, bail, format_err};
+use anyhow::{bail, format_err, Context, Error};
 
 use proxmox_log as log;
 
@@ -15,13 +15,12 @@ use proxmox_ve_config::firewall::types::alias::{Alias, AliasName, AliasScope};
 
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
-use proxmox_ve_config::host::network::InterfaceMapping;
-use proxmox_ve_config::host::network::IpLink;
 use proxmox_ve_config::host::types::BridgeName;
 
-use proxmox_nftables::NftClient;
+use proxmox_network_api::{get_network_interfaces, AltnameMapping};
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
+use proxmox_nftables::NftClient;
 use proxmox_ve_config::sdn::{
     config::{RunningConfig, SdnConfig},
     ipam::{Ipam, IpamJson},
@@ -44,7 +43,7 @@ pub trait FirewallConfigLoader {
         &self,
         bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
-    fn interface_mapping(&self) -> Result<InterfaceMapping, Error>;
+    fn interface_mapping(&self) -> Result<AltnameMapping, Error>;
 }
 
 #[derive(Default)]
@@ -227,24 +226,10 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
         Ok(None)
     }
 
-    fn interface_mapping(&self) -> Result<InterfaceMapping, Error> {
-        let output = std::process::Command::new("ip")
-            .arg("-details")
-            .arg("-json")
-            .arg("link")
-            .arg("show")
-            .stdout(std::process::Stdio::piped())
-            .output()
-            .with_context(|| "could not obtain ip link output")?;
-
-        if !output.status.success() {
-            bail!("ip link returned non-zero exit code")
-        }
-
-        Ok(serde_json::from_slice::<Vec<IpLink>>(&output.stdout)
-            .with_context(|| "could not deserialize ip link output")?
-            .into_iter()
-            .collect())
+    fn interface_mapping(&self) -> Result<AltnameMapping, Error> {
+        Ok(AltnameMapping::from_iter(
+            get_network_interfaces()?.into_values(),
+        ))
     }
 }
 
@@ -280,7 +265,7 @@ pub struct FirewallConfig {
     nft_config: BTreeMap<String, ListChain>,
     sdn_config: Option<SdnConfig>,
     ipam_config: Option<Ipam>,
-    interface_mapping: InterfaceMapping,
+    interface_mapping: AltnameMapping,
 }
 
 impl FirewallConfig {

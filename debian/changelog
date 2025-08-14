@@ -1,3 +1,9 @@
+proxmox-firewall (1.1.2) trixie; urgency=medium
+
+  * update to proxmox-network-api interface parser
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 14 Aug 2025 12:39:04 +0200
+
 proxmox-firewall (1.1.1) trixie; urgency=medium
 
   * firewall: add connmark rule with VMID to all guest chains.

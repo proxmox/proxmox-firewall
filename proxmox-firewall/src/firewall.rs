@@ -355,7 +355,16 @@ impl Firewall {
         }
 
         for (bridge_name, bridge_config) in enabled_bridges {
-            self.create_bridge_chain(&mut commands, bridge_name, bridge_config)?;
+            self.create_bridge_chain(&mut commands, &guest_table, bridge_name, bridge_config)?;
+
+            if self.config.host().is_enabled() {
+                self.create_bridge_chain(
+                    &mut commands,
+                    &cluster_host_table,
+                    bridge_name,
+                    bridge_config,
+                )?;
+            }
         }
 
         Ok(commands)
@@ -364,70 +373,69 @@ impl Firewall {
     fn create_bridge_chain(
         &self,
         commands: &mut Commands,
+        table: &TablePart,
         name: &BridgeName,
         config: &BridgeConfig,
     ) -> Result<(), Error> {
-        for table in [Self::host_table(), Self::guest_table()] {
-            log::info!("creating bridge chain {name} in table {}", table.table());
+        log::info!("creating bridge chain {name} in table {}", table.table());
 
-            let chain = Self::bridge_chain(table.clone(), name);
+        let chain = Self::bridge_chain(table.clone(), name);
 
-            commands.append(&mut vec![
-                Add::chain(chain.clone()),
-                Flush::chain(chain.clone()),
-                Add::rule(AddRule::from_statement(
-                    chain.clone(),
-                    Statement::jump("before-bridge"),
-                )),
-            ]);
+        commands.append(&mut vec![
+            Add::chain(chain.clone()),
+            Flush::chain(chain.clone()),
+            Add::rule(AddRule::from_statement(
+                chain.clone(),
+                Statement::jump("before-bridge"),
+            )),
+        ]);
 
-            let env = NftRuleEnv {
-                chain: chain.clone(),
-                direction: Direction::Forward,
-                firewall_config: &self.config,
-                vmid: None,
-            };
+        let env = NftRuleEnv {
+            chain: chain.clone(),
+            direction: Direction::Forward,
+            firewall_config: &self.config,
+            vmid: None,
+        };
 
-            for config_rule in config.rules() {
-                for rule in NftRule::from_config_rule(config_rule, &env)? {
-                    commands.push(Add::rule(rule.into_add_rule(chain.clone())));
-                }
+        for config_rule in config.rules() {
+            for rule in NftRule::from_config_rule(config_rule, &env)? {
+                commands.push(Add::rule(rule.into_add_rule(chain.clone())));
             }
-
-            let default_policy = config.policy_forward();
-
-            self.create_log_rule(
-                commands,
-                config.log_level_forward(),
-                chain.clone(),
-                default_policy,
-                None,
-            )?;
-
-            commands.push(Add::rule(AddRule::from_statement(
-                chain.clone(),
-                default_policy,
-            )));
-
-            let key = if table == Self::host_table() {
-                name.into()
-            } else {
-                Expression::concat([name.into(), name.into()])
-            };
-
-            let map_element = AddElement::map_from_expressions(
-                Self::bridge_vmap(table),
-                [(
-                    key,
-                    MapValue::from(Verdict::Jump {
-                        target: chain.name().to_string(),
-                    }),
-                )]
-                .to_vec(),
-            );
-
-            commands.push(Add::element(map_element));
         }
+
+        let default_policy = config.policy_forward();
+
+        self.create_log_rule(
+            commands,
+            config.log_level_forward(),
+            chain.clone(),
+            default_policy,
+            None,
+        )?;
+
+        commands.push(Add::rule(AddRule::from_statement(
+            chain.clone(),
+            default_policy,
+        )));
+
+        let key = if table == &Self::host_table() {
+            name.into()
+        } else {
+            Expression::concat([name.into(), name.into()])
+        };
+
+        let map_element = AddElement::map_from_expressions(
+            Self::bridge_vmap(table.clone()),
+            [(
+                key,
+                MapValue::from(Verdict::Jump {
+                    target: chain.name().to_string(),
+                }),
+            )]
+            .to_vec(),
+        );
+
+        commands.push(Add::element(map_element));
 
         Ok(())
     }

@@ -267,6 +267,7 @@ table inet proxmox-firewall {
 
     chain forward {
         type filter hook forward priority filter; policy accept;
+        ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
         jump host-forward
         jump cluster-forward
     }
@@ -278,9 +279,7 @@ table inet proxmox-firewall {
     chain host-out {}
 
     chain cluster-forward {}
-    chain host-forward {
-        meta protocol != arp ct state vmap { established : accept, related : accept, invalid : jump invalid-conntrack }
-    }
+    chain host-forward {}
 
     chain ct-in {}
     chain invalid-conntrack { }

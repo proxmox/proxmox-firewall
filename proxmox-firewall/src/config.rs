@@ -11,8 +11,10 @@ use proxmox_ve_config::firewall::bridge::Config as BridgeConfig;
 use proxmox_ve_config::firewall::cluster::Config as ClusterConfig;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
-use proxmox_ve_config::firewall::types::alias::{Alias, AliasName, AliasScope};
+use proxmox_ve_config::firewall::types::alias::{Alias, AliasScope, RuleAliasName};
 
+use proxmox_ve_config::firewall::types::ipset::{IpsetScope, RuleIpsetName};
+use proxmox_ve_config::firewall::types::Ipset;
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
 use proxmox_ve_config::host::types::BridgeName;
@@ -257,13 +259,28 @@ impl NftConfigLoader for PveNftConfigLoader {
     }
 }
 
+pub struct FirewallSdnConfig {
+    _config: SdnConfig,
+    ipsets: BTreeMap<String, Ipset>,
+}
+
+impl FirewallSdnConfig {
+    pub fn ipsets(&self) -> &BTreeMap<String, Ipset> {
+        &self.ipsets
+    }
+
+    pub fn ipset(&self, name: &str) -> Option<&Ipset> {
+        self.ipsets.get(name)
+    }
+}
+
 pub struct FirewallConfig {
     cluster_config: ClusterConfig,
     host_config: HostConfig,
     guest_config: BTreeMap<Vmid, GuestConfig>,
     bridge_config: BTreeMap<BridgeName, BridgeConfig>,
     nft_config: BTreeMap<String, ListChain>,
-    sdn_config: Option<SdnConfig>,
+    sdn_config: Option<FirewallSdnConfig>,
     ipam_config: Option<Ipam>,
     interface_mapping: AltnameMapping,
 }
@@ -325,11 +342,21 @@ impl FirewallConfig {
 
     pub fn parse_sdn(
         firewall_loader: &dyn FirewallConfigLoader,
-    ) -> Result<Option<SdnConfig>, Error> {
+    ) -> Result<Option<FirewallSdnConfig>, Error> {
         Ok(match firewall_loader.sdn_running_config()? {
             Some(data) => {
                 let running_config: RunningConfig = serde_json::from_reader(data)?;
-                Some(SdnConfig::try_from(running_config)?)
+                let config = SdnConfig::try_from(running_config)?;
+
+                let ipsets = config
+                    .ipsets(None)
+                    .map(|ipset| (ipset.name().name().to_string(), ipset))
+                    .collect();
+
+                Some(FirewallSdnConfig {
+                    _config: config,
+                    ipsets,
+                })
             }
             _ => None,
         })
@@ -415,7 +442,7 @@ impl FirewallConfig {
         &self.nft_config
     }
 
-    pub fn sdn(&self) -> Option<&SdnConfig> {
+    pub fn sdn(&self) -> Option<&FirewallSdnConfig> {
         self.sdn_config.as_ref()
     }
 
@@ -431,22 +458,54 @@ impl FirewallConfig {
         self.interface_mapping.get(iface_name).map(|x| x.as_str())
     }
 
-    pub fn alias(&self, name: &AliasName, vmid: Option<Vmid>) -> Option<&Alias> {
+    fn guest_alias(&self, name: &str, vmid: Vmid) -> Option<&Alias> {
+        if let Some(guest_config) = self.guests().get(&vmid) {
+            return guest_config.alias(name);
+        }
+
+        log::warn!("trying to get alias {name} for non-existing guest: #{vmid}");
+        None
+    }
+
+    pub fn alias(&self, name: &RuleAliasName, vmid: Option<Vmid>) -> Option<&Alias> {
         log::trace!("getting alias {name:?}");
 
-        match name.scope() {
-            AliasScope::Datacenter => self.cluster().alias(name.name()),
-            AliasScope::Guest => {
-                if let Some(vmid) = vmid {
-                    if let Some(entry) = self.guests().get(&vmid) {
-                        return entry.alias(name);
-                    }
-
-                    log::warn!("trying to get alias {name} for non-existing guest: #{vmid}");
+        match name {
+            RuleAliasName::Scoped(alias_name) => match alias_name.scope() {
+                AliasScope::Datacenter => self.cluster().alias(alias_name.name()),
+                AliasScope::Guest => {
+                    vmid.and_then(|vmid| self.guest_alias(alias_name.name(), vmid))
                 }
+            },
+            RuleAliasName::Legacy(legacy_alias_name) => vmid
+                .and_then(|vmid| self.guest_alias(legacy_alias_name.as_ref(), vmid))
+                .or_else(|| self.cluster().alias(legacy_alias_name.as_ref())),
+        }
+    }
 
-                None
-            }
+    fn guest_ipset(&self, name: &str, vmid: Vmid) -> Option<&Ipset> {
+        if let Some(guest_config) = self.guests().get(&vmid) {
+            return guest_config.ipset(name);
+        }
+
+        log::warn!("trying to get ipset {name} for non-existing guest: #{vmid}");
+        None
+    }
+
+    pub fn ipset(&self, name: &RuleIpsetName, vmid: Option<Vmid>) -> Option<&Ipset> {
+        log::trace!("getting ipset {name:?}");
+
+        match name {
+            RuleIpsetName::Scoped(ipset_name) => match ipset_name.scope() {
+                IpsetScope::Sdn => self.sdn()?.ipset(ipset_name.name()),
+                IpsetScope::Datacenter => self.cluster().ipset(ipset_name.name()),
+                IpsetScope::Guest => {
+                    vmid.and_then(|vmid| self.guest_ipset(ipset_name.name(), vmid))
+                }
+            },
+            RuleIpsetName::Legacy(legacy_ipset_name) => vmid
+                .and_then(|vmid| self.guest_ipset(legacy_ipset_name.as_ref(), vmid))
+                .or_else(|| self.cluster().ipset(legacy_ipset_name.as_ref())),
         }
     }
 }

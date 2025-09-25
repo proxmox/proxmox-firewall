@@ -14,14 +14,14 @@ use proxmox_ve_config::{
         ct_helper::CtHelperMacro,
         fw_macros::{get_macro, FwMacro},
         types::{
-            alias::AliasName,
-            ipset::{Ipfilter, IpsetName},
+            alias::RuleAliasName,
+            ipset::{Ipfilter, IpsetName, RuleIpsetName},
             log::LogRateLimit,
             rule::{Direction, Kind, RuleGroup, Verdict as ConfigVerdict},
             rule_match::{
                 Icmp, Icmpv6, IpAddrMatch, IpMatch, Ports, Protocol, RuleMatch, Sctp, Tcp, Udp,
             },
-            Alias, Rule,
+            Alias, Ipset, Rule,
         },
     },
     guest::types::Vmid,
@@ -121,7 +121,11 @@ pub(crate) struct NftRuleEnv<'a> {
 }
 
 impl NftRuleEnv<'_> {
-    fn alias(&self, name: &AliasName) -> Option<&Alias> {
+    fn ipset(&self, name: &RuleIpsetName) -> Option<&Ipset> {
+        self.firewall_config.ipset(name, self.vmid)
+    }
+
+    fn alias(&self, name: &RuleAliasName) -> Option<&Alias> {
         self.firewall_config.alias(name, self.vmid)
     }
 
@@ -289,10 +293,14 @@ impl ToNftRules for RuleMatch {
 /// `name`. It matches the IPs contained in the ipset with the field given in `field_name`.
 fn handle_set(
     rules: &mut Vec<NftRule>,
-    name: &IpsetName,
+    name: &RuleIpsetName,
     field_name: &str,
     env: &NftRuleEnv,
 ) -> Result<(), Error> {
+    let Some(ipset) = env.ipset(name) else {
+        bail!("could not find ipset {name}");
+    };
+
     let mut new_rules = rules
         .drain(..)
         .flat_map(|rule| {
@@ -310,7 +318,7 @@ fn handle_set(
                         field.clone(),
                         Expression::set_name(&SetName::ipset_name(
                             Family::V4,
-                            name,
+                            ipset.name(),
                             env.vmid,
                             false,
                         )),
@@ -321,7 +329,7 @@ fn handle_set(
                         field,
                         Expression::set_name(&SetName::ipset_name(
                             Family::V4,
-                            name,
+                            ipset.name(),
                             env.vmid,
                             true,
                         )),
@@ -344,7 +352,7 @@ fn handle_set(
                         field.clone(),
                         Expression::set_name(&SetName::ipset_name(
                             Family::V6,
-                            name,
+                            ipset.name(),
                             env.vmid,
                             false,
                         )),
@@ -355,7 +363,7 @@ fn handle_set(
                         field,
                         Expression::set_name(&SetName::ipset_name(
                             Family::V6,
-                            name,
+                            ipset.name(),
                             env.vmid,
                             true,
                         )),

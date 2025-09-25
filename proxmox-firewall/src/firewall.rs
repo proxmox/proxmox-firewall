@@ -196,7 +196,7 @@ impl Firewall {
 
             let management_ips = HostConfig::management_ips()?;
 
-            let mut ipset = Ipset::from_parts(IpsetScope::Datacenter, "management");
+            let mut ipset = Ipset::new(IpsetName::new(IpsetScope::Datacenter, "management"));
             ipset.reserve(management_ips.len());
 
             let entries = management_ips.into_iter().map(IpsetEntry::from);
@@ -229,13 +229,10 @@ impl Firewall {
         let guest_table = Self::guest_table();
 
         if let Some(sdn_config) = self.config.sdn() {
-            let ipsets = sdn_config
-                .ipsets(None)
-                .map(|ipset| (ipset.name().to_string(), ipset))
-                .collect();
+            let ipsets = sdn_config.ipsets();
 
-            self.create_ipsets(&mut commands, &ipsets, &cluster_host_table, None)?;
-            self.create_ipsets(&mut commands, &ipsets, &guest_table, None)?;
+            self.create_ipsets(&mut commands, ipsets, &cluster_host_table, None)?;
+            self.create_ipsets(&mut commands, ipsets, &guest_table, None)?;
         }
 
         if let Some(ipam_config) = self.config.ipam() {

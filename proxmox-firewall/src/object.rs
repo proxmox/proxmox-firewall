@@ -13,7 +13,7 @@ use proxmox_nftables::{
 use proxmox_ve_config::{
     firewall::{
         ct_helper::CtHelperMacro,
-        types::{alias::AliasName, ipset::IpsetAddress, Alias, Ipset},
+        types::{alias::RuleAliasName, ipset::IpsetAddress, Alias, Ipset},
     },
     guest::types::Vmid,
 };
@@ -29,7 +29,7 @@ pub(crate) struct NftObjectEnv<'a, 'b> {
 }
 
 impl NftObjectEnv<'_, '_> {
-    pub(crate) fn alias(&self, name: &AliasName) -> Option<&Alias> {
+    pub(crate) fn alias(&self, name: &RuleAliasName) -> Option<&Alias> {
         self.firewall_config.alias(name, self.vmid)
     }
 }

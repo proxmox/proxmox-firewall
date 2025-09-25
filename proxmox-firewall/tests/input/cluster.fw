@@ -20,8 +20,10 @@ dc/network1
 
 GROUP network1 -i eth0
 IN ACCEPT -log nolog
+IN ACCEPT -dest +network1
 
 [group network1]
 
 IN ACCEPT -source dc/network1 -dest dc/network1 -log nolog
+IN ACCEPT -source network1 -dest network1 -log nolog
 

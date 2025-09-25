@@ -1822,6 +1822,54 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "group-network1-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "chain": {
           "family": "inet",
           "table": "proxmox-firewall",
@@ -1890,6 +1938,82 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "table": "proxmox-firewall",
           "chain": "cluster-in",
           "expr": [
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-dc/network1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-dc/network1-nomatch"
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-dc/network1"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-dc/network1-nomatch"
+              }
+            },
             {
               "accept": null
             }
@@ -3952,6 +4076,54 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "family": "bridge",
           "table": "proxmox-firewall-guests",
           "name": "group-network1-in"
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "group-network1-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "172.16.100.0",
+                    "len": 24
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
         }
       }
     },

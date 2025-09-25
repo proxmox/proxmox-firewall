@@ -265,7 +265,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -287,7 +288,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -326,7 +328,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -348,7 +351,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -387,7 +391,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -409,7 +414,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -448,7 +454,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -470,7 +477,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -509,7 +517,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -531,7 +540,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -570,7 +580,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -592,7 +603,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -631,7 +643,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -653,7 +666,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -709,7 +723,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -731,7 +746,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -787,7 +803,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -809,7 +826,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -848,7 +866,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -870,7 +889,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -909,7 +929,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -931,7 +952,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -970,7 +992,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -992,7 +1015,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1031,7 +1055,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1053,7 +1078,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1092,7 +1118,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1114,7 +1141,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1153,7 +1181,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1175,7 +1204,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1231,7 +1261,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1253,7 +1284,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1309,7 +1341,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1331,7 +1364,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1370,7 +1404,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1392,7 +1427,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1431,7 +1467,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1453,7 +1490,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1492,7 +1530,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1514,7 +1553,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1553,7 +1593,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1575,7 +1616,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1614,7 +1656,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1636,7 +1679,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1658,7 +1702,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1680,7 +1725,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1719,7 +1765,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -1741,7 +1788,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3860,7 +3908,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3882,7 +3931,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3921,7 +3971,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3943,7 +3994,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3965,7 +4017,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -3987,7 +4040,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4026,7 +4080,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4048,7 +4103,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4288,7 +4344,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4310,7 +4367,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4349,7 +4407,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -4371,7 +4430,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -5596,7 +5656,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -5618,7 +5679,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv4_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -5640,7 +5702,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },
@@ -5662,7 +5725,8 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "type": "ipv6_addr",
           "flags": [
             "interval"
-          ]
+          ],
+          "auto-merge": true
         }
       }
     },

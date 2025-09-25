@@ -124,8 +124,9 @@ impl ToNftObjects for Ipset {
                 SetName::ipset_name(family, self.name(), env.vmid, false),
             );
 
-            let set_config =
-                SetConfig::new(set_name.clone(), vec![element_type]).with_flag(SetFlag::Interval);
+            let set_config = SetConfig::new(set_name.clone(), vec![element_type])
+                .with_flag(SetFlag::Interval)
+                .with_auto_merge(true);
 
             let nomatch_name = SetName::new(
                 env.table.clone(),
@@ -133,7 +134,8 @@ impl ToNftObjects for Ipset {
             );
 
             let nomatch_config = SetConfig::new(nomatch_name.clone(), vec![element_type])
-                .with_flag(SetFlag::Interval);
+                .with_flag(SetFlag::Interval)
+                .with_auto_merge(true);
 
             commands.append(&mut vec![
                 Add::set(set_config),

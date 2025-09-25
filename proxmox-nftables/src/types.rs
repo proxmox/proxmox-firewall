@@ -500,6 +500,9 @@ pub struct SetConfig {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<i64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    auto_merge: Option<bool>,
 }
 
 impl SetConfig {
@@ -512,6 +515,7 @@ impl SetConfig {
             timeout: None,
             gc_interval: None,
             size: None,
+            auto_merge: None,
         }
     }
 
@@ -521,6 +525,11 @@ impl SetConfig {
 
     pub fn with_flag(mut self, flag: SetFlag) -> Self {
         self.flags.push(flag);
+        self
+    }
+
+    pub fn with_auto_merge(mut self, auto_merge: bool) -> Self {
+        self.auto_merge = Some(auto_merge);
         self
     }
 }

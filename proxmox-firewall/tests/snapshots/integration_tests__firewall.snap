@@ -1642,6 +1642,12 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                 "addr": "127.0.0.1",
                 "len": 8
               }
+            },
+            {
+              "prefix": {
+                "addr": "198.51.100.100",
+                "len": 32
+              }
             }
           ]
         }
@@ -3956,6 +3962,12 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "prefix": {
                 "addr": "127.0.0.1",
                 "len": 8
+              }
+            },
+            {
+              "prefix": {
+                "addr": "198.51.100.100",
+                "len": 32
               }
             }
           ]

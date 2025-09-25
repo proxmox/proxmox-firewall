@@ -190,27 +190,40 @@ impl Firewall {
         ]
     }
 
-    fn create_management_ipset(&self, commands: &mut Commands) -> Result<(), Error> {
-        if self.config.cluster().ipsets().get("management").is_none() {
-            log::trace!("auto-generating management ipset");
+    fn create_management_ipset(
+        &self,
+        commands: &mut Commands,
+        table: &TablePart,
+    ) -> Result<(), Error> {
+        let mut management_ipset = Ipset::new(IpsetName::new(IpsetScope::Datacenter, "management"));
 
-            let management_ips = HostConfig::management_ips()?;
+        if let Some(config_ipset) = self.config.cluster().ipsets().get("management") {
+            log::trace!("adding custom entries from management ipset");
 
-            let mut ipset = Ipset::new(IpsetName::new(IpsetScope::Datacenter, "management"));
-            ipset.reserve(management_ips.len());
-
-            let entries = management_ips.into_iter().map(IpsetEntry::from);
-
-            ipset.extend(entries);
-
-            let env = NftObjectEnv {
-                table: &Self::cluster_table(),
-                firewall_config: &self.config,
-                vmid: None,
-            };
-
-            commands.append(&mut ipset.to_nft_objects(&env)?);
+            for entry in config_ipset.iter() {
+                management_ipset.push(entry.clone());
+            }
         }
+
+        if let Some(local_network_alias) = self.config.cluster().alias("local_network") {
+            log::trace!("using local_network alias for determining management ips");
+
+            management_ipset.push(IpsetEntry::from(*local_network_alias.address()));
+        } else {
+            log::trace!("using network configuration for determining management ips");
+
+            for management_ip in HostConfig::management_ips()? {
+                management_ipset.push(IpsetEntry::from(management_ip));
+            }
+        }
+
+        let env = NftObjectEnv {
+            table,
+            firewall_config: &self.config,
+            vmid: None,
+        };
+
+        commands.append(&mut management_ipset.to_nft_objects(&env)?);
 
         Ok(())
     }
@@ -248,7 +261,7 @@ impl Firewall {
         if self.config.host().is_enabled() {
             log::info!("creating cluster / host configuration");
 
-            self.create_management_ipset(&mut commands)?;
+            self.create_management_ipset(&mut commands, &cluster_host_table)?;
 
             self.create_ipsets(
                 &mut commands,
@@ -314,6 +327,8 @@ impl Firewall {
 
         if !(enabled_guests.is_empty() && enabled_bridges.is_empty()) {
             log::info!("creating guest configuration");
+
+            self.create_management_ipset(&mut commands, &guest_table)?;
 
             self.create_ipsets(
                 &mut commands,
@@ -784,7 +799,7 @@ impl Firewall {
         };
 
         for (name, ipset) in ipsets {
-            if ipset.ipfilter().is_some() {
+            if ipset.ipfilter().is_some() || ipset.name().name() == "management" {
                 continue;
             }
 

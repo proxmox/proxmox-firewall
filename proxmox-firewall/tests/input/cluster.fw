@@ -7,6 +7,7 @@ enable: 1
 
 network1 172.16.100.0/24
 network2 172.16.200.0/24
+local_network 198.51.100.100/32
 
 [IPSET network1]
 

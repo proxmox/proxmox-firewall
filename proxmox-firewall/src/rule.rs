@@ -283,12 +283,15 @@ impl ToNftRules for RuleMatch {
     }
 }
 
+/// Handle matching on an ipset.
+///
+/// This function adds statements to the `rules` that match on the ipset with the given name
+/// `name`. It matches the IPs contained in the ipset with the field given in `field_name`.
 fn handle_set(
     rules: &mut Vec<NftRule>,
     name: &IpsetName,
     field_name: &str,
     env: &NftRuleEnv,
-    contains: bool,
 ) -> Result<(), Error> {
     let mut new_rules = rules
         .drain(..)
@@ -303,7 +306,7 @@ fn handle_set(
 
                 rule.append(&mut vec![
                     Match::new(
-                        if contains { Operator::Eq } else { Operator::Ne },
+                        Operator::Eq,
                         field.clone(),
                         Expression::set_name(&SetName::ipset_name(
                             Family::V4,
@@ -314,7 +317,7 @@ fn handle_set(
                     )
                     .into(),
                     Match::new(
-                        if contains { Operator::Ne } else { Operator::Eq },
+                        Operator::Ne,
                         field,
                         Expression::set_name(&SetName::ipset_name(
                             Family::V4,
@@ -337,7 +340,7 @@ fn handle_set(
 
                 rule.append(&mut vec![
                     Match::new(
-                        if contains { Operator::Eq } else { Operator::Ne },
+                        Operator::Eq,
                         field.clone(),
                         Expression::set_name(&SetName::ipset_name(
                             Family::V6,
@@ -348,7 +351,7 @@ fn handle_set(
                     )
                     .into(),
                     Match::new(
-                        if contains { Operator::Ne } else { Operator::Eq },
+                        Operator::Ne,
                         field,
                         Expression::set_name(&SetName::ipset_name(
                             Family::V6,
@@ -361,6 +364,114 @@ fn handle_set(
                 ]);
 
                 new_rules.push(rule);
+            }
+
+            new_rules
+        })
+        .collect::<Vec<NftRule>>();
+
+    rules.append(&mut new_rules);
+
+    Ok(())
+}
+
+/// Handle matching on an ipfilter.
+///
+/// This function adds statements to the `rules` that match if the IP in the field `field_name`
+/// does not fulfill the criteria of the given ipfilter.
+fn handle_ipfilter(
+    rules: &mut Vec<NftRule>,
+    name: &IpsetName,
+    field_name: &str,
+    env: &NftRuleEnv,
+) -> Result<(), Error> {
+    let mut new_rules = rules
+        .drain(..)
+        .flat_map(|rule| {
+            let mut new_rules = Vec::new();
+
+            if matches!(rule.family(), Some(Family::V4) | None) && env.contains_family(Family::V4) {
+                let field = Payload::field("ip", field_name);
+
+                let mut match_rule = rule.clone();
+                match_rule.set_family(Family::V4);
+
+                match_rule.push(
+                    Match::new(
+                        Operator::Ne,
+                        field.clone(),
+                        Expression::set_name(&SetName::ipset_name(
+                            Family::V4,
+                            name,
+                            env.vmid,
+                            false,
+                        )),
+                    )
+                    .into(),
+                );
+
+                new_rules.push(match_rule);
+
+                let mut nomatch_rule = rule.clone();
+                nomatch_rule.set_family(Family::V4);
+
+                nomatch_rule.push(
+                    Match::new(
+                        Operator::Eq,
+                        field,
+                        Expression::set_name(&SetName::ipset_name(
+                            Family::V4,
+                            name,
+                            env.vmid,
+                            true,
+                        )),
+                    )
+                    .into(),
+                );
+
+                new_rules.push(nomatch_rule);
+            }
+
+            if matches!(rule.family(), Some(Family::V6) | None) && env.contains_family(Family::V6) {
+                let field = Payload::field("ip6", field_name);
+
+                let mut match_rule = rule.clone();
+                match_rule.set_family(Family::V6);
+
+                match_rule.push(
+                    Match::new(
+                        Operator::Ne,
+                        field.clone(),
+                        Expression::set_name(&SetName::ipset_name(
+                            Family::V6,
+                            name,
+                            env.vmid,
+                            false,
+                        )),
+                    )
+                    .into(),
+                );
+
+                new_rules.push(match_rule);
+
+                let mut nomatch_rule = rule.clone();
+                nomatch_rule.set_family(Family::V6);
+
+                nomatch_rule.push(
+                    Match::new(
+                        Operator::Eq,
+                        field,
+                        Expression::set_name(&SetName::ipset_name(
+                            Family::V6,
+                            name,
+                            env.vmid,
+                            true,
+                        )),
+                    )
+                    .into(),
+                );
+
+                new_rules.push(nomatch_rule);
             }
 
             new_rules
@@ -447,7 +558,7 @@ fn handle_match(
 
             Ok(())
         }
-        IpAddrMatch::Set(name) => handle_set(rules, name, field_name, env, true),
+        IpAddrMatch::Set(name) => handle_set(rules, name, field_name, env),
     }
 }
 
@@ -679,13 +790,7 @@ impl ToNftRules for Ipfilter<'_> {
                 );
 
                 let mut ipfilter_rules = vec![base_rule.clone()];
-                handle_set(
-                    &mut ipfilter_rules,
-                    self.ipset().name(),
-                    "saddr",
-                    env,
-                    false,
-                )?;
+                handle_ipfilter(&mut ipfilter_rules, self.ipset().name(), "saddr", env)?;
                 rules.append(&mut ipfilter_rules);
 
                 if env.contains_family(Family::V4) {

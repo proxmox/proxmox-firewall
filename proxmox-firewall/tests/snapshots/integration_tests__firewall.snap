@@ -4280,6 +4280,31 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               }
             },
             {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
+              }
+            },
+            {
               "match": {
                 "op": "==",
                 "left": {
@@ -4326,6 +4351,31 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                   }
                 },
                 "right": "@v6-guest-100/ipfilter-net1"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i1"
               }
             },
             {
@@ -4580,6 +4630,31 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               }
             },
             {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i3"
+              }
+            },
+            {
               "match": {
                 "op": "==",
                 "left": {
@@ -4626,6 +4701,31 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                   }
                 },
                 "right": "@v6-guest-100/ipfilter-net3"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i3"
               }
             },
             {

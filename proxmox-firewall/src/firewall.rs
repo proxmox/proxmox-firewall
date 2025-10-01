@@ -24,7 +24,7 @@ use proxmox_ve_config::firewall::ct_helper::get_cthelper;
 use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
-use proxmox_network_types::ip_address::{Cidr, Ipv6Cidr};
+use proxmox_network_types::ip_address::{Cidr, Ipv4Cidr, Ipv6Cidr};
 use proxmox_ve_config::firewall::types::ipset::{
     Ipfilter, Ipset, IpsetEntry, IpsetName, IpsetScope,
 };
@@ -823,11 +823,15 @@ impl Firewall {
                     ipset.push(IpsetEntry::from(Cidr::from(cidr)));
 
                     if let Some(ip_address) = network_device.ip() {
-                        ipset.push(IpsetEntry::from(Cidr::from(ip_address)));
+                        ipset.push(IpsetEntry::from(Cidr::from(Ipv4Cidr::from(
+                            *ip_address.address(),
+                        ))));
                     }
 
                     if let Some(ip6_address) = network_device.ip6() {
-                        ipset.push(IpsetEntry::from(Cidr::from(ip6_address)));
+                        ipset.push(IpsetEntry::from(Cidr::from(Ipv6Cidr::from(
+                            *ip6_address.address(),
+                        ))));
                     }
 
                     commands.append(&mut ipset.to_nft_objects(&env)?);

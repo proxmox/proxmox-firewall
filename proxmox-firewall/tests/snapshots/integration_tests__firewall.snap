@@ -4386,6 +4386,306 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
     },
     {
       "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net3",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net3"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net3-nomatch",
+          "type": "ipv4_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net3-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v4-guest-100/ipfilter-net3",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "192.0.2.10",
+                "len": 32
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net3",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net3"
+        }
+      }
+    },
+    {
+      "add": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net3-nomatch",
+          "type": "ipv6_addr",
+          "flags": [
+            "interval"
+          ]
+        }
+      }
+    },
+    {
+      "flush": {
+        "set": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net3-nomatch"
+        }
+      }
+    },
+    {
+      "add": {
+        "element": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "name": "v6-guest-100/ipfilter-net3",
+          "elem": [
+            {
+              "prefix": {
+                "addr": "fe80::be24:11ff:fe4d:b0fe",
+                "len": 128
+              }
+            },
+            {
+              "prefix": {
+                "addr": "fd80::1235",
+                "len": 128
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "oifname"
+                  }
+                },
+                "right": "veth100i3"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "arp",
+                    "field": "daddr ip"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net3"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i3"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net3"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net3-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i3"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-guest-100/ipfilter-net3"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-guest-100/ipfilter-net3-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "bridge",
+          "table": "proxmox-firewall-guests",
+          "chain": "guest-100-out",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "meta": {
+                    "key": "iifname"
+                  }
+                },
+                "right": "veth100i3"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "arp",
+                    "field": "saddr ip"
+                  }
+                },
+                "right": "@v4-guest-100/ipfilter-net3"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
         "rule": {
           "family": "bridge",
           "table": "proxmox-firewall-guests",
@@ -4742,6 +5042,14 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                   "target": "guest-100-in"
                 }
               }
+            ],
+            [
+              "veth100i3",
+              {
+                "goto": {
+                  "target": "guest-100-in"
+                }
+              }
             ]
           ]
         }
@@ -4881,6 +5189,14 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "elem": [
             [
               "veth100i1",
+              {
+                "goto": {
+                  "target": "guest-100-out"
+                }
+              }
+            ],
+            [
+              "veth100i3",
               {
                 "goto": {
                   "target": "guest-100-out"

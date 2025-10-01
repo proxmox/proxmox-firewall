@@ -1,20 +1,19 @@
 use std::ops::{Deref, DerefMut};
 
-use anyhow::{Error, bail, format_err};
+use anyhow::{bail, format_err, Error};
 
 use proxmox_log as log;
 use proxmox_nftables::{
-    Expression, Statement,
     expression::{Ct, IpFamily, Meta, Payload, Prefix},
     statement::{Log, LogLevel, Match, Operator},
     types::{AddRule, ChainPart, SetName, TableFamily, TablePart},
+    Expression, Statement,
 };
 use proxmox_ve_config::{
     firewall::{
         ct_helper::CtHelperMacro,
-        fw_macros::{FwMacro, get_macro},
+        fw_macros::{get_macro, FwMacro},
         types::{
-            Alias, Rule,
             alias::AliasName,
             ipset::{Ipfilter, IpsetName},
             log::LogRateLimit,
@@ -22,6 +21,7 @@ use proxmox_ve_config::{
             rule_match::{
                 Icmp, Icmpv6, IpAddrMatch, IpMatch, Ports, Protocol, RuleMatch, Sctp, Tcp, Udp,
             },
+            Alias, Rule,
         },
     },
     guest::types::Vmid,
@@ -691,18 +691,16 @@ impl ToNftRules for Ipfilter<'_> {
                 if env.contains_family(Family::V4) {
                     base_rule.set_family(Family::V4);
 
-                    base_rule.append(&mut vec![
-                        Match::new_ne(
-                            Payload::field("arp", "saddr ip"),
-                            Expression::set_name(&SetName::ipset_name(
-                                Family::V4,
-                                self.ipset().name(),
-                                env.vmid,
-                                false,
-                            )),
-                        )
-                        .into(),
-                    ]);
+                    base_rule.append(&mut vec![Match::new_ne(
+                        Payload::field("arp", "saddr ip"),
+                        Expression::set_name(&SetName::ipset_name(
+                            Family::V4,
+                            self.ipset().name(),
+                            env.vmid,
+                            false,
+                        )),
+                    )
+                    .into()]);
 
                     rules.push(base_rule);
                 }

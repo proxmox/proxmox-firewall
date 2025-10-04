@@ -40,7 +40,7 @@ $(DEB) $(DBG_DEB) &: $(BUILDDIR)
 
 .PHONY: test
 test:
-	$(CARGO) test
+	$(CARGO) test $(CARGO_BUILD_ARGS)
 
 .PHONY: dsc
 dsc:

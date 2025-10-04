@@ -1,3 +1,29 @@
+proxmox-firewall (1.2.0) trixie; urgency=medium
+
+  * fix #6831: move conntrack statement to forward chain to avoid that
+    conntracked flows that are routed by the PVE host to not get accepted.
+
+  * vnet firewall: create chains in host table only if host-level firewall is
+    enabled.
+
+  * ip filter: restrict containers to use their specific IP, not the full
+    CIDR network.
+
+  * fix #6336: fix IP filter matching logic so that filters with empty nomatch
+    sets can actually work.
+
+  * fix #6107: add support for legacy ipset and alias names, i.e. those that
+    do not include the explicit scope (dc or guest).
+
+  * firewall: set auto-merge flag for ipsets to ensure that sets that contain
+    overlapping IP ranges do not cause rules to be generated that are not
+    accepted by nftables.
+
+  * merge management ipset with local_network to avoid pitfall and to better
+    align the behavior with the perl pve-firewall daemon.
+
+ -- Proxmox Support Team <support@proxmox.com>  Sat, 04 Oct 2025 15:06:40 +0200
+
 proxmox-firewall (1.1.2) trixie; urgency=medium
 
   * update to proxmox-network-api interface parser

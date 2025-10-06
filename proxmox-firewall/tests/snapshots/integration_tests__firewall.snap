@@ -2,6 +2,7 @@
 source: proxmox-firewall/tests/integration_tests.rs
 assertion_line: 127
 expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
+snapshot_kind: text
 ---
 {
   "nftables": [
@@ -3867,6 +3868,68 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                     68
                   ]
                 }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmpv6",
+                    "field": "type"
+                  }
+                },
+                "right": "nd-neighbor-solicit"
+              }
+            },
+            {
+              "limit": {
+                "rate": 2,
+                "per": "second",
+                "burst": 12
+              }
+            },
+            {
+              "log": {
+                "prefix": ":0:6:host-in: ACCEPT: ",
+                "group": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmpv6",
+                    "field": "type"
+                  }
+                },
+                "right": "nd-neighbor-solicit"
               }
             },
             {

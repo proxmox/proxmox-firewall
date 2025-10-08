@@ -2084,6 +2084,44 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "cluster-in",
           "expr": [
             {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": 3
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "code"
+                  }
+                },
+                "right": 1
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-in",
+          "expr": [
+            {
               "limit": {
                 "rate": 2,
                 "per": "second",
@@ -2149,6 +2187,34 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "chain": "cluster-out",
           "expr": [
             {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": "router-solicitation"
+              }
+            },
+            {
+              "jump": {
+                "target": "do-reject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-out",
+          "expr": [
+            {
               "limit": {
                 "rate": 2,
                 "per": "second",
@@ -2174,6 +2240,44 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
           "expr": [
             {
               "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "cluster-forward",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmpv6",
+                    "field": "type"
+                  }
+                },
+                "right": 3
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "icmpv6",
+                    "field": "code"
+                  }
+                },
+                "right": 0
+              }
+            },
+            {
+              "drop": null
             }
           ]
         }

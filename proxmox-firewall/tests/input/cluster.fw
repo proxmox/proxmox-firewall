@@ -22,6 +22,9 @@ dc/network1
 GROUP network1 -i eth0
 IN ACCEPT -log nolog
 IN ACCEPT -dest +network1
+FORWARD DROP -p ipv6-icmp -log nolog -icmp-type ttl-zero-during-transit
+IN ACCEPT -p icmp -log nolog -icmp-type host-unreachable
+OUT REJECT -p icmp -log nolog -icmp-type router-solicitation
 
 [group network1]
 

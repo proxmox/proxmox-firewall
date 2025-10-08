@@ -651,17 +651,21 @@ impl ToNftRules for Icmp {
     fn to_nft_rules(&self, rules: &mut Vec<NftRule>, _env: &NftRuleEnv) -> Result<(), Error> {
         for rule in rules.iter_mut() {
             if matches!(rule.family(), Some(Family::V4) | None) {
+                if let Some(icmp_type) = self.ty() {
+                    rule.push(
+                        Match::new_eq(Payload::field("icmp", "type"), Expression::from(icmp_type))
+                            .into(),
+                    );
+                }
+
                 if let Some(icmp_code) = self.code() {
                     rule.push(
                         Match::new_eq(Payload::field("icmp", "code"), Expression::from(icmp_code))
                             .into(),
                     );
-                } else if let Some(icmp_type) = self.ty() {
-                    rule.push(
-                        Match::new_eq(Payload::field("icmp", "type"), Expression::from(icmp_type))
-                            .into(),
-                    );
-                } else {
+                }
+
+                if self.code().is_none() && self.ty().is_none() {
                     rule.push(Match::new_eq(Meta::new("l4proto"), Expression::from("icmp")).into());
                 }
 
@@ -679,6 +683,16 @@ impl ToNftRules for Icmpv6 {
 
         for rule in rules.iter_mut() {
             if matches!(rule.family(), Some(Family::V6) | None) {
+                if let Some(icmp_type) = self.ty() {
+                    rule.push(
+                        Match::new_eq(
+                            Payload::field("icmpv6", "type"),
+                            Expression::from(icmp_type),
+                        )
+                        .into(),
+                    );
+                }
+
                 if let Some(icmp_code) = self.code() {
                     rule.push(
                         Match::new_eq(
@@ -687,15 +701,9 @@ impl ToNftRules for Icmpv6 {
                         )
                         .into(),
                     );
-                } else if let Some(icmp_type) = self.ty() {
-                    rule.push(
-                        Match::new_eq(
-                            Payload::field("icmpv6", "type"),
-                            Expression::from(icmp_type),
-                        )
-                        .into(),
-                    );
-                } else {
+                }
+
+                if self.code().is_none() && self.ty().is_none() {
                     rule.push(
                         Match::new_eq(Meta::new("l4proto"), Expression::from("icmpv6")).into(),
                     );

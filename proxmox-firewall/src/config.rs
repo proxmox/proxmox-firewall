@@ -13,8 +13,8 @@ use proxmox_ve_config::firewall::guest::Config as GuestConfig;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 use proxmox_ve_config::firewall::types::alias::{Alias, AliasScope, RuleAliasName};
 
-use proxmox_ve_config::firewall::types::ipset::{IpsetScope, RuleIpsetName};
 use proxmox_ve_config::firewall::types::Ipset;
+use proxmox_ve_config::firewall::types::ipset::{IpsetScope, RuleIpsetName};
 use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
 use proxmox_ve_config::host::types::BridgeName;

@@ -1,8 +1,6 @@
 ---
 source: proxmox-firewall/tests/integration_tests.rs
-assertion_line: 127
 expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
-snapshot_kind: text
 ---
 {
   "nftables": [
@@ -4068,6 +4066,254 @@ snapshot_kind: text
               "jump": {
                 "target": "do-reject"
               }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-forward",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-sdn/guest-ipam-101"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-sdn/guest-ipam-101-nomatch"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-sdn/guest-ipam-101"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-sdn/guest-ipam-101-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-forward",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-sdn/guest-ipam-101"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-sdn/guest-ipam-101-nomatch"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-sdn/guest-ipam-101"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-sdn/guest-ipam-101-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-forward",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-sdn/public-all"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v4-sdn/public-all-nomatch"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-sdn/public-gateway"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v4-sdn/public-gateway-nomatch"
+              }
+            },
+            {
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-forward",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-sdn/public-all"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "saddr"
+                  }
+                },
+                "right": "@v6-sdn/public-all-nomatch"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-sdn/public-gateway"
+              }
+            },
+            {
+              "match": {
+                "op": "!=",
+                "left": {
+                  "payload": {
+                    "protocol": "ip6",
+                    "field": "daddr"
+                  }
+                },
+                "right": "@v6-sdn/public-gateway-nomatch"
+              }
+            },
+            {
+              "drop": null
             }
           ]
         }

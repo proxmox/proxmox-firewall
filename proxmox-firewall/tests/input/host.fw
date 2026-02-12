@@ -24,4 +24,6 @@ IN ACCEPT --icmp-type neighbor-solicitation --proto ipv6-icmp --log info
 IN Ping(REJECT)
 IN REJECT -p udp --dport 443
 OUT REJECT -p udp --dport 443
+FORWARD DROP --source +sdn/guest-ipam-101 --dest +sdn/guest-ipam-101
+FORWARD DROP --source +sdn/public-all --dest +sdn/public-gateway
 

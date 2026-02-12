@@ -249,10 +249,7 @@ impl Firewall {
         }
 
         if let Some(ipam_config) = self.config.ipam() {
-            let ipsets = ipam_config
-                .ipsets(None)
-                .map(|ipset| (ipset.name().to_string(), ipset))
-                .collect();
+            let ipsets = ipam_config.ipsets();
 
             self.create_ipsets(&mut commands, &ipsets, &cluster_host_table, None)?;
             self.create_ipsets(&mut commands, &ipsets, &guest_table, None)?;

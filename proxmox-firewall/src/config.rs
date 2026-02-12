@@ -274,6 +274,21 @@ impl FirewallSdnConfig {
     }
 }
 
+pub struct FirewallIpamConfig {
+    _config: Ipam,
+    ipsets: BTreeMap<String, Ipset>,
+}
+
+impl FirewallIpamConfig {
+    pub fn ipsets(&self) -> &BTreeMap<String, Ipset> {
+        &self.ipsets
+    }
+
+    pub fn ipset(&self, name: &str) -> Option<&Ipset> {
+        self.ipsets.get(name)
+    }
+}
+
 pub struct FirewallConfig {
     cluster_config: ClusterConfig,
     host_config: HostConfig,
@@ -281,7 +296,7 @@ pub struct FirewallConfig {
     bridge_config: BTreeMap<BridgeName, BridgeConfig>,
     nft_config: BTreeMap<String, ListChain>,
     sdn_config: Option<FirewallSdnConfig>,
-    ipam_config: Option<Ipam>,
+    ipam_config: Option<FirewallIpamConfig>,
     interface_mapping: AltnameMapping,
 }
 
@@ -362,11 +377,23 @@ impl FirewallConfig {
         })
     }
 
-    pub fn parse_ipam(firewall_loader: &dyn FirewallConfigLoader) -> Result<Option<Ipam>, Error> {
+    pub fn parse_ipam(
+        firewall_loader: &dyn FirewallConfigLoader,
+    ) -> Result<Option<FirewallIpamConfig>, Error> {
         Ok(match firewall_loader.ipam()? {
             Some(data) => {
                 let raw_ipam: IpamJson = serde_json::from_reader(data)?;
-                Some(Ipam::try_from(raw_ipam)?)
+                let ipam = Ipam::try_from(raw_ipam)?;
+
+                let ipsets = ipam
+                    .ipsets(None)
+                    .map(|ipset| (ipset.name().name().to_string(), ipset))
+                    .collect();
+
+                Some(FirewallIpamConfig {
+                    _config: ipam,
+                    ipsets,
+                })
             }
             _ => None,
         })
@@ -446,7 +473,7 @@ impl FirewallConfig {
         self.sdn_config.as_ref()
     }
 
-    pub fn ipam(&self) -> Option<&Ipam> {
+    pub fn ipam(&self) -> Option<&FirewallIpamConfig> {
         self.ipam_config.as_ref()
     }
 
@@ -497,7 +524,10 @@ impl FirewallConfig {
 
         match name {
             RuleIpsetName::Scoped(ipset_name) => match ipset_name.scope() {
-                IpsetScope::Sdn => self.sdn()?.ipset(ipset_name.name()),
+                IpsetScope::Sdn => self
+                    .sdn()?
+                    .ipset(ipset_name.name())
+                    .or_else(|| self.ipam()?.ipset(ipset_name.name())),
                 IpsetScope::Datacenter => self.cluster().ipset(ipset_name.name()),
                 IpsetScope::Guest => {
                     vmid.and_then(|vmid| self.guest_ipset(ipset_name.name(), vmid))

@@ -571,25 +571,29 @@ impl Firewall {
 
         if let Some(value) = self.config.host().nf_conntrack_max() {
             log::debug!("set nf_conntrack_max");
-            fs::write(NF_CONNTRACK_MAX_FILE, value.to_string())
-                .unwrap_or_else(|_| log::warn!("cannot set nf_conntrack_max"));
+            if let Err(err) = fs::write(NF_CONNTRACK_MAX_FILE, value.to_string()) {
+                log::warn!("cannot set nf_conntrack_max: {err:#}");
+            }
         }
 
         if let Some(value) = self.config.host().nf_conntrack_tcp_timeout_established() {
             log::debug!("set nf_conntrack_tcp_timeout_established");
-            fs::write(NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED, value.to_string())
-                .unwrap_or_else(|_| log::warn!("cannot set nf_conntrack_tcp_timeout_established"));
+            if let Err(err) = fs::write(NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED, value.to_string()) {
+                log::warn!("cannot set nf_conntrack_tcp_timeout_established: {err:#}");
+            }
         }
 
         if let Some(value) = self.config.host().nf_conntrack_tcp_timeout_syn_recv() {
             log::debug!("set nf_conntrack_tcp_timeout_syn_recv");
-            fs::write(NF_CONNTRACK_TCP_TIMEOUT_SYN_RECV, value.to_string())
-                .unwrap_or_else(|_| log::warn!("cannot set nf_conntrack_tcp_timeout_syn_recv"));
+            if let Err(err) = fs::write(NF_CONNTRACK_TCP_TIMEOUT_SYN_RECV, value.to_string()) {
+                log::warn!("cannot set nf_conntrack_tcp_timeout_syn_recv: {err:#}");
+            }
         }
 
         let value = (self.config.host().log_nf_conntrack() as u8).to_string();
-        fs::write(LOG_CONNTRACK_FILE, value)
-            .unwrap_or_else(|_| log::warn!("cannot set conntrack_log_file"));
+        if let Err(err) = fs::write(LOG_CONNTRACK_FILE, value) {
+            log::warn!("cannot set conntrack_log_file: {err:#}");
+        }
 
         /*
         CliCommand::new("systemctl")

@@ -62,7 +62,13 @@ impl NftRule {
             return Ok(rules);
         }
 
-        rule.to_nft_rules(&mut rules, env)?;
+        // Contain generation failures (unresolvable interface, missing ipset, alias, ...) to the
+        // single offending config rule -- bailing here would abort the whole firewall update and
+        // leave the host unprotected over a single stale config reference.
+        if let Err(err) = rule.to_nft_rules(&mut rules, env) {
+            log::warn!("skipping rule {rule:?}: {err:#}");
+            return Ok(Vec::new());
+        }
 
         Ok(rules)
     }
@@ -129,24 +135,26 @@ impl NftRuleEnv<'_> {
         self.firewall_config.alias(name, self.vmid)
     }
 
-    fn iface_name(&self, rule_iface: &str) -> String {
+    fn iface_name(&self, rule_iface: &str) -> Result<String, Error> {
         match &self.vmid {
             Some(vmid) => {
-                if let Some(config) = self.firewall_config.guests().get(vmid) {
-                    if let Ok(name) = config.iface_name_by_key(rule_iface) {
-                        return name;
-                    }
-                }
+                let config = self
+                    .firewall_config
+                    .guests()
+                    .get(vmid)
+                    .ok_or_else(|| format_err!("no config for VM #{vmid}"))?;
 
-                log::warn!("Unable to resolve interface name {rule_iface} for VM #{vmid}");
-
-                rule_iface.to_string()
+                config.iface_name_by_key(rule_iface).map_err(|err| {
+                    format_err!("cannot resolve interface '{rule_iface}' for VM #{vmid}: {err:#}")
+                })
             }
-            None => self
+            // no altname mapping is fine, an interface name may be specified
+            // directly -- pass it through unchanged in that case.
+            None => Ok(self
                 .firewall_config
                 .interface_mapping(rule_iface)
-                .map(|iface_name| iface_name.to_string())
-                .unwrap_or_else(|| rule_iface.to_string()),
+                .unwrap_or(rule_iface)
+                .to_string()),
         }
     }
 
@@ -193,7 +201,7 @@ fn handle_iface(rules: &mut [NftRule], env: &NftRuleEnv, name: &str) -> Result<(
         (_, Direction::Forward) => bail!("cannot define interfaces for forward direction"),
     };
 
-    let iface_name = env.iface_name(name);
+    let iface_name = env.iface_name(name)?;
 
     log::trace!("adding interface: {iface_name}");
 

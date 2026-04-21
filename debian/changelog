@@ -1,3 +1,9 @@
+proxmox-firewall (1.2.2) trixie; urgency=medium
+
+  * fix regression in IP-set lookup for auto-generated IPAM IP-sets.
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 21 Apr 2026 12:52:09 +0200
+
 proxmox-firewall (1.2.1) trixie; urgency=medium
 
   * fix generating rules with both ICMP type and ICMP code set.

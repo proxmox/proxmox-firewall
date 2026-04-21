@@ -82,7 +82,7 @@ fn open_config_folder(path: &str) -> Result<Option<ReadDir>, Error> {
             Ok(None)
         }
         Err(err) => {
-            let context = format!("unable to open configuration folder at {BRIDGE_CONFIG_PATH}");
+            let context = format!("unable to open configuration folder at {path}");
             Err(anyhow::Error::new(err).context(context))
         }
     }

@@ -317,7 +317,7 @@ pub enum CtDirection {
     Original,
     Reply,
 }
-serde_plain::derive_display_from_serialize!(CtDirection);
+proxmox_serde::forward_display_to_serialize!(CtDirection);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]

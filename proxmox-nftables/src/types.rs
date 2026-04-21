@@ -29,7 +29,7 @@ pub enum TableFamily {
     Bridge,
     Netdev,
 }
-serde_plain::derive_display_from_serialize!(TableFamily);
+proxmox_serde::forward_display_to_serialize!(TableFamily);
 
 impl TableFamily {
     pub fn ip_families(&self) -> Vec<IpFamily> {
@@ -57,7 +57,7 @@ pub enum ElementType {
     Ipv4Addr,
     Ipv6Addr,
 }
-serde_plain::derive_display_from_serialize!(ElementType);
+proxmox_serde::forward_display_to_serialize!(ElementType);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -66,7 +66,7 @@ pub enum ChainType {
     Nat,
     Route,
 }
-serde_plain::derive_display_from_serialize!(ChainType);
+proxmox_serde::forward_display_to_serialize!(ChainType);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -74,7 +74,7 @@ pub enum SetPolicy {
     Performance,
     Memory,
 }
-serde_plain::derive_display_from_serialize!(SetPolicy);
+proxmox_serde::forward_display_to_serialize!(SetPolicy);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -83,7 +83,7 @@ pub enum SetFlag {
     Interval,
     Timeout,
 }
-serde_plain::derive_display_from_serialize!(SetFlag);
+proxmox_serde::forward_display_to_serialize!(SetFlag);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -101,7 +101,7 @@ pub enum Hook {
     Output,
     Postrouting,
 }
-serde_plain::derive_display_from_serialize!(Hook);
+proxmox_serde::forward_display_to_serialize!(Hook);
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]

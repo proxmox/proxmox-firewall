@@ -5,6 +5,35 @@ members = [
 ]
 resolver = "3"
 
+[workspace.package]
+version = "1.2.1"
+authors = [
+    "Wolfgang Bumiller <w.bumiller@proxmox.com>",
+    "Stefan Hanreich <s.hanreich@proxmox.com>",
+    "Proxmox Support Team <support@proxmox.com>",
+]
+edition = "2024"
+license = "AGPL-3"
+homepage = "https://www.proxmox.com"
+
 [workspace.dependencies]
+# external dependencies
+anyhow = "1"
+insta = "1.21"
+log = "0.4"
+pico-args = "0.5"
+serde = "1"
+serde_json = "1"
+signal-hook = "0.3"
+thiserror = "2"
+
+# proxmox dependencies
+proxmox-log = "1"
+proxmox-network-api = "1"
 proxmox-network-types = "1"
+proxmox-serde = "1"
+proxmox-sys = "1"
 proxmox-ve-config = "0.5"
+
+# workspace crates
+proxmox-nftables = { version = "0.1.0", path = "proxmox-nftables" }

@@ -1,26 +1,25 @@
 [package]
 name = "proxmox-nftables"
 version = "0.1.0"
-edition = "2024"
-authors = [
-    "Wolfgang Bumiller <w.bumiller@proxmox.com>",
-    "Stefan Hanreich <s.hanreich@proxmox.com>",
-    "Proxmox Support Team <support@proxmox.com>",
-]
 description = "Proxmox VE nftables"
-license = "AGPL-3"
+
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
 
 [features]
 config-ext = ["dep:proxmox-ve-config", "dep:proxmox-network-types"]
 
 [dependencies]
-log = "0.4"
-anyhow = "1"
-thiserror = "2"
+anyhow.workspace = true
+log.workspace = true
+thiserror.workspace = true
 
-serde = { version = "1", features = [ "derive" ] }
-serde_json = "1"
-proxmox-serde = "1"
+serde = { workspace = true, features = [ "derive" ] }
+serde_json.workspace = true
+
+proxmox-serde.workspace = true
 
 proxmox-ve-config = { workspace = true, optional = true }
 proxmox-network-types = { workspace = true, optional = true }

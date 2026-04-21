@@ -1,31 +1,29 @@
 [package]
 name = "proxmox-firewall"
-version = "1.2.1"
-edition = "2024"
-authors = [
-    "Wolfgang Bumiller <w.bumiller@proxmox.com>",
-    "Stefan Hanreich <s.hanreich@proxmox.com>",
-    "Proxmox Support Team <support@proxmox.com>",
-]
 description = "Proxmox VE nftables firewall implementation"
-license = "AGPL-3"
+
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
 
 [dependencies]
-anyhow = "1"
+anyhow.workspace = true
 
-pico-args = "0.5"
+pico-args.workspace = true
 
-serde = { version = "1", features = [ "derive" ] }
-serde_json = "1"
+serde = { workspace = true, features = [ "derive" ] }
+serde_json.workspace = true
 
-signal-hook = "0.3"
+signal-hook.workspace = true
 
-proxmox-log = "1"
-proxmox-network-types = { workspace = true }
-proxmox-network-api = { version = "1", features = [ "impl" ] }
-proxmox-nftables = { path = "../proxmox-nftables", features = ["config-ext"] }
-proxmox-ve-config = { workspace = true }
+proxmox-log.workspace = true
+proxmox-network-types.workspace = true
+proxmox-network-api = { workspace = true, features = [ "impl" ] }
+proxmox-nftables = { workspace = true, features = [ "config-ext" ] }
+proxmox-ve-config.workspace = true
 
 [dev-dependencies]
-insta = { version = "1.21", features = ["json"] }
-proxmox-sys = "1"
+insta = { workspace = true, features = [ "json" ] }
+proxmox-sys.workspace = true

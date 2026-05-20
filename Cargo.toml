@@ -33,7 +33,7 @@ proxmox-network-api = "1"
 proxmox-network-types = "1"
 proxmox-serde = "1"
 proxmox-sys = "1"
-proxmox-ve-config = "0.5"
+proxmox-ve-config = "0.10"
 
 # workspace crates
 proxmox-nftables = { version = "0.1.0", path = "proxmox-nftables" }

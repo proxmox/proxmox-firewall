@@ -1,3 +1,15 @@
+proxmox-firewall (1.2.3) trixie; urgency=medium
+
+  * fix #6399: update to proxmox-ve-config 0.10 to ensure firewall rules whose
+    comment contains a hash sign no longer abort rule parsing, so the firewall
+    starts as expected.
+
+  * skip a single firewall rule that fails to generate, logging a warning,
+    instead of aborting the whole ruleset update, so that one unresolvable
+    rule reference no longer drops the rest of the host's rules.
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 20 May 2026 05:48:48 +0200
+
 proxmox-firewall (1.2.2) trixie; urgency=medium
 
   * fix regression in IP-set lookup for auto-generated IPAM IP-sets.

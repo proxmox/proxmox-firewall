@@ -56,6 +56,7 @@ pub enum ElementType {
     Ifname,
     Ipv4Addr,
     Ipv6Addr,
+    Mark,
 }
 proxmox_serde::forward_display_to_serialize!(ElementType);
 

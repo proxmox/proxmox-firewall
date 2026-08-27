@@ -311,6 +311,15 @@ pub struct Vmap {
     data: Expression,
 }
 
+impl Vmap {
+    pub fn new(key: impl Into<Expression>, data: impl Into<Expression>) -> Self {
+        Self {
+            key: key.into(),
+            data: data.into(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Match {
     op: Operator,

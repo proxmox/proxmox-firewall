@@ -1,3 +1,4 @@
+#[cfg(feature = "config-ext")]
 use anyhow::{Error, bail};
 use serde::{Deserialize, Serialize};
 

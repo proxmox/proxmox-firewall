@@ -1,5 +1,4 @@
 use crate::types::{ElemConfig, Verdict};
-use proxmox_ve_config::host::types::BridgeName;
 use serde::{Deserialize, Serialize};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
@@ -13,6 +12,8 @@ use proxmox_ve_config::firewall::types::port::{PortEntry, PortList};
 use proxmox_ve_config::firewall::types::rule_match::{IcmpCode, IcmpType, Icmpv6Code, Icmpv6Type};
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::guest::types::Vmid;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::host::types::BridgeName;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]

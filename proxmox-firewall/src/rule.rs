@@ -6,6 +6,7 @@ use proxmox_log as log;
 use proxmox_nftables::{
     Expression, Statement,
     expression::{Ct, IpFamily, Meta, Payload, Prefix},
+    protocol,
     statement::{Log, LogLevel, Match, Operator},
     types::{AddRule, ChainPart, SetName, TableFamily, TablePart},
 };
@@ -19,9 +20,7 @@ use proxmox_ve_config::{
             ipset::{Ipfilter, IpsetName, RuleIpsetName},
             log::LogRateLimit,
             rule::{Direction, Kind, RuleGroup, Verdict as ConfigVerdict},
-            rule_match::{
-                Icmp, Icmpv6, IpAddrMatch, IpMatch, Ports, Protocol, RuleMatch, Sctp, Tcp, Udp,
-            },
+            rule_match::{IpAddrMatch, IpMatch, Protocol, RuleMatch},
         },
     },
     guest::types::Vmid,
@@ -596,162 +595,23 @@ impl ToNftRules for IpMatch {
     }
 }
 
-fn handle_protocol(rules: &mut [NftRule], _env: &NftRuleEnv, name: &str) -> Result<(), Error> {
-    for rule in rules.iter_mut() {
-        rule.push(Match::new_eq(Meta::new("l4proto"), Expression::from(name)).into());
-    }
-
-    Ok(())
-}
-
 impl ToNftRules for Protocol {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
+    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, _env: &NftRuleEnv) -> Result<(), Error> {
         log::trace!("adding protocol: {self:?}");
 
-        match self {
-            Protocol::Tcp(tcp) => tcp.to_nft_rules(rules, env),
-            Protocol::Udp(udp) => udp.to_nft_rules(rules, env),
-            Protocol::Dccp(ports) => {
-                handle_protocol(rules, env, "dccp")?;
-                ports.to_nft_rules(rules, env)
-            }
-            Protocol::UdpLite(ports) => {
-                handle_protocol(rules, env, "udplite")?;
-                ports.to_nft_rules(rules, env)
-            }
-            Protocol::Sctp(sctp) => sctp.to_nft_rules(rules, env),
-            Protocol::Icmp(icmp) => icmp.to_nft_rules(rules, env),
-            Protocol::Icmpv6(icmpv6) => icmpv6.to_nft_rules(rules, env),
-            Protocol::Named(name) => handle_protocol(rules, env, name),
-            Protocol::Numeric(id) => {
-                for rule in rules.iter_mut() {
-                    rule.push(Match::new_eq(Meta::new("l4proto"), Expression::from(*id)).into());
-                }
-
-                Ok(())
-            }
-        }
-    }
-}
-
-impl ToNftRules for Tcp {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
-        handle_protocol(rules, env, "tcp")?;
-        self.ports().to_nft_rules(rules, env)
-    }
-}
-
-impl ToNftRules for Udp {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
-        handle_protocol(rules, env, "udp")?;
-        self.ports().to_nft_rules(rules, env)
-    }
-}
-
-impl ToNftRules for Sctp {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, env: &NftRuleEnv) -> Result<(), Error> {
-        handle_protocol(rules, env, "sctp")?;
-        self.ports().to_nft_rules(rules, env)
-    }
-}
-
-impl ToNftRules for Icmp {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, _env: &NftRuleEnv) -> Result<(), Error> {
+        let family = self.family();
         for rule in rules.iter_mut() {
-            if matches!(rule.family(), Some(Family::V4) | None) {
-                if let Some(icmp_type) = self.ty() {
-                    rule.push(
-                        Match::new_eq(Payload::field("icmp", "type"), Expression::from(icmp_type))
-                            .into(),
-                    );
-                }
-
-                if let Some(icmp_code) = self.code() {
-                    rule.push(
-                        Match::new_eq(Payload::field("icmp", "code"), Expression::from(icmp_code))
-                            .into(),
-                    );
-                }
-
-                if self.code().is_none() && self.ty().is_none() {
-                    rule.push(Match::new_eq(Meta::new("l4proto"), Expression::from("icmp")).into());
-                }
-
-                rule.set_family(Family::V4);
+            if family
+                .zip(rule.family())
+                .is_some_and(|(wanted, pinned)| wanted != pinned)
+            {
+                continue;
             }
-        }
-
-        Ok(())
-    }
-}
-
-impl ToNftRules for Icmpv6 {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, _env: &NftRuleEnv) -> Result<(), Error> {
-        log::trace!("applying icmpv6: {self:?}");
-
-        for rule in rules.iter_mut() {
-            if matches!(rule.family(), Some(Family::V6) | None) {
-                if let Some(icmp_type) = self.ty() {
-                    rule.push(
-                        Match::new_eq(
-                            Payload::field("icmpv6", "type"),
-                            Expression::from(icmp_type),
-                        )
-                        .into(),
-                    );
-                }
-
-                if let Some(icmp_code) = self.code() {
-                    rule.push(
-                        Match::new_eq(
-                            Payload::field("icmpv6", "code"),
-                            Expression::from(icmp_code),
-                        )
-                        .into(),
-                    );
-                }
-
-                if self.code().is_none() && self.ty().is_none() {
-                    rule.push(
-                        Match::new_eq(Meta::new("l4proto"), Expression::from("icmpv6")).into(),
-                    );
-                }
-
-                rule.set_family(Family::V6);
+            for statement in protocol::matches(self) {
+                rule.push(statement);
             }
-        }
-
-        Ok(())
-    }
-}
-
-impl ToNftRules for Ports {
-    fn to_nft_rules(&self, rules: &mut Vec<NftRule>, _env: &NftRuleEnv) -> Result<(), Error> {
-        log::trace!("applying ports: {self:?}");
-
-        for rule in rules {
-            if let Some(sport) = self.sport() {
-                log::trace!("applying sport: {sport:?}");
-
-                rule.push(
-                    Match::new_eq(
-                        Expression::from(Payload::field("th", "sport")),
-                        Expression::from(sport),
-                    )
-                    .into(),
-                )
-            }
-
-            if let Some(dport) = self.dport() {
-                log::trace!("applying dport: {dport:?}");
-
-                rule.push(
-                    Match::new_eq(
-                        Expression::from(Payload::field("th", "dport")),
-                        Expression::from(dport),
-                    )
-                    .into(),
-                )
+            if let Some(family) = family {
+                rule.set_family(family);
             }
         }
 

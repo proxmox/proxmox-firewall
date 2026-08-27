@@ -2,6 +2,7 @@ pub mod client;
 pub mod command;
 pub mod expression;
 pub mod helper;
+pub mod protocol;
 pub mod statement;
 pub mod types;
 

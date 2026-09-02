@@ -1,0 +1,255 @@
+{
+   "byid" : {
+      "0800" : {
+         "name" : "IPv4"
+      },
+      "0805" : {
+         "name" : "X25"
+      },
+      "0806" : {
+         "name" : "ARP"
+      },
+      "0808" : {
+         "name" : "FR_ARP"
+      },
+      "08FF" : {
+         "name" : "BPQ"
+      },
+      "22F3" : {
+         "name" : "TRILL"
+      },
+      "22F4" : {
+         "name" : "L2-IS-IS"
+      },
+      "6558" : {
+         "name" : "TEB"
+      },
+      "6559" : {
+         "name" : "RAW_FR"
+      },
+      "8035" : {
+         "name" : "RARP"
+      },
+      "809B" : {
+         "name" : "ATALK"
+      },
+      "80F3" : {
+         "name" : "AARP"
+      },
+      "8100" : {
+         "name" : "802_1Q"
+      },
+      "8137" : {
+         "name" : "IPX"
+      },
+      "8191" : {
+         "name" : "NetBEUI"
+      },
+      "86DD" : {
+         "name" : "IPv6"
+      },
+      "8809" : {
+         "name" : "SLOW"
+      },
+      "880B" : {
+         "name" : "PPP"
+      },
+      "8847" : {
+         "name" : "MPLS"
+      },
+      "8848" : {
+         "name" : "MPLS_MULTI"
+      },
+      "884C" : {
+         "name" : "ATMMPOA"
+      },
+      "8863" : {
+         "name" : "PPP_DISC"
+      },
+      "8864" : {
+         "name" : "PPP_SES"
+      },
+      "8884" : {
+         "name" : "ATMFATE"
+      },
+      "888E" : {
+         "name" : "EAPOL"
+      },
+      "88A4" : {
+         "name" : "EtherCAT"
+      },
+      "88A8" : {
+         "name" : "S-TAG"
+      },
+      "88C7" : {
+         "name" : "EAP_PREAUTH"
+      },
+      "88CC" : {
+         "name" : "LLDP"
+      },
+      "88E5" : {
+         "name" : "MACSEC"
+      },
+      "88E7" : {
+         "name" : "PBB"
+      },
+      "88F5" : {
+         "name" : "MVRP"
+      },
+      "88F7" : {
+         "name" : "PTP"
+      },
+      "8906" : {
+         "name" : "FCOE"
+      },
+      "8914" : {
+         "name" : "FIP"
+      },
+      "8915" : {
+         "name" : "ROCE"
+      },
+      "A0ED" : {
+         "name" : "LoWPAN"
+      }
+   },
+   "byname" : {
+      "1q" : {
+         "id" : "8100"
+      },
+      "802.1q" : {
+         "id" : "8100"
+      },
+      "8021q" : {
+         "id" : "8100"
+      },
+      "802_1Q" : {
+         "id" : "8100"
+      },
+      "AARP" : {
+         "id" : "80F3"
+      },
+      "ARP" : {
+         "id" : "0806"
+      },
+      "ATALK" : {
+         "id" : "809B"
+      },
+      "ATMFATE" : {
+         "id" : "8884"
+      },
+      "ATMMPOA" : {
+         "id" : "884C"
+      },
+      "BPQ" : {
+         "id" : "08FF"
+      },
+      "EAPOL" : {
+         "id" : "888E"
+      },
+      "EAP_PREAUTH" : {
+         "id" : "88C7"
+      },
+      "EtherCAT" : {
+         "id" : "88A4"
+      },
+      "FCOE" : {
+         "id" : "8906"
+      },
+      "FIP" : {
+         "id" : "8914"
+      },
+      "FR_ARP" : {
+         "id" : "0808"
+      },
+      "IPX" : {
+         "id" : "8137"
+      },
+      "IPv4" : {
+         "id" : "0800"
+      },
+      "IPv6" : {
+         "id" : "86DD"
+      },
+      "L2-IS-IS" : {
+         "id" : "22F4"
+      },
+      "LLDP" : {
+         "id" : "88CC"
+      },
+      "LoWPAN" : {
+         "id" : "A0ED"
+      },
+      "MACSEC" : {
+         "id" : "88E5"
+      },
+      "MPLS" : {
+         "id" : "8847"
+      },
+      "MPLS_MULTI" : {
+         "id" : "8848"
+      },
+      "MVRP" : {
+         "id" : "88F5"
+      },
+      "NetBEUI" : {
+         "id" : "8191"
+      },
+      "PBB" : {
+         "id" : "88E7"
+      },
+      "PPP" : {
+         "id" : "880B"
+      },
+      "PPP_DISC" : {
+         "id" : "8863"
+      },
+      "PPP_SES" : {
+         "id" : "8864"
+      },
+      "PTP" : {
+         "id" : "88F7"
+      },
+      "RARP" : {
+         "id" : "8035"
+      },
+      "RAW_FR" : {
+         "id" : "6559"
+      },
+      "ROCE" : {
+         "id" : "8915"
+      },
+      "S-TAG" : {
+         "id" : "88A8"
+      },
+      "SLOW" : {
+         "id" : "8809"
+      },
+      "TEB" : {
+         "id" : "6558"
+      },
+      "TRILL" : {
+         "id" : "22F3"
+      },
+      "X25" : {
+         "id" : "0805"
+      },
+      "dot1q" : {
+         "id" : "8100"
+      },
+      "ether-arp" : {
+         "id" : "0806"
+      },
+      "ip" : {
+         "id" : "0800"
+      },
+      "ip4" : {
+         "id" : "0800"
+      },
+      "ip6" : {
+         "id" : "86DD"
+      },
+      "macinmac" : {
+         "id" : "88E7"
+      }
+   }
+}

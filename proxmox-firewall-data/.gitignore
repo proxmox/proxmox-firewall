@@ -1,0 +1,9 @@
+*.buildinfo
+*.build
+*.changes
+*.deb
+*.dsc
+/build
+/*-deb
+proxmox-firewall-data*[0-9]*/
+proxmox-firewall-data*[0-9]*.tar*

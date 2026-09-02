@@ -1,0 +1,17 @@
+Source: proxmox-firewall-data
+Section: admin
+Priority: optional
+Maintainer: Proxmox Support Team <support@proxmox.com>
+Rules-Requires-Root: no
+Build-Depends: debhelper-compat (= 13),
+               libjson-perl <!nocheck>,
+               libpve-common-perl <!nocheck>,
+Standards-Version: 4.7.2
+Homepage: https://www.proxmox.com
+
+Package: proxmox-firewall-data
+Architecture: all
+Depends: ${misc:Depends},
+Description: Firewall JSON data used by firewall daemons
+ Includes data parsed from the stock netbase files for use by the firewall
+ daemons to provide resolution for service and port aliases.

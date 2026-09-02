@@ -1,0 +1,3141 @@
+{
+   "byid" : {
+      "1" : {
+         "name" : "tcpmux",
+         "port" : "1",
+         "tcp" : 1
+      },
+      "10000" : {
+         "name" : "webmin",
+         "port" : "10000",
+         "tcp" : 1
+      },
+      "10050" : {
+         "name" : "zabbix-agent",
+         "port" : "10050",
+         "tcp" : 1
+      },
+      "10051" : {
+         "name" : "zabbix-trapper",
+         "port" : "10051",
+         "tcp" : 1
+      },
+      "10080" : {
+         "name" : "amanda",
+         "port" : "10080",
+         "tcp" : 1
+      },
+      "10081" : {
+         "name" : "kamanda",
+         "port" : "10081",
+         "tcp" : 1
+      },
+      "10082" : {
+         "name" : "amandaidx",
+         "port" : "10082",
+         "tcp" : 1
+      },
+      "10083" : {
+         "name" : "amidxtape",
+         "port" : "10083",
+         "tcp" : 1
+      },
+      "102" : {
+         "name" : "iso-tsap",
+         "port" : "102",
+         "tcp" : 1
+      },
+      "104" : {
+         "name" : "acr-nema",
+         "port" : "104",
+         "tcp" : 1
+      },
+      "106" : {
+         "name" : "poppassd",
+         "port" : "106",
+         "tcp" : 1
+      },
+      "1080" : {
+         "name" : "socks",
+         "port" : "1080",
+         "tcp" : 1
+      },
+      "10809" : {
+         "name" : "nbd",
+         "port" : "10809",
+         "tcp" : 1
+      },
+      "1093" : {
+         "name" : "proofd",
+         "port" : "1093",
+         "tcp" : 1
+      },
+      "1094" : {
+         "name" : "rootd",
+         "port" : "1094",
+         "tcp" : 1
+      },
+      "1099" : {
+         "name" : "rmiregistry",
+         "port" : "1099",
+         "tcp" : 1
+      },
+      "11" : {
+         "name" : "systat",
+         "port" : "11",
+         "tcp" : 1
+      },
+      "110" : {
+         "name" : "pop3",
+         "port" : "110",
+         "tcp" : 1
+      },
+      "111" : {
+         "name" : "sunrpc",
+         "port" : "111",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "11112" : {
+         "name" : "dicom",
+         "port" : "11112",
+         "tcp" : 1
+      },
+      "1127" : {
+         "name" : "supfiledbg",
+         "port" : "1127",
+         "tcp" : 1
+      },
+      "113" : {
+         "name" : "auth",
+         "port" : "113",
+         "tcp" : 1
+      },
+      "11371" : {
+         "name" : "hkp",
+         "port" : "11371",
+         "tcp" : 1
+      },
+      "1178" : {
+         "name" : "skkserv",
+         "port" : "1178",
+         "tcp" : 1
+      },
+      "119" : {
+         "name" : "nntp",
+         "port" : "119",
+         "tcp" : 1
+      },
+      "1194" : {
+         "name" : "openvpn",
+         "port" : "1194",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1210" : {
+         "name" : "predict",
+         "port" : "1210",
+         "udp" : 1
+      },
+      "123" : {
+         "name" : "ntp",
+         "port" : "123",
+         "udp" : 1
+      },
+      "1236" : {
+         "name" : "rmtcfg",
+         "port" : "1236",
+         "tcp" : 1
+      },
+      "13" : {
+         "name" : "daytime",
+         "port" : "13",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1313" : {
+         "name" : "xtel",
+         "port" : "1313",
+         "tcp" : 1
+      },
+      "1314" : {
+         "name" : "xtelw",
+         "port" : "1314",
+         "tcp" : 1
+      },
+      "135" : {
+         "name" : "epmap",
+         "port" : "135",
+         "tcp" : 1
+      },
+      "1352" : {
+         "name" : "lotusnote",
+         "port" : "1352",
+         "tcp" : 1
+      },
+      "137" : {
+         "name" : "netbios-ns",
+         "port" : "137",
+         "udp" : 1
+      },
+      "138" : {
+         "name" : "netbios-dgm",
+         "port" : "138",
+         "udp" : 1
+      },
+      "139" : {
+         "name" : "netbios-ssn",
+         "port" : "139",
+         "tcp" : 1
+      },
+      "143" : {
+         "name" : "imap2",
+         "port" : "143",
+         "tcp" : 1
+      },
+      "1433" : {
+         "name" : "ms-sql-s",
+         "port" : "1433",
+         "tcp" : 1
+      },
+      "1434" : {
+         "name" : "ms-sql-m",
+         "port" : "1434",
+         "udp" : 1
+      },
+      "15" : {
+         "name" : "netstat",
+         "port" : "15",
+         "tcp" : 1
+      },
+      "1524" : {
+         "name" : "ingreslock",
+         "port" : "1524",
+         "tcp" : 1
+      },
+      "161" : {
+         "name" : "snmp",
+         "port" : "161",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "162" : {
+         "name" : "snmp-trap",
+         "port" : "162",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "163" : {
+         "name" : "cmip-man",
+         "port" : "163",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "164" : {
+         "name" : "cmip-agent",
+         "port" : "164",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1645" : {
+         "name" : "datametrics",
+         "port" : "1645",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1646" : {
+         "name" : "sa-msg-port",
+         "port" : "1646",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1649" : {
+         "name" : "kermit",
+         "port" : "1649",
+         "tcp" : 1
+      },
+      "1677" : {
+         "name" : "groupwise",
+         "port" : "1677",
+         "tcp" : 1
+      },
+      "17" : {
+         "name" : "qotd",
+         "port" : "17",
+         "tcp" : 1
+      },
+      "17001" : {
+         "name" : "sgi-cmsd",
+         "port" : "17001",
+         "udp" : 1
+      },
+      "17002" : {
+         "name" : "sgi-crsd",
+         "port" : "17002",
+         "udp" : 1
+      },
+      "17003" : {
+         "name" : "sgi-gcd",
+         "port" : "17003",
+         "udp" : 1
+      },
+      "17004" : {
+         "name" : "sgi-cad",
+         "port" : "17004",
+         "tcp" : 1
+      },
+      "1701" : {
+         "name" : "l2f",
+         "port" : "1701",
+         "udp" : 1
+      },
+      "174" : {
+         "name" : "mailq",
+         "port" : "174",
+         "tcp" : 1
+      },
+      "17500" : {
+         "name" : "db-lsp",
+         "port" : "17500",
+         "tcp" : 1
+      },
+      "177" : {
+         "name" : "xdmcp",
+         "port" : "177",
+         "udp" : 1
+      },
+      "179" : {
+         "name" : "bgp",
+         "port" : "179",
+         "tcp" : 1
+      },
+      "1812" : {
+         "name" : "radius",
+         "port" : "1812",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "1813" : {
+         "name" : "radius-acct",
+         "port" : "1813",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "19" : {
+         "name" : "chargen",
+         "port" : "19",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "199" : {
+         "name" : "smux",
+         "port" : "199",
+         "tcp" : 1
+      },
+      "20" : {
+         "name" : "ftp-data",
+         "port" : "20",
+         "tcp" : 1
+      },
+      "2000" : {
+         "name" : "cisco-sccp",
+         "port" : "2000",
+         "tcp" : 1
+      },
+      "2049" : {
+         "name" : "nfs",
+         "port" : "2049",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2086" : {
+         "name" : "gnunet",
+         "port" : "2086",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "209" : {
+         "name" : "qmtp",
+         "port" : "209",
+         "tcp" : 1
+      },
+      "21" : {
+         "name" : "fsp",
+         "port" : "21",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "210" : {
+         "name" : "z3950",
+         "port" : "210",
+         "tcp" : 1
+      },
+      "2101" : {
+         "name" : "rtcm-sc104",
+         "port" : "2101",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2102" : {
+         "name" : "zephyr-srv",
+         "port" : "2102",
+         "udp" : 1
+      },
+      "2103" : {
+         "name" : "zephyr-clt",
+         "port" : "2103",
+         "udp" : 1
+      },
+      "2104" : {
+         "name" : "zephyr-hm",
+         "port" : "2104",
+         "udp" : 1
+      },
+      "2119" : {
+         "name" : "gsigatekeeper",
+         "port" : "2119",
+         "tcp" : 1
+      },
+      "2121" : {
+         "name" : "iprop",
+         "port" : "2121",
+         "tcp" : 1
+      },
+      "213" : {
+         "name" : "ipx",
+         "port" : "213",
+         "udp" : 1
+      },
+      "2135" : {
+         "name" : "gris",
+         "port" : "2135",
+         "tcp" : 1
+      },
+      "22" : {
+         "name" : "ssh",
+         "port" : "22",
+         "tcp" : 1
+      },
+      "22125" : {
+         "name" : "dcap",
+         "port" : "22125",
+         "tcp" : 1
+      },
+      "22128" : {
+         "name" : "gsidcap",
+         "port" : "22128",
+         "tcp" : 1
+      },
+      "22273" : {
+         "name" : "wnn6",
+         "port" : "22273",
+         "tcp" : 1
+      },
+      "23" : {
+         "name" : "telnet",
+         "port" : "23",
+         "tcp" : 1
+      },
+      "2401" : {
+         "name" : "cvspserver",
+         "port" : "2401",
+         "tcp" : 1
+      },
+      "2430" : {
+         "name" : "venus",
+         "port" : "2430",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2431" : {
+         "name" : "venus-se",
+         "port" : "2431",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2432" : {
+         "name" : "codasrv",
+         "port" : "2432",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2433" : {
+         "name" : "codasrv-se",
+         "port" : "2433",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "24554" : {
+         "name" : "binkp",
+         "port" : "24554",
+         "tcp" : 1
+      },
+      "25" : {
+         "name" : "smtp",
+         "port" : "25",
+         "tcp" : 1
+      },
+      "2583" : {
+         "name" : "mon",
+         "port" : "2583",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2600" : {
+         "name" : "zebrasrv",
+         "port" : "2600",
+         "tcp" : 1
+      },
+      "2601" : {
+         "name" : "zebra",
+         "port" : "2601",
+         "tcp" : 1
+      },
+      "2602" : {
+         "name" : "ripd",
+         "port" : "2602",
+         "tcp" : 1
+      },
+      "2603" : {
+         "name" : "ripngd",
+         "port" : "2603",
+         "tcp" : 1
+      },
+      "2604" : {
+         "name" : "ospfd",
+         "port" : "2604",
+         "tcp" : 1
+      },
+      "2605" : {
+         "name" : "bgpd",
+         "port" : "2605",
+         "tcp" : 1
+      },
+      "2606" : {
+         "name" : "ospf6d",
+         "port" : "2606",
+         "tcp" : 1
+      },
+      "2607" : {
+         "name" : "ospfapi",
+         "port" : "2607",
+         "tcp" : 1
+      },
+      "2608" : {
+         "name" : "isisd",
+         "port" : "2608",
+         "tcp" : 1
+      },
+      "2628" : {
+         "name" : "dict",
+         "port" : "2628",
+         "tcp" : 1
+      },
+      "27374" : {
+         "name" : "asp",
+         "port" : "27374",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "2792" : {
+         "name" : "f5-globalsite",
+         "port" : "2792",
+         "tcp" : 1
+      },
+      "2811" : {
+         "name" : "gsiftp",
+         "port" : "2811",
+         "tcp" : 1
+      },
+      "2947" : {
+         "name" : "gpsd",
+         "port" : "2947",
+         "tcp" : 1
+      },
+      "3050" : {
+         "name" : "gds-db",
+         "port" : "3050",
+         "tcp" : 1
+      },
+      "30865" : {
+         "name" : "csync2",
+         "port" : "30865",
+         "tcp" : 1
+      },
+      "3130" : {
+         "name" : "icpv2",
+         "port" : "3130",
+         "udp" : 1
+      },
+      "319" : {
+         "name" : "ptp-event",
+         "port" : "319",
+         "udp" : 1
+      },
+      "320" : {
+         "name" : "ptp-general",
+         "port" : "320",
+         "udp" : 1
+      },
+      "3205" : {
+         "name" : "isns",
+         "port" : "3205",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "3260" : {
+         "name" : "iscsi-target",
+         "port" : "3260",
+         "tcp" : 1
+      },
+      "3306" : {
+         "name" : "mysql",
+         "port" : "3306",
+         "tcp" : 1
+      },
+      "3389" : {
+         "name" : "ms-wbt-server",
+         "port" : "3389",
+         "tcp" : 1
+      },
+      "345" : {
+         "name" : "pawserv",
+         "port" : "345",
+         "tcp" : 1
+      },
+      "346" : {
+         "name" : "zserv",
+         "port" : "346",
+         "tcp" : 1
+      },
+      "3493" : {
+         "name" : "nut",
+         "port" : "3493",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "3632" : {
+         "name" : "distcc",
+         "port" : "3632",
+         "tcp" : 1
+      },
+      "3689" : {
+         "name" : "daap",
+         "port" : "3689",
+         "tcp" : 1
+      },
+      "369" : {
+         "name" : "rpc2portmap",
+         "port" : "369",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "3690" : {
+         "name" : "svn",
+         "port" : "3690",
+         "tcp" : 1
+      },
+      "37" : {
+         "name" : "time",
+         "port" : "37",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "370" : {
+         "name" : "codaauth2",
+         "port" : "370",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "371" : {
+         "name" : "clearcase",
+         "port" : "371",
+         "udp" : 1
+      },
+      "389" : {
+         "name" : "ldap",
+         "port" : "389",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "4031" : {
+         "name" : "suucp",
+         "port" : "4031",
+         "tcp" : 1
+      },
+      "4094" : {
+         "name" : "sysrqd",
+         "port" : "4094",
+         "tcp" : 1
+      },
+      "4190" : {
+         "name" : "sieve",
+         "port" : "4190",
+         "tcp" : 1
+      },
+      "427" : {
+         "name" : "svrloc",
+         "port" : "427",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "43" : {
+         "name" : "whois",
+         "port" : "43",
+         "tcp" : 1
+      },
+      "4353" : {
+         "name" : "f5-iquery",
+         "port" : "4353",
+         "tcp" : 1
+      },
+      "4369" : {
+         "name" : "epmd",
+         "port" : "4369",
+         "tcp" : 1
+      },
+      "4373" : {
+         "name" : "remctl",
+         "port" : "4373",
+         "tcp" : 1
+      },
+      "443" : {
+         "name" : "https",
+         "port" : "443",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "444" : {
+         "name" : "snpp",
+         "port" : "444",
+         "tcp" : 1
+      },
+      "445" : {
+         "name" : "microsoft-ds",
+         "port" : "445",
+         "tcp" : 1
+      },
+      "4460" : {
+         "name" : "ntske",
+         "port" : "4460",
+         "tcp" : 1
+      },
+      "4500" : {
+         "name" : "ipsec-nat-t",
+         "port" : "4500",
+         "udp" : 1
+      },
+      "4557" : {
+         "name" : "fax",
+         "port" : "4557",
+         "tcp" : 1
+      },
+      "4559" : {
+         "name" : "hylafax",
+         "port" : "4559",
+         "tcp" : 1
+      },
+      "4569" : {
+         "name" : "iax",
+         "port" : "4569",
+         "udp" : 1
+      },
+      "464" : {
+         "name" : "kpasswd",
+         "port" : "464",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "465" : {
+         "name" : "submissions",
+         "port" : "465",
+         "tcp" : 1
+      },
+      "4691" : {
+         "name" : "mtn",
+         "port" : "4691",
+         "tcp" : 1
+      },
+      "487" : {
+         "name" : "saft",
+         "port" : "487",
+         "tcp" : 1
+      },
+      "4899" : {
+         "name" : "radmin-port",
+         "port" : "4899",
+         "tcp" : 1
+      },
+      "49" : {
+         "name" : "tacacs",
+         "port" : "49",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "4949" : {
+         "name" : "munin",
+         "port" : "4949",
+         "tcp" : 1
+      },
+      "500" : {
+         "name" : "isakmp",
+         "port" : "500",
+         "udp" : 1
+      },
+      "5060" : {
+         "name" : "sip",
+         "port" : "5060",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "5061" : {
+         "name" : "sip-tls",
+         "port" : "5061",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "512" : {
+         "name" : "biff",
+         "port" : "512",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "513" : {
+         "name" : "who",
+         "port" : "513",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "514" : {
+         "name" : "syslog",
+         "port" : "514",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "515" : {
+         "name" : "printer",
+         "port" : "515",
+         "tcp" : 1
+      },
+      "517" : {
+         "name" : "talk",
+         "port" : "517",
+         "udp" : 1
+      },
+      "518" : {
+         "name" : "ntalk",
+         "port" : "518",
+         "udp" : 1
+      },
+      "520" : {
+         "name" : "route",
+         "port" : "520",
+         "udp" : 1
+      },
+      "5222" : {
+         "name" : "xmpp-client",
+         "port" : "5222",
+         "tcp" : 1
+      },
+      "5269" : {
+         "name" : "xmpp-server",
+         "port" : "5269",
+         "tcp" : 1
+      },
+      "53" : {
+         "name" : "domain",
+         "port" : "53",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "5308" : {
+         "name" : "cfengine",
+         "port" : "5308",
+         "tcp" : 1
+      },
+      "5353" : {
+         "name" : "mdns",
+         "port" : "5353",
+         "udp" : 1
+      },
+      "538" : {
+         "name" : "gdomap",
+         "port" : "538",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "540" : {
+         "name" : "uucp",
+         "port" : "540",
+         "tcp" : 1
+      },
+      "543" : {
+         "name" : "klogin",
+         "port" : "543",
+         "tcp" : 1
+      },
+      "5432" : {
+         "name" : "postgresql",
+         "port" : "5432",
+         "tcp" : 1
+      },
+      "544" : {
+         "name" : "kshell",
+         "port" : "544",
+         "tcp" : 1
+      },
+      "546" : {
+         "name" : "dhcpv6-client",
+         "port" : "546",
+         "udp" : 1
+      },
+      "547" : {
+         "name" : "dhcpv6-server",
+         "port" : "547",
+         "udp" : 1
+      },
+      "548" : {
+         "name" : "afpovertcp",
+         "port" : "548",
+         "tcp" : 1
+      },
+      "554" : {
+         "name" : "rtsp",
+         "port" : "554",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "5555" : {
+         "name" : "rplay",
+         "port" : "5555",
+         "udp" : 1
+      },
+      "5556" : {
+         "name" : "freeciv",
+         "port" : "5556",
+         "tcp" : 1
+      },
+      "563" : {
+         "name" : "nntps",
+         "port" : "563",
+         "tcp" : 1
+      },
+      "5666" : {
+         "name" : "nrpe",
+         "port" : "5666",
+         "tcp" : 1
+      },
+      "5667" : {
+         "name" : "nsca",
+         "port" : "5667",
+         "tcp" : 1
+      },
+      "5671" : {
+         "name" : "amqps",
+         "port" : "5671",
+         "tcp" : 1
+      },
+      "5672" : {
+         "name" : "amqp",
+         "port" : "5672",
+         "sctp" : 1,
+         "tcp" : 1
+      },
+      "5680" : {
+         "name" : "canna",
+         "port" : "5680",
+         "tcp" : 1
+      },
+      "5683" : {
+         "name" : "coap",
+         "port" : "5683",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "5684" : {
+         "name" : "coaps",
+         "port" : "5684",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "57000" : {
+         "name" : "dircproxy",
+         "port" : "57000",
+         "tcp" : 1
+      },
+      "587" : {
+         "name" : "submission",
+         "port" : "587",
+         "tcp" : 1
+      },
+      "6000" : {
+         "name" : "x11",
+         "port" : "6000",
+         "tcp" : 1
+      },
+      "6001" : {
+         "name" : "x11-1",
+         "port" : "6001",
+         "tcp" : 1
+      },
+      "6002" : {
+         "name" : "x11-2",
+         "port" : "6002",
+         "tcp" : 1
+      },
+      "6003" : {
+         "name" : "x11-3",
+         "port" : "6003",
+         "tcp" : 1
+      },
+      "6004" : {
+         "name" : "x11-4",
+         "port" : "6004",
+         "tcp" : 1
+      },
+      "6005" : {
+         "name" : "x11-5",
+         "port" : "6005",
+         "tcp" : 1
+      },
+      "6006" : {
+         "name" : "x11-6",
+         "port" : "6006",
+         "tcp" : 1
+      },
+      "6007" : {
+         "name" : "x11-7",
+         "port" : "6007",
+         "tcp" : 1
+      },
+      "60177" : {
+         "name" : "tfido",
+         "port" : "60177",
+         "tcp" : 1
+      },
+      "60179" : {
+         "name" : "fido",
+         "port" : "60179",
+         "tcp" : 1
+      },
+      "607" : {
+         "name" : "nqs",
+         "port" : "607",
+         "tcp" : 1
+      },
+      "623" : {
+         "name" : "asf-rmcp",
+         "port" : "623",
+         "udp" : 1
+      },
+      "628" : {
+         "name" : "qmqp",
+         "port" : "628",
+         "tcp" : 1
+      },
+      "631" : {
+         "name" : "ipp",
+         "port" : "631",
+         "tcp" : 1
+      },
+      "6346" : {
+         "name" : "gnutella-svc",
+         "port" : "6346",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "6347" : {
+         "name" : "gnutella-rtr",
+         "port" : "6347",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "636" : {
+         "name" : "ldaps",
+         "port" : "636",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "6379" : {
+         "name" : "redis",
+         "port" : "6379",
+         "tcp" : 1
+      },
+      "6444" : {
+         "name" : "sge-qmaster",
+         "port" : "6444",
+         "tcp" : 1
+      },
+      "6445" : {
+         "name" : "sge-execd",
+         "port" : "6445",
+         "tcp" : 1
+      },
+      "6446" : {
+         "name" : "mysql-proxy",
+         "port" : "6446",
+         "tcp" : 1
+      },
+      "646" : {
+         "name" : "ldp",
+         "port" : "646",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "6514" : {
+         "name" : "syslog-tls",
+         "port" : "6514",
+         "tcp" : 1
+      },
+      "655" : {
+         "name" : "tinc",
+         "port" : "655",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "6566" : {
+         "name" : "sane-port",
+         "port" : "6566",
+         "tcp" : 1
+      },
+      "6667" : {
+         "name" : "ircd",
+         "port" : "6667",
+         "tcp" : 1
+      },
+      "6696" : {
+         "name" : "babel",
+         "port" : "6696",
+         "udp" : 1
+      },
+      "6697" : {
+         "name" : "ircs-u",
+         "port" : "6697",
+         "tcp" : 1
+      },
+      "67" : {
+         "name" : "bootps",
+         "port" : "67",
+         "udp" : 1
+      },
+      "68" : {
+         "name" : "bootpc",
+         "port" : "68",
+         "udp" : 1
+      },
+      "69" : {
+         "name" : "tftp",
+         "port" : "69",
+         "udp" : 1
+      },
+      "7" : {
+         "name" : "echo",
+         "port" : "7",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "70" : {
+         "name" : "gopher",
+         "port" : "70",
+         "tcp" : 1
+      },
+      "7000" : {
+         "name" : "afs3-fileserver",
+         "port" : "7000",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "7001" : {
+         "name" : "afs3-callback",
+         "port" : "7001",
+         "udp" : 1
+      },
+      "7002" : {
+         "name" : "afs3-prserver",
+         "port" : "7002",
+         "udp" : 1
+      },
+      "7003" : {
+         "name" : "afs3-vlserver",
+         "port" : "7003",
+         "udp" : 1
+      },
+      "7004" : {
+         "name" : "afs3-kaserver",
+         "port" : "7004",
+         "udp" : 1
+      },
+      "7005" : {
+         "name" : "afs3-volser",
+         "port" : "7005",
+         "udp" : 1
+      },
+      "7007" : {
+         "name" : "afs3-bos",
+         "port" : "7007",
+         "udp" : 1
+      },
+      "7008" : {
+         "name" : "afs3-update",
+         "port" : "7008",
+         "udp" : 1
+      },
+      "7009" : {
+         "name" : "afs3-rmtsys",
+         "port" : "7009",
+         "udp" : 1
+      },
+      "706" : {
+         "name" : "silc",
+         "port" : "706",
+         "tcp" : 1
+      },
+      "7100" : {
+         "name" : "font-service",
+         "port" : "7100",
+         "tcp" : 1
+      },
+      "749" : {
+         "name" : "kerberos-adm",
+         "port" : "749",
+         "tcp" : 1
+      },
+      "750" : {
+         "name" : "kerberos4",
+         "port" : "750",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "751" : {
+         "name" : "kerberos-master",
+         "port" : "751",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "752" : {
+         "name" : "passwd-server",
+         "port" : "752",
+         "udp" : 1
+      },
+      "754" : {
+         "name" : "krb-prop",
+         "port" : "754",
+         "tcp" : 1
+      },
+      "775" : {
+         "name" : "moira-db",
+         "port" : "775",
+         "tcp" : 1
+      },
+      "777" : {
+         "name" : "moira-update",
+         "port" : "777",
+         "tcp" : 1
+      },
+      "779" : {
+         "name" : "moira-ureg",
+         "port" : "779",
+         "udp" : 1
+      },
+      "783" : {
+         "name" : "spamd",
+         "port" : "783",
+         "tcp" : 1
+      },
+      "79" : {
+         "name" : "finger",
+         "port" : "79",
+         "tcp" : 1
+      },
+      "80" : {
+         "name" : "http",
+         "port" : "80",
+         "tcp" : 1
+      },
+      "8021" : {
+         "name" : "zope-ftp",
+         "port" : "8021",
+         "tcp" : 1
+      },
+      "8080" : {
+         "name" : "http-alt",
+         "port" : "8080",
+         "tcp" : 1
+      },
+      "8081" : {
+         "name" : "tproxy",
+         "port" : "8081",
+         "tcp" : 1
+      },
+      "8088" : {
+         "name" : "omniorb",
+         "port" : "8088",
+         "tcp" : 1
+      },
+      "8140" : {
+         "name" : "puppet",
+         "port" : "8140",
+         "tcp" : 1
+      },
+      "853" : {
+         "name" : "domain-s",
+         "port" : "853",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "871" : {
+         "name" : "supfilesrv",
+         "port" : "871",
+         "tcp" : 1
+      },
+      "873" : {
+         "name" : "rsync",
+         "port" : "873",
+         "tcp" : 1
+      },
+      "88" : {
+         "name" : "kerberos",
+         "port" : "88",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "8990" : {
+         "name" : "clc-build-daemon",
+         "port" : "8990",
+         "tcp" : 1
+      },
+      "9" : {
+         "name" : "discard",
+         "port" : "9",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "9098" : {
+         "name" : "xinetd",
+         "port" : "9098",
+         "tcp" : 1
+      },
+      "9101" : {
+         "name" : "bacula-dir",
+         "port" : "9101",
+         "tcp" : 1
+      },
+      "9102" : {
+         "name" : "bacula-fd",
+         "port" : "9102",
+         "tcp" : 1
+      },
+      "9103" : {
+         "name" : "bacula-sd",
+         "port" : "9103",
+         "tcp" : 1
+      },
+      "9418" : {
+         "name" : "git",
+         "port" : "9418",
+         "tcp" : 1
+      },
+      "9667" : {
+         "name" : "xmms2",
+         "port" : "9667",
+         "tcp" : 1
+      },
+      "9673" : {
+         "name" : "zope",
+         "port" : "9673",
+         "tcp" : 1
+      },
+      "989" : {
+         "name" : "ftps-data",
+         "port" : "989",
+         "tcp" : 1
+      },
+      "990" : {
+         "name" : "ftps",
+         "port" : "990",
+         "tcp" : 1
+      },
+      "992" : {
+         "name" : "telnets",
+         "port" : "992",
+         "tcp" : 1
+      },
+      "993" : {
+         "name" : "imaps",
+         "port" : "993",
+         "tcp" : 1
+      },
+      "995" : {
+         "name" : "pop3s",
+         "port" : "995",
+         "tcp" : 1
+      }
+   },
+   "byname" : {
+      "Clearcase" : {
+         "name" : "clearcase",
+         "port" : "371",
+         "udp" : 1
+      },
+      "acr-nema" : {
+         "name" : "acr-nema",
+         "port" : "104",
+         "tcp" : 1
+      },
+      "afpovertcp" : {
+         "name" : "afpovertcp",
+         "port" : "548",
+         "tcp" : 1
+      },
+      "afs3-bos" : {
+         "name" : "afs3-bos",
+         "port" : "7007",
+         "udp" : 1
+      },
+      "afs3-callback" : {
+         "name" : "afs3-callback",
+         "port" : "7001",
+         "udp" : 1
+      },
+      "afs3-fileserver" : {
+         "name" : "afs3-fileserver",
+         "port" : "7000",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "afs3-kaserver" : {
+         "name" : "afs3-kaserver",
+         "port" : "7004",
+         "udp" : 1
+      },
+      "afs3-prserver" : {
+         "name" : "afs3-prserver",
+         "port" : "7002",
+         "udp" : 1
+      },
+      "afs3-rmtsys" : {
+         "name" : "afs3-rmtsys",
+         "port" : "7009",
+         "udp" : 1
+      },
+      "afs3-update" : {
+         "name" : "afs3-update",
+         "port" : "7008",
+         "udp" : 1
+      },
+      "afs3-vlserver" : {
+         "name" : "afs3-vlserver",
+         "port" : "7003",
+         "udp" : 1
+      },
+      "afs3-volser" : {
+         "name" : "afs3-volser",
+         "port" : "7005",
+         "udp" : 1
+      },
+      "amanda" : {
+         "name" : "amanda",
+         "port" : "10080",
+         "tcp" : 1
+      },
+      "amandaidx" : {
+         "name" : "amandaidx",
+         "port" : "10082",
+         "tcp" : 1
+      },
+      "amidxtape" : {
+         "name" : "amidxtape",
+         "port" : "10083",
+         "tcp" : 1
+      },
+      "amqp" : {
+         "name" : "amqp",
+         "port" : "5672",
+         "sctp" : 1,
+         "tcp" : 1
+      },
+      "amqps" : {
+         "name" : "amqps",
+         "port" : "5671",
+         "tcp" : 1
+      },
+      "asf-rmcp" : {
+         "name" : "asf-rmcp",
+         "port" : "623",
+         "udp" : 1
+      },
+      "asp" : {
+         "name" : "asp",
+         "port" : "27374",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "auth" : {
+         "name" : "auth",
+         "port" : "113",
+         "tcp" : 1
+      },
+      "authentication" : {
+         "name" : "auth",
+         "port" : "113",
+         "tcp" : 1
+      },
+      "babel" : {
+         "name" : "babel",
+         "port" : "6696",
+         "udp" : 1
+      },
+      "bacula-dir" : {
+         "name" : "bacula-dir",
+         "port" : "9101",
+         "tcp" : 1
+      },
+      "bacula-fd" : {
+         "name" : "bacula-fd",
+         "port" : "9102",
+         "tcp" : 1
+      },
+      "bacula-sd" : {
+         "name" : "bacula-sd",
+         "port" : "9103",
+         "tcp" : 1
+      },
+      "bbs" : {
+         "name" : "afs3-fileserver",
+         "port" : "7000",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "bgp" : {
+         "name" : "bgp",
+         "port" : "179",
+         "tcp" : 1
+      },
+      "bgpd" : {
+         "name" : "bgpd",
+         "port" : "2605",
+         "tcp" : 1
+      },
+      "biff" : {
+         "name" : "biff",
+         "port" : "512",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "binkp" : {
+         "name" : "binkp",
+         "port" : "24554",
+         "tcp" : 1
+      },
+      "bootpc" : {
+         "name" : "bootpc",
+         "port" : "68",
+         "udp" : 1
+      },
+      "bootps" : {
+         "name" : "bootps",
+         "port" : "67",
+         "udp" : 1
+      },
+      "canna" : {
+         "name" : "canna",
+         "port" : "5680",
+         "tcp" : 1
+      },
+      "cfengine" : {
+         "name" : "cfengine",
+         "port" : "5308",
+         "tcp" : 1
+      },
+      "chargen" : {
+         "name" : "chargen",
+         "port" : "19",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "cisco-sccp" : {
+         "name" : "cisco-sccp",
+         "port" : "2000",
+         "tcp" : 1
+      },
+      "clc-build-daemon" : {
+         "name" : "clc-build-daemon",
+         "port" : "8990",
+         "tcp" : 1
+      },
+      "clearcase" : {
+         "name" : "clearcase",
+         "port" : "371",
+         "udp" : 1
+      },
+      "cmd" : {
+         "name" : "syslog",
+         "port" : "514",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "cmip-agent" : {
+         "name" : "cmip-agent",
+         "port" : "164",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "cmip-man" : {
+         "name" : "cmip-man",
+         "port" : "163",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "coap" : {
+         "name" : "coap",
+         "port" : "5683",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "coaps" : {
+         "name" : "coaps",
+         "port" : "5684",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "codaauth2" : {
+         "name" : "codaauth2",
+         "port" : "370",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "codasrv" : {
+         "name" : "codasrv",
+         "port" : "2432",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "codasrv-se" : {
+         "name" : "codasrv-se",
+         "port" : "2433",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "comsat" : {
+         "name" : "biff",
+         "port" : "512",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "csync2" : {
+         "name" : "csync2",
+         "port" : "30865",
+         "tcp" : 1
+      },
+      "cvspserver" : {
+         "name" : "cvspserver",
+         "port" : "2401",
+         "tcp" : 1
+      },
+      "daap" : {
+         "name" : "daap",
+         "port" : "3689",
+         "tcp" : 1
+      },
+      "datametrics" : {
+         "name" : "datametrics",
+         "port" : "1645",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "daytime" : {
+         "name" : "daytime",
+         "port" : "13",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "db-lsp" : {
+         "name" : "db-lsp",
+         "port" : "17500",
+         "tcp" : 1
+      },
+      "dcap" : {
+         "name" : "dcap",
+         "port" : "22125",
+         "tcp" : 1
+      },
+      "dhcpv6-client" : {
+         "name" : "dhcpv6-client",
+         "port" : "546",
+         "udp" : 1
+      },
+      "dhcpv6-server" : {
+         "name" : "dhcpv6-server",
+         "port" : "547",
+         "udp" : 1
+      },
+      "dicom" : {
+         "name" : "dicom",
+         "port" : "11112",
+         "tcp" : 1
+      },
+      "dict" : {
+         "name" : "dict",
+         "port" : "2628",
+         "tcp" : 1
+      },
+      "dircproxy" : {
+         "name" : "dircproxy",
+         "port" : "57000",
+         "tcp" : 1
+      },
+      "discard" : {
+         "name" : "discard",
+         "port" : "9",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "distcc" : {
+         "name" : "distcc",
+         "port" : "3632",
+         "tcp" : 1
+      },
+      "domain" : {
+         "name" : "domain",
+         "port" : "53",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "domain-s" : {
+         "name" : "domain-s",
+         "port" : "853",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "echo" : {
+         "name" : "echo",
+         "port" : "7",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "epmap" : {
+         "name" : "epmap",
+         "port" : "135",
+         "tcp" : 1
+      },
+      "epmd" : {
+         "name" : "epmd",
+         "port" : "4369",
+         "tcp" : 1
+      },
+      "exec" : {
+         "name" : "biff",
+         "port" : "512",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "f5-globalsite" : {
+         "name" : "f5-globalsite",
+         "port" : "2792",
+         "tcp" : 1
+      },
+      "f5-iquery" : {
+         "name" : "f5-iquery",
+         "port" : "4353",
+         "tcp" : 1
+      },
+      "fax" : {
+         "name" : "fax",
+         "port" : "4557",
+         "tcp" : 1
+      },
+      "fido" : {
+         "name" : "fido",
+         "port" : "60179",
+         "tcp" : 1
+      },
+      "finger" : {
+         "name" : "finger",
+         "port" : "79",
+         "tcp" : 1
+      },
+      "font-service" : {
+         "name" : "font-service",
+         "port" : "7100",
+         "tcp" : 1
+      },
+      "freeciv" : {
+         "name" : "freeciv",
+         "port" : "5556",
+         "tcp" : 1
+      },
+      "fsp" : {
+         "name" : "fsp",
+         "port" : "21",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "fspd" : {
+         "name" : "fsp",
+         "port" : "21",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ftp" : {
+         "name" : "fsp",
+         "port" : "21",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ftp-data" : {
+         "name" : "ftp-data",
+         "port" : "20",
+         "tcp" : 1
+      },
+      "ftps" : {
+         "name" : "ftps",
+         "port" : "990",
+         "tcp" : 1
+      },
+      "ftps-data" : {
+         "name" : "ftps-data",
+         "port" : "989",
+         "tcp" : 1
+      },
+      "gdomap" : {
+         "name" : "gdomap",
+         "port" : "538",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "gds-db" : {
+         "name" : "gds-db",
+         "port" : "3050",
+         "tcp" : 1
+      },
+      "gds_db" : {
+         "name" : "gds-db",
+         "port" : "3050",
+         "tcp" : 1
+      },
+      "git" : {
+         "name" : "git",
+         "port" : "9418",
+         "tcp" : 1
+      },
+      "gnunet" : {
+         "name" : "gnunet",
+         "port" : "2086",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "gnutella-rtr" : {
+         "name" : "gnutella-rtr",
+         "port" : "6347",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "gnutella-svc" : {
+         "name" : "gnutella-svc",
+         "port" : "6346",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "gopher" : {
+         "name" : "gopher",
+         "port" : "70",
+         "tcp" : 1
+      },
+      "gpsd" : {
+         "name" : "gpsd",
+         "port" : "2947",
+         "tcp" : 1
+      },
+      "gris" : {
+         "name" : "gris",
+         "port" : "2135",
+         "tcp" : 1
+      },
+      "groupwise" : {
+         "name" : "groupwise",
+         "port" : "1677",
+         "tcp" : 1
+      },
+      "gsidcap" : {
+         "name" : "gsidcap",
+         "port" : "22128",
+         "tcp" : 1
+      },
+      "gsiftp" : {
+         "name" : "gsiftp",
+         "port" : "2811",
+         "tcp" : 1
+      },
+      "gsigatekeeper" : {
+         "name" : "gsigatekeeper",
+         "port" : "2119",
+         "tcp" : 1
+      },
+      "hkp" : {
+         "name" : "hkp",
+         "port" : "11371",
+         "tcp" : 1
+      },
+      "hprop" : {
+         "name" : "krb-prop",
+         "port" : "754",
+         "tcp" : 1
+      },
+      "http" : {
+         "name" : "http",
+         "port" : "80",
+         "tcp" : 1
+      },
+      "http-alt" : {
+         "name" : "http-alt",
+         "port" : "8080",
+         "tcp" : 1
+      },
+      "https" : {
+         "name" : "https",
+         "port" : "443",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "hylafax" : {
+         "name" : "hylafax",
+         "port" : "4559",
+         "tcp" : 1
+      },
+      "iax" : {
+         "name" : "iax",
+         "port" : "4569",
+         "udp" : 1
+      },
+      "icp" : {
+         "name" : "icpv2",
+         "port" : "3130",
+         "udp" : 1
+      },
+      "icpv2" : {
+         "name" : "icpv2",
+         "port" : "3130",
+         "udp" : 1
+      },
+      "ident" : {
+         "name" : "auth",
+         "port" : "113",
+         "tcp" : 1
+      },
+      "imap" : {
+         "name" : "imap2",
+         "port" : "143",
+         "tcp" : 1
+      },
+      "imap2" : {
+         "name" : "imap2",
+         "port" : "143",
+         "tcp" : 1
+      },
+      "imaps" : {
+         "name" : "imaps",
+         "port" : "993",
+         "tcp" : 1
+      },
+      "ingreslock" : {
+         "name" : "ingreslock",
+         "port" : "1524",
+         "tcp" : 1
+      },
+      "ipp" : {
+         "name" : "ipp",
+         "port" : "631",
+         "tcp" : 1
+      },
+      "iprop" : {
+         "name" : "iprop",
+         "port" : "2121",
+         "tcp" : 1
+      },
+      "ipsec-nat-t" : {
+         "name" : "ipsec-nat-t",
+         "port" : "4500",
+         "udp" : 1
+      },
+      "ipx" : {
+         "name" : "ipx",
+         "port" : "213",
+         "udp" : 1
+      },
+      "ircd" : {
+         "name" : "ircd",
+         "port" : "6667",
+         "tcp" : 1
+      },
+      "ircs-u" : {
+         "name" : "ircs-u",
+         "port" : "6697",
+         "tcp" : 1
+      },
+      "isakmp" : {
+         "name" : "isakmp",
+         "port" : "500",
+         "udp" : 1
+      },
+      "iscsi-target" : {
+         "name" : "iscsi-target",
+         "port" : "3260",
+         "tcp" : 1
+      },
+      "isisd" : {
+         "name" : "isisd",
+         "port" : "2608",
+         "tcp" : 1
+      },
+      "isns" : {
+         "name" : "isns",
+         "port" : "3205",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "iso-tsap" : {
+         "name" : "iso-tsap",
+         "port" : "102",
+         "tcp" : 1
+      },
+      "jabber-client" : {
+         "name" : "xmpp-client",
+         "port" : "5222",
+         "tcp" : 1
+      },
+      "jabber-server" : {
+         "name" : "xmpp-server",
+         "port" : "5269",
+         "tcp" : 1
+      },
+      "kamanda" : {
+         "name" : "kamanda",
+         "port" : "10081",
+         "tcp" : 1
+      },
+      "kdc" : {
+         "name" : "kerberos4",
+         "port" : "750",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos" : {
+         "name" : "kerberos",
+         "port" : "88",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos-adm" : {
+         "name" : "kerberos-adm",
+         "port" : "749",
+         "tcp" : 1
+      },
+      "kerberos-iv" : {
+         "name" : "kerberos4",
+         "port" : "750",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos-master" : {
+         "name" : "kerberos-master",
+         "port" : "751",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos-sec" : {
+         "name" : "kerberos",
+         "port" : "88",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos4" : {
+         "name" : "kerberos4",
+         "port" : "750",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos5" : {
+         "name" : "kerberos",
+         "port" : "88",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kerberos_master" : {
+         "name" : "kerberos-master",
+         "port" : "751",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "kermit" : {
+         "name" : "kermit",
+         "port" : "1649",
+         "tcp" : 1
+      },
+      "klogin" : {
+         "name" : "klogin",
+         "port" : "543",
+         "tcp" : 1
+      },
+      "kpasswd" : {
+         "name" : "kpasswd",
+         "port" : "464",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "krb-prop" : {
+         "name" : "krb-prop",
+         "port" : "754",
+         "tcp" : 1
+      },
+      "krb5" : {
+         "name" : "kerberos",
+         "port" : "88",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "krb5_prop" : {
+         "name" : "krb-prop",
+         "port" : "754",
+         "tcp" : 1
+      },
+      "krb_prop" : {
+         "name" : "krb-prop",
+         "port" : "754",
+         "tcp" : 1
+      },
+      "krcmd" : {
+         "name" : "kshell",
+         "port" : "544",
+         "tcp" : 1
+      },
+      "kshell" : {
+         "name" : "kshell",
+         "port" : "544",
+         "tcp" : 1
+      },
+      "l2f" : {
+         "name" : "l2f",
+         "port" : "1701",
+         "udp" : 1
+      },
+      "l2tp" : {
+         "name" : "l2f",
+         "port" : "1701",
+         "udp" : 1
+      },
+      "ldap" : {
+         "name" : "ldap",
+         "port" : "389",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ldaps" : {
+         "name" : "ldaps",
+         "port" : "636",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ldp" : {
+         "name" : "ldp",
+         "port" : "646",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "loc-srv" : {
+         "name" : "epmap",
+         "port" : "135",
+         "tcp" : 1
+      },
+      "login" : {
+         "name" : "who",
+         "port" : "513",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "lotusnote" : {
+         "name" : "lotusnote",
+         "port" : "1352",
+         "tcp" : 1
+      },
+      "lotusnotes" : {
+         "name" : "lotusnote",
+         "port" : "1352",
+         "tcp" : 1
+      },
+      "lrrd" : {
+         "name" : "munin",
+         "port" : "4949",
+         "tcp" : 1
+      },
+      "mail" : {
+         "name" : "smtp",
+         "port" : "25",
+         "tcp" : 1
+      },
+      "mailq" : {
+         "name" : "mailq",
+         "port" : "174",
+         "tcp" : 1
+      },
+      "mdns" : {
+         "name" : "mdns",
+         "port" : "5353",
+         "udp" : 1
+      },
+      "microsoft-ds" : {
+         "name" : "microsoft-ds",
+         "port" : "445",
+         "tcp" : 1
+      },
+      "moira-db" : {
+         "name" : "moira-db",
+         "port" : "775",
+         "tcp" : 1
+      },
+      "moira-update" : {
+         "name" : "moira-update",
+         "port" : "777",
+         "tcp" : 1
+      },
+      "moira-ureg" : {
+         "name" : "moira-ureg",
+         "port" : "779",
+         "udp" : 1
+      },
+      "moira_db" : {
+         "name" : "moira-db",
+         "port" : "775",
+         "tcp" : 1
+      },
+      "moira_update" : {
+         "name" : "moira-update",
+         "port" : "777",
+         "tcp" : 1
+      },
+      "moira_ureg" : {
+         "name" : "moira-ureg",
+         "port" : "779",
+         "udp" : 1
+      },
+      "mon" : {
+         "name" : "mon",
+         "port" : "2583",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ms-sql-m" : {
+         "name" : "ms-sql-m",
+         "port" : "1434",
+         "udp" : 1
+      },
+      "ms-sql-s" : {
+         "name" : "ms-sql-s",
+         "port" : "1433",
+         "tcp" : 1
+      },
+      "ms-wbt-server" : {
+         "name" : "ms-wbt-server",
+         "port" : "3389",
+         "tcp" : 1
+      },
+      "mtn" : {
+         "name" : "mtn",
+         "port" : "4691",
+         "tcp" : 1
+      },
+      "munin" : {
+         "name" : "munin",
+         "port" : "4949",
+         "tcp" : 1
+      },
+      "mysql" : {
+         "name" : "mysql",
+         "port" : "3306",
+         "tcp" : 1
+      },
+      "mysql-proxy" : {
+         "name" : "mysql-proxy",
+         "port" : "6446",
+         "tcp" : 1
+      },
+      "nbd" : {
+         "name" : "nbd",
+         "port" : "10809",
+         "tcp" : 1
+      },
+      "netbios-dgm" : {
+         "name" : "netbios-dgm",
+         "port" : "138",
+         "udp" : 1
+      },
+      "netbios-ns" : {
+         "name" : "netbios-ns",
+         "port" : "137",
+         "udp" : 1
+      },
+      "netbios-ssn" : {
+         "name" : "netbios-ssn",
+         "port" : "139",
+         "tcp" : 1
+      },
+      "netstat" : {
+         "name" : "netstat",
+         "port" : "15",
+         "tcp" : 1
+      },
+      "nfs" : {
+         "name" : "nfs",
+         "port" : "2049",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "nicname" : {
+         "name" : "whois",
+         "port" : "43",
+         "tcp" : 1
+      },
+      "nntp" : {
+         "name" : "nntp",
+         "port" : "119",
+         "tcp" : 1
+      },
+      "nntps" : {
+         "name" : "nntps",
+         "port" : "563",
+         "tcp" : 1
+      },
+      "nqs" : {
+         "name" : "nqs",
+         "port" : "607",
+         "tcp" : 1
+      },
+      "nrpe" : {
+         "name" : "nrpe",
+         "port" : "5666",
+         "tcp" : 1
+      },
+      "nsca" : {
+         "name" : "nsca",
+         "port" : "5667",
+         "tcp" : 1
+      },
+      "ntalk" : {
+         "name" : "ntalk",
+         "port" : "518",
+         "udp" : 1
+      },
+      "ntp" : {
+         "name" : "ntp",
+         "port" : "123",
+         "udp" : 1
+      },
+      "ntske" : {
+         "name" : "ntske",
+         "port" : "4460",
+         "tcp" : 1
+      },
+      "null" : {
+         "name" : "discard",
+         "port" : "9",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "nut" : {
+         "name" : "nut",
+         "port" : "3493",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "old-radacct" : {
+         "name" : "sa-msg-port",
+         "port" : "1646",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "old-radius" : {
+         "name" : "datametrics",
+         "port" : "1645",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "omniorb" : {
+         "name" : "omniorb",
+         "port" : "8088",
+         "tcp" : 1
+      },
+      "openvpn" : {
+         "name" : "openvpn",
+         "port" : "1194",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "ospf6d" : {
+         "name" : "ospf6d",
+         "port" : "2606",
+         "tcp" : 1
+      },
+      "ospfapi" : {
+         "name" : "ospfapi",
+         "port" : "2607",
+         "tcp" : 1
+      },
+      "ospfd" : {
+         "name" : "ospfd",
+         "port" : "2604",
+         "tcp" : 1
+      },
+      "passwd-server" : {
+         "name" : "passwd-server",
+         "port" : "752",
+         "udp" : 1
+      },
+      "passwd_server" : {
+         "name" : "passwd-server",
+         "port" : "752",
+         "udp" : 1
+      },
+      "pawserv" : {
+         "name" : "pawserv",
+         "port" : "345",
+         "tcp" : 1
+      },
+      "pop-3" : {
+         "name" : "pop3",
+         "port" : "110",
+         "tcp" : 1
+      },
+      "pop3" : {
+         "name" : "pop3",
+         "port" : "110",
+         "tcp" : 1
+      },
+      "pop3s" : {
+         "name" : "pop3s",
+         "port" : "995",
+         "tcp" : 1
+      },
+      "poppassd" : {
+         "name" : "poppassd",
+         "port" : "106",
+         "tcp" : 1
+      },
+      "portmapper" : {
+         "name" : "sunrpc",
+         "port" : "111",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "postgres" : {
+         "name" : "postgresql",
+         "port" : "5432",
+         "tcp" : 1
+      },
+      "postgresql" : {
+         "name" : "postgresql",
+         "port" : "5432",
+         "tcp" : 1
+      },
+      "predict" : {
+         "name" : "predict",
+         "port" : "1210",
+         "udp" : 1
+      },
+      "printer" : {
+         "name" : "printer",
+         "port" : "515",
+         "tcp" : 1
+      },
+      "proofd" : {
+         "name" : "proofd",
+         "port" : "1093",
+         "tcp" : 1
+      },
+      "ptp-event" : {
+         "name" : "ptp-event",
+         "port" : "319",
+         "udp" : 1
+      },
+      "ptp-general" : {
+         "name" : "ptp-general",
+         "port" : "320",
+         "udp" : 1
+      },
+      "puppet" : {
+         "name" : "puppet",
+         "port" : "8140",
+         "tcp" : 1
+      },
+      "qmqp" : {
+         "name" : "qmqp",
+         "port" : "628",
+         "tcp" : 1
+      },
+      "qmtp" : {
+         "name" : "qmtp",
+         "port" : "209",
+         "tcp" : 1
+      },
+      "qotd" : {
+         "name" : "qotd",
+         "port" : "17",
+         "tcp" : 1
+      },
+      "quote" : {
+         "name" : "qotd",
+         "port" : "17",
+         "tcp" : 1
+      },
+      "radacct" : {
+         "name" : "radius-acct",
+         "port" : "1813",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "radius" : {
+         "name" : "radius",
+         "port" : "1812",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "radius-acct" : {
+         "name" : "radius-acct",
+         "port" : "1813",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "radmin-port" : {
+         "name" : "radmin-port",
+         "port" : "4899",
+         "tcp" : 1
+      },
+      "readnews" : {
+         "name" : "nntp",
+         "port" : "119",
+         "tcp" : 1
+      },
+      "redis" : {
+         "name" : "redis",
+         "port" : "6379",
+         "tcp" : 1
+      },
+      "remctl" : {
+         "name" : "remctl",
+         "port" : "4373",
+         "tcp" : 1
+      },
+      "ripd" : {
+         "name" : "ripd",
+         "port" : "2602",
+         "tcp" : 1
+      },
+      "ripngd" : {
+         "name" : "ripngd",
+         "port" : "2603",
+         "tcp" : 1
+      },
+      "rmiregistry" : {
+         "name" : "rmiregistry",
+         "port" : "1099",
+         "tcp" : 1
+      },
+      "rmtcfg" : {
+         "name" : "rmtcfg",
+         "port" : "1236",
+         "tcp" : 1
+      },
+      "rootd" : {
+         "name" : "rootd",
+         "port" : "1094",
+         "tcp" : 1
+      },
+      "route" : {
+         "name" : "route",
+         "port" : "520",
+         "udp" : 1
+      },
+      "routed" : {
+         "name" : "route",
+         "port" : "520",
+         "udp" : 1
+      },
+      "router" : {
+         "name" : "route",
+         "port" : "520",
+         "udp" : 1
+      },
+      "rpc2portmap" : {
+         "name" : "rpc2portmap",
+         "port" : "369",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "rplay" : {
+         "name" : "rplay",
+         "port" : "5555",
+         "udp" : 1
+      },
+      "rptp" : {
+         "name" : "freeciv",
+         "port" : "5556",
+         "tcp" : 1
+      },
+      "rsync" : {
+         "name" : "rsync",
+         "port" : "873",
+         "tcp" : 1
+      },
+      "rtcm-sc104" : {
+         "name" : "rtcm-sc104",
+         "port" : "2101",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "rtsp" : {
+         "name" : "rtsp",
+         "port" : "554",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "sa-msg-port" : {
+         "name" : "sa-msg-port",
+         "port" : "1646",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "saft" : {
+         "name" : "saft",
+         "port" : "487",
+         "tcp" : 1
+      },
+      "sane" : {
+         "name" : "sane-port",
+         "port" : "6566",
+         "tcp" : 1
+      },
+      "sane-port" : {
+         "name" : "sane-port",
+         "port" : "6566",
+         "tcp" : 1
+      },
+      "saned" : {
+         "name" : "sane-port",
+         "port" : "6566",
+         "tcp" : 1
+      },
+      "sge-execd" : {
+         "name" : "sge-execd",
+         "port" : "6445",
+         "tcp" : 1
+      },
+      "sge-qmaster" : {
+         "name" : "sge-qmaster",
+         "port" : "6444",
+         "tcp" : 1
+      },
+      "sge_execd" : {
+         "name" : "sge-execd",
+         "port" : "6445",
+         "tcp" : 1
+      },
+      "sge_qmaster" : {
+         "name" : "sge-qmaster",
+         "port" : "6444",
+         "tcp" : 1
+      },
+      "sgi-cad" : {
+         "name" : "sgi-cad",
+         "port" : "17004",
+         "tcp" : 1
+      },
+      "sgi-cmsd" : {
+         "name" : "sgi-cmsd",
+         "port" : "17001",
+         "udp" : 1
+      },
+      "sgi-crsd" : {
+         "name" : "sgi-crsd",
+         "port" : "17002",
+         "udp" : 1
+      },
+      "sgi-gcd" : {
+         "name" : "sgi-gcd",
+         "port" : "17003",
+         "udp" : 1
+      },
+      "shell" : {
+         "name" : "syslog",
+         "port" : "514",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "sieve" : {
+         "name" : "sieve",
+         "port" : "4190",
+         "tcp" : 1
+      },
+      "silc" : {
+         "name" : "silc",
+         "port" : "706",
+         "tcp" : 1
+      },
+      "sink" : {
+         "name" : "discard",
+         "port" : "9",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "sip" : {
+         "name" : "sip",
+         "port" : "5060",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "sip-tls" : {
+         "name" : "sip-tls",
+         "port" : "5061",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "skkserv" : {
+         "name" : "skkserv",
+         "port" : "1178",
+         "tcp" : 1
+      },
+      "smtp" : {
+         "name" : "smtp",
+         "port" : "25",
+         "tcp" : 1
+      },
+      "smtps" : {
+         "name" : "submissions",
+         "port" : "465",
+         "tcp" : 1
+      },
+      "smux" : {
+         "name" : "smux",
+         "port" : "199",
+         "tcp" : 1
+      },
+      "snmp" : {
+         "name" : "snmp",
+         "port" : "161",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "snmp-trap" : {
+         "name" : "snmp-trap",
+         "port" : "162",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "snmptrap" : {
+         "name" : "snmp-trap",
+         "port" : "162",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "snntp" : {
+         "name" : "nntps",
+         "port" : "563",
+         "tcp" : 1
+      },
+      "snpp" : {
+         "name" : "snpp",
+         "port" : "444",
+         "tcp" : 1
+      },
+      "socks" : {
+         "name" : "socks",
+         "port" : "1080",
+         "tcp" : 1
+      },
+      "source" : {
+         "name" : "chargen",
+         "port" : "19",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "spamd" : {
+         "name" : "spamd",
+         "port" : "783",
+         "tcp" : 1
+      },
+      "spooler" : {
+         "name" : "printer",
+         "port" : "515",
+         "tcp" : 1
+      },
+      "ssh" : {
+         "name" : "ssh",
+         "port" : "22",
+         "tcp" : 1
+      },
+      "ssmtp" : {
+         "name" : "submissions",
+         "port" : "465",
+         "tcp" : 1
+      },
+      "submission" : {
+         "name" : "submission",
+         "port" : "587",
+         "tcp" : 1
+      },
+      "submissions" : {
+         "name" : "submissions",
+         "port" : "465",
+         "tcp" : 1
+      },
+      "subversion" : {
+         "name" : "svn",
+         "port" : "3690",
+         "tcp" : 1
+      },
+      "sunrpc" : {
+         "name" : "sunrpc",
+         "port" : "111",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "supfiledbg" : {
+         "name" : "supfiledbg",
+         "port" : "1127",
+         "tcp" : 1
+      },
+      "supfilesrv" : {
+         "name" : "supfilesrv",
+         "port" : "871",
+         "tcp" : 1
+      },
+      "suucp" : {
+         "name" : "suucp",
+         "port" : "4031",
+         "tcp" : 1
+      },
+      "svn" : {
+         "name" : "svn",
+         "port" : "3690",
+         "tcp" : 1
+      },
+      "svrloc" : {
+         "name" : "svrloc",
+         "port" : "427",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "syslog" : {
+         "name" : "syslog",
+         "port" : "514",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "syslog-tls" : {
+         "name" : "syslog-tls",
+         "port" : "6514",
+         "tcp" : 1
+      },
+      "sysrqd" : {
+         "name" : "sysrqd",
+         "port" : "4094",
+         "tcp" : 1
+      },
+      "systat" : {
+         "name" : "systat",
+         "port" : "11",
+         "tcp" : 1
+      },
+      "tacacs" : {
+         "name" : "tacacs",
+         "port" : "49",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "talk" : {
+         "name" : "talk",
+         "port" : "517",
+         "udp" : 1
+      },
+      "tap" : {
+         "name" : "auth",
+         "port" : "113",
+         "tcp" : 1
+      },
+      "tcpmux" : {
+         "name" : "tcpmux",
+         "port" : "1",
+         "tcp" : 1
+      },
+      "telnet" : {
+         "name" : "telnet",
+         "port" : "23",
+         "tcp" : 1
+      },
+      "telnets" : {
+         "name" : "telnets",
+         "port" : "992",
+         "tcp" : 1
+      },
+      "tfido" : {
+         "name" : "tfido",
+         "port" : "60177",
+         "tcp" : 1
+      },
+      "tftp" : {
+         "name" : "tftp",
+         "port" : "69",
+         "udp" : 1
+      },
+      "time" : {
+         "name" : "time",
+         "port" : "37",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "timserver" : {
+         "name" : "time",
+         "port" : "37",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "tinc" : {
+         "name" : "tinc",
+         "port" : "655",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "tproxy" : {
+         "name" : "tproxy",
+         "port" : "8081",
+         "tcp" : 1
+      },
+      "tsap" : {
+         "name" : "iso-tsap",
+         "port" : "102",
+         "tcp" : 1
+      },
+      "ttytst" : {
+         "name" : "chargen",
+         "port" : "19",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "untp" : {
+         "name" : "nntp",
+         "port" : "119",
+         "tcp" : 1
+      },
+      "urd" : {
+         "name" : "submissions",
+         "port" : "465",
+         "tcp" : 1
+      },
+      "users" : {
+         "name" : "systat",
+         "port" : "11",
+         "tcp" : 1
+      },
+      "uucp" : {
+         "name" : "uucp",
+         "port" : "540",
+         "tcp" : 1
+      },
+      "uucpd" : {
+         "name" : "uucp",
+         "port" : "540",
+         "tcp" : 1
+      },
+      "venus" : {
+         "name" : "venus",
+         "port" : "2430",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "venus-se" : {
+         "name" : "venus-se",
+         "port" : "2431",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "wais" : {
+         "name" : "z3950",
+         "port" : "210",
+         "tcp" : 1
+      },
+      "webcache" : {
+         "name" : "http-alt",
+         "port" : "8080",
+         "tcp" : 1
+      },
+      "webmin" : {
+         "name" : "webmin",
+         "port" : "10000",
+         "tcp" : 1
+      },
+      "who" : {
+         "name" : "who",
+         "port" : "513",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "whod" : {
+         "name" : "who",
+         "port" : "513",
+         "tcp" : 1,
+         "udp" : 1
+      },
+      "whois" : {
+         "name" : "whois",
+         "port" : "43",
+         "tcp" : 1
+      },
+      "wnn6" : {
+         "name" : "wnn6",
+         "port" : "22273",
+         "tcp" : 1
+      },
+      "www" : {
+         "name" : "http",
+         "port" : "80",
+         "tcp" : 1
+      },
+      "x11" : {
+         "name" : "x11",
+         "port" : "6000",
+         "tcp" : 1
+      },
+      "x11-0" : {
+         "name" : "x11",
+         "port" : "6000",
+         "tcp" : 1
+      },
+      "x11-1" : {
+         "name" : "x11-1",
+         "port" : "6001",
+         "tcp" : 1
+      },
+      "x11-2" : {
+         "name" : "x11-2",
+         "port" : "6002",
+         "tcp" : 1
+      },
+      "x11-3" : {
+         "name" : "x11-3",
+         "port" : "6003",
+         "tcp" : 1
+      },
+      "x11-4" : {
+         "name" : "x11-4",
+         "port" : "6004",
+         "tcp" : 1
+      },
+      "x11-5" : {
+         "name" : "x11-5",
+         "port" : "6005",
+         "tcp" : 1
+      },
+      "x11-6" : {
+         "name" : "x11-6",
+         "port" : "6006",
+         "tcp" : 1
+      },
+      "x11-7" : {
+         "name" : "x11-7",
+         "port" : "6007",
+         "tcp" : 1
+      },
+      "xdmcp" : {
+         "name" : "xdmcp",
+         "port" : "177",
+         "udp" : 1
+      },
+      "xfs" : {
+         "name" : "font-service",
+         "port" : "7100",
+         "tcp" : 1
+      },
+      "xinetd" : {
+         "name" : "xinetd",
+         "port" : "9098",
+         "tcp" : 1
+      },
+      "xmms2" : {
+         "name" : "xmms2",
+         "port" : "9667",
+         "tcp" : 1
+      },
+      "xmpp-client" : {
+         "name" : "xmpp-client",
+         "port" : "5222",
+         "tcp" : 1
+      },
+      "xmpp-server" : {
+         "name" : "xmpp-server",
+         "port" : "5269",
+         "tcp" : 1
+      },
+      "xtel" : {
+         "name" : "xtel",
+         "port" : "1313",
+         "tcp" : 1
+      },
+      "xtelw" : {
+         "name" : "xtelw",
+         "port" : "1314",
+         "tcp" : 1
+      },
+      "z3950" : {
+         "name" : "z3950",
+         "port" : "210",
+         "tcp" : 1
+      },
+      "zabbix-agent" : {
+         "name" : "zabbix-agent",
+         "port" : "10050",
+         "tcp" : 1
+      },
+      "zabbix-trapper" : {
+         "name" : "zabbix-trapper",
+         "port" : "10051",
+         "tcp" : 1
+      },
+      "zebra" : {
+         "name" : "zebra",
+         "port" : "2601",
+         "tcp" : 1
+      },
+      "zebrasrv" : {
+         "name" : "zebrasrv",
+         "port" : "2600",
+         "tcp" : 1
+      },
+      "zephyr-clt" : {
+         "name" : "zephyr-clt",
+         "port" : "2103",
+         "udp" : 1
+      },
+      "zephyr-hm" : {
+         "name" : "zephyr-hm",
+         "port" : "2104",
+         "udp" : 1
+      },
+      "zephyr-srv" : {
+         "name" : "zephyr-srv",
+         "port" : "2102",
+         "udp" : 1
+      },
+      "zope" : {
+         "name" : "zope",
+         "port" : "9673",
+         "tcp" : 1
+      },
+      "zope-ftp" : {
+         "name" : "zope-ftp",
+         "port" : "8021",
+         "tcp" : 1
+      },
+      "zserv" : {
+         "name" : "zserv",
+         "port" : "346",
+         "tcp" : 1
+      }
+   }
+}

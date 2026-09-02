@@ -1,0 +1,342 @@
+{
+   "byid" : {
+      "0" : {
+         "name" : "hopopt"
+      },
+      "1" : {
+         "name" : "icmp"
+      },
+      "103" : {
+         "name" : "pim"
+      },
+      "108" : {
+         "name" : "ipcomp"
+      },
+      "112" : {
+         "name" : "vrrp"
+      },
+      "115" : {
+         "name" : "l2tp"
+      },
+      "12" : {
+         "name" : "pup"
+      },
+      "124" : {
+         "name" : "isis"
+      },
+      "132" : {
+         "name" : "sctp"
+      },
+      "133" : {
+         "name" : "fc"
+      },
+      "135" : {
+         "name" : "mobility-header"
+      },
+      "136" : {
+         "name" : "udplite"
+      },
+      "137" : {
+         "name" : "mpls-in-ip"
+      },
+      "138" : {
+         "name" : "manet"
+      },
+      "139" : {
+         "name" : "hip"
+      },
+      "140" : {
+         "name" : "shim6"
+      },
+      "141" : {
+         "name" : "wesp"
+      },
+      "142" : {
+         "name" : "rohc"
+      },
+      "143" : {
+         "name" : "ethernet"
+      },
+      "17" : {
+         "name" : "udp"
+      },
+      "2" : {
+         "name" : "igmp"
+      },
+      "20" : {
+         "name" : "hmp"
+      },
+      "22" : {
+         "name" : "xns-idp"
+      },
+      "27" : {
+         "name" : "rdp"
+      },
+      "29" : {
+         "name" : "iso-tp4"
+      },
+      "3" : {
+         "name" : "ggp"
+      },
+      "33" : {
+         "name" : "dccp"
+      },
+      "36" : {
+         "name" : "xtp"
+      },
+      "37" : {
+         "name" : "ddp"
+      },
+      "38" : {
+         "name" : "idpr-cmtp"
+      },
+      "4" : {
+         "name" : "ipencap"
+      },
+      "41" : {
+         "name" : "ipv6"
+      },
+      "43" : {
+         "name" : "ipv6-route"
+      },
+      "44" : {
+         "name" : "ipv6-frag"
+      },
+      "45" : {
+         "name" : "idrp"
+      },
+      "46" : {
+         "name" : "rsvp"
+      },
+      "47" : {
+         "name" : "gre"
+      },
+      "5" : {
+         "name" : "st"
+      },
+      "50" : {
+         "name" : "esp"
+      },
+      "51" : {
+         "name" : "ah"
+      },
+      "57" : {
+         "name" : "skip"
+      },
+      "58" : {
+         "name" : "ipv6-icmp"
+      },
+      "59" : {
+         "name" : "ipv6-nonxt"
+      },
+      "6" : {
+         "name" : "tcp"
+      },
+      "60" : {
+         "name" : "ipv6-opts"
+      },
+      "73" : {
+         "name" : "rspf"
+      },
+      "8" : {
+         "name" : "egp"
+      },
+      "81" : {
+         "name" : "vmtp"
+      },
+      "88" : {
+         "name" : "eigrp"
+      },
+      "89" : {
+         "name" : "ospf"
+      },
+      "9" : {
+         "name" : "igp"
+      },
+      "93" : {
+         "name" : "ax.25"
+      },
+      "94" : {
+         "name" : "ipip"
+      },
+      "97" : {
+         "name" : "etherip"
+      },
+      "98" : {
+         "name" : "encap"
+      }
+   },
+   "byname" : {
+      "ah" : {
+         "id" : "51"
+      },
+      "ax.25" : {
+         "id" : "93"
+      },
+      "dccp" : {
+         "id" : "33"
+      },
+      "ddp" : {
+         "id" : "37"
+      },
+      "egp" : {
+         "id" : "8"
+      },
+      "eigrp" : {
+         "id" : "88"
+      },
+      "encap" : {
+         "id" : "98"
+      },
+      "esp" : {
+         "id" : "50"
+      },
+      "etherip" : {
+         "id" : "97"
+      },
+      "ethernet" : {
+         "id" : "143"
+      },
+      "fc" : {
+         "id" : "133"
+      },
+      "ggp" : {
+         "id" : "3"
+      },
+      "gre" : {
+         "id" : "47"
+      },
+      "hip" : {
+         "id" : "139"
+      },
+      "hmp" : {
+         "id" : "20"
+      },
+      "hopopt" : {
+         "id" : "0"
+      },
+      "icmp" : {
+         "id" : "1"
+      },
+      "icmpv6" : {
+         "id" : "58"
+      },
+      "idpr-cmtp" : {
+         "id" : "38"
+      },
+      "idrp" : {
+         "id" : "45"
+      },
+      "igmp" : {
+         "id" : "2"
+      },
+      "igp" : {
+         "id" : "9"
+      },
+      "ip" : {
+         "id" : "0"
+      },
+      "ipcomp" : {
+         "id" : "108"
+      },
+      "ipencap" : {
+         "id" : "4"
+      },
+      "ipip" : {
+         "id" : "94"
+      },
+      "ipv6" : {
+         "id" : "41"
+      },
+      "ipv6-frag" : {
+         "id" : "44"
+      },
+      "ipv6-icmp" : {
+         "id" : "58"
+      },
+      "ipv6-nonxt" : {
+         "id" : "59"
+      },
+      "ipv6-opts" : {
+         "id" : "60"
+      },
+      "ipv6-route" : {
+         "id" : "43"
+      },
+      "isis" : {
+         "id" : "124"
+      },
+      "iso-tp4" : {
+         "id" : "29"
+      },
+      "l2tp" : {
+         "id" : "115"
+      },
+      "manet" : {
+         "id" : "138"
+      },
+      "mobility-header" : {
+         "id" : "135"
+      },
+      "mpls-in-ip" : {
+         "id" : "137"
+      },
+      "ospf" : {
+         "id" : "89"
+      },
+      "pim" : {
+         "id" : "103"
+      },
+      "pup" : {
+         "id" : "12"
+      },
+      "rdp" : {
+         "id" : "27"
+      },
+      "rohc" : {
+         "id" : "142"
+      },
+      "rspf" : {
+         "id" : "73"
+      },
+      "rsvp" : {
+         "id" : "46"
+      },
+      "sctp" : {
+         "id" : "132"
+      },
+      "shim6" : {
+         "id" : "140"
+      },
+      "skip" : {
+         "id" : "57"
+      },
+      "st" : {
+         "id" : "5"
+      },
+      "tcp" : {
+         "id" : "6"
+      },
+      "udp" : {
+         "id" : "17"
+      },
+      "udplite" : {
+         "id" : "136"
+      },
+      "vmtp" : {
+         "id" : "81"
+      },
+      "vrrp" : {
+         "id" : "112"
+      },
+      "wesp" : {
+         "id" : "141"
+      },
+      "xns-idp" : {
+         "id" : "22"
+      },
+      "xtp" : {
+         "id" : "36"
+      }
+   }
+}

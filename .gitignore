@@ -1,6 +1,6 @@
 /target
 /Cargo.lock
-proxmox-firewall-*/
+proxmox-firewall-[0-9]*/
 *.deb
 *.dsc
 *.tar*

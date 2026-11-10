@@ -7,7 +7,6 @@ use proxmox_log as log;
 
 use proxmox_nftables::command::{Add, Commands, Delete, Flush};
 use proxmox_nftables::expression::{Meta, Payload};
-use proxmox_nftables::helper::NfVec;
 use proxmox_nftables::statement::{
     AnonymousLimit, Log, LogLevel, Mangle, Match, Set, SetOperation,
 };
@@ -491,7 +490,7 @@ impl Firewall {
                     Statement::Set(Set {
                         op: SetOperation::Update,
                         elem: Expression::from(Payload::field("ip", "saddr")),
-                        stmt: Some(NfVec::one(rate_limit.clone())),
+                        stmt: Some(vec![rate_limit.clone()]),
                         set: "@v4-synflood-limit".to_string(),
                     }),
                     Statement::make_drop(),
@@ -504,7 +503,7 @@ impl Firewall {
                     Statement::Set(Set {
                         op: SetOperation::Update,
                         elem: Expression::from(Payload::field("ip6", "saddr")),
-                        stmt: Some(NfVec::one(rate_limit)),
+                        stmt: Some(vec![rate_limit]),
                         set: "@v6-synflood-limit".to_string(),
                     }),
                     Statement::make_drop(),

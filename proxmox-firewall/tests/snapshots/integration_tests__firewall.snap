@@ -3490,14 +3490,16 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                   }
                 },
                 "set": "@v4-synflood-limit",
-                "stmt": {
-                  "limit": {
-                    "rate": 400,
-                    "per": "second",
-                    "burst": 1337,
-                    "inv": true
+                "stmt": [
+                  {
+                    "limit": {
+                      "rate": 400,
+                      "per": "second",
+                      "burst": 1337,
+                      "inv": true
+                    }
                   }
-                }
+                ]
               }
             },
             {
@@ -3524,14 +3526,16 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
                   }
                 },
                 "set": "@v6-synflood-limit",
-                "stmt": {
-                  "limit": {
-                    "rate": 400,
-                    "per": "second",
-                    "burst": 1337,
-                    "inv": true
+                "stmt": [
+                  {
+                    "limit": {
+                      "rate": 400,
+                      "per": "second",
+                      "burst": 1337,
+                      "inv": true
+                    }
                   }
-                }
+                ]
               }
             },
             {

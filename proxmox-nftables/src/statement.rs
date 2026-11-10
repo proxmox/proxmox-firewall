@@ -408,5 +408,29 @@ pub struct Set {
     pub op: SetOperation,
     pub elem: Expression,
     pub set: String,
-    pub stmt: Option<NfVec<Statement>>,
+    // nftables only accepts a list here, even for a single statement
+    pub stmt: Option<Vec<Statement>>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::expression::Payload;
+
+    #[test]
+    fn set_statements_are_serialized_as_list() {
+        let mut set = Set {
+            op: SetOperation::Update,
+            elem: Expression::from(Payload::field("ip", "saddr")),
+            set: "@limit".to_string(),
+            stmt: Some(vec![Statement::make_drop()]),
+        };
+
+        let json = serde_json::to_value(&set).expect("serializable");
+        assert_eq!(json["stmt"], serde_json::json!([{ "drop": null }]));
+
+        set.stmt = None;
+        let json = serde_json::to_value(&set).expect("serializable");
+        assert_eq!(json["stmt"], serde_json::Value::Null);
+    }
 }

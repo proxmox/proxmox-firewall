@@ -24,6 +24,7 @@ use proxmox_nftables::NftClient;
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
 use proxmox_ve_config::sdn::{
+    VnetName,
     config::{RunningConfig, SdnConfig},
     ipam::{Ipam, IpamJson},
 };
@@ -94,6 +95,15 @@ fn fw_name(dir_entry: DirEntry) -> Option<String> {
         .to_str()?
         .strip_suffix(".fw")
         .map(str::to_string)
+}
+
+/// Parses the name of a bridge firewall configuration file.
+///
+/// The files belong to VNets, so their names have to be valid VNet names. Any other name, e.g. `*`,
+/// would end up in the names of chains and in interface matches of the ruleset.
+fn bridge_name_from_fw_name(name: &str) -> Result<BridgeName, Error> {
+    VnetName::new(name.to_string())?;
+    Ok(BridgeName::new(name.to_string())?)
 }
 
 const CLUSTER_CONFIG_PATH: &str = "/etc/pve/firewall/cluster.fw";
@@ -201,10 +211,17 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
 
         if let Some(files) = open_config_folder(BRIDGE_CONFIG_PATH)? {
             for file in files {
-                let bridge_name = fw_name(file?).map(BridgeName::new).transpose()?;
+                let Some(name) = fw_name(file?) else {
+                    continue;
+                };
 
-                if let Some(bridge_name) = bridge_name {
-                    bridges.push(bridge_name);
+                // an invalid file name persists until the file is removed, so it must not prevent
+                // generating the rules of all other bridges and guests, skip it instead
+                match bridge_name_from_fw_name(&name) {
+                    Ok(bridge_name) => bridges.push(bridge_name),
+                    Err(err) => log::error!(
+                        "invalid bridge name '{name}' in {BRIDGE_CONFIG_PATH}: {err} - skipping vnet rule generation"
+                    ),
                 }
             }
         }
@@ -536,6 +553,23 @@ impl FirewallConfig {
             RuleIpsetName::Legacy(legacy_ipset_name) => vmid
                 .and_then(|vmid| self.guest_ipset(legacy_ipset_name.as_ref(), vmid))
                 .or_else(|| self.cluster().ipset(legacy_ipset_name.as_ref())),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bridge_names_are_vnet_names() {
+        for name in ["vnet0", "vnet1234", "v"] {
+            let bridge_name = bridge_name_from_fw_name(name).expect(name);
+            assert_eq!(bridge_name.name(), name);
+        }
+
+        for name in ["", "*", "vnet-1", "1vnet", "vnet12345", "vnet0.1", "vnet 0"] {
+            assert!(bridge_name_from_fw_name(name).is_err(), "{name:?}");
         }
     }
 }

@@ -191,6 +191,21 @@ impl ToNftRules for Rule {
     }
 }
 
+/// The longest interface name the kernel allows, IFNAMSIZ without the terminating null byte.
+const MAX_IFACE_NAME_LEN: usize = 15;
+
+/// Checks that `name` can be the name of a network interface.
+///
+/// nftables rejects the whole ruleset if a rule matches on a longer interface name, so such a rule
+/// has to be skipped instead.
+fn check_iface_name(name: &str) -> Result<(), Error> {
+    if name.len() > MAX_IFACE_NAME_LEN {
+        bail!("interface name '{name}' is longer than {MAX_IFACE_NAME_LEN} bytes");
+    }
+
+    Ok(())
+}
+
 fn handle_iface(rules: &mut [NftRule], env: &NftRuleEnv, name: &str) -> Result<(), Error> {
     let iface_key = match (env.vmid, env.direction) {
         (Some(_), Direction::In) => "oifname",
@@ -201,6 +216,7 @@ fn handle_iface(rules: &mut [NftRule], env: &NftRuleEnv, name: &str) -> Result<(
     };
 
     let iface_name = env.iface_name(name)?;
+    check_iface_name(&iface_name)?;
 
     log::trace!("adding interface: {iface_name}");
 
@@ -776,5 +792,21 @@ impl ToNftRules for FwMacro {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn iface_names_fit_the_kernel_limit() {
+        for name in ["eth0", "vmbr0.100", "enp1s0f0np0", "abcdefghijklmno"] {
+            check_iface_name(name).expect(name);
+        }
+
+        for name in ["abcdefghijklmnop", "enx0123456789abcd", "wireguard_tunnel0"] {
+            assert!(check_iface_name(name).is_err(), "{name}");
+        }
     }
 }

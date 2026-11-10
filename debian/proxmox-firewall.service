@@ -6,6 +6,8 @@ After=pvefw-logger.service pve-cluster.service network.target systemd-modules-lo
 [Service]
 ExecStart=/usr/libexec/proxmox/proxmox-firewall start
 Type=simple
+Restart=always
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target

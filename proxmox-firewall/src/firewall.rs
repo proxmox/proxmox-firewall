@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-use anyhow::{Error, bail};
+use anyhow::{Context, Error, bail};
 
 use proxmox_log as log;
 
@@ -211,7 +211,14 @@ impl Firewall {
         } else {
             log::trace!("using network configuration for determining management ips");
 
-            for management_ip in HostConfig::management_ips()? {
+            // Without the management IPs, the generated ruleset could lock out the administrator,
+            // so fail instead and keep the previously applied ruleset.
+            let management_ips = HostConfig::management_ips().context(
+                "unable to determine the management IPs - not updating the ruleset, define the \
+                 local_network alias in the datacenter firewall configuration to skip this lookup",
+            )?;
+
+            for management_ip in management_ips {
                 management_ipset.push(IpsetEntry::from(management_ip));
             }
         }

@@ -10,11 +10,34 @@ use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap, GuestType};
 use proxmox_ve_config::host::types::BridgeName;
 
-struct MockFirewallConfigLoader {}
+/// The SDN running configuration returned by [`MockFirewallConfigLoader`].
+enum MockSdnConfig {
+    Valid,
+    Invalid,
+    InvalidIpam,
+    ReadError,
+}
+
+/// A reader that fails like a configuration file whose content cannot be read.
+struct FailingReader;
+
+impl std::io::Read for FailingReader {
+    fn read(&mut self, _buf: &mut [u8]) -> std::io::Result<usize> {
+        Err(std::io::Error::other("read error"))
+    }
+}
+
+struct MockFirewallConfigLoader {
+    sdn_config: MockSdnConfig,
+}
 
 impl MockFirewallConfigLoader {
     pub fn new() -> Self {
-        Self {}
+        Self::with_sdn_config(MockSdnConfig::Valid)
+    }
+
+    pub fn with_sdn_config(sdn_config: MockSdnConfig) -> Self {
+        Self { sdn_config }
     }
 }
 
@@ -73,13 +96,20 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
     }
 
     fn sdn_running_config(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
-        Ok(Some(Box::new(
-            include_str!("input/.running-config.json").as_bytes(),
-        )))
+        Ok(Some(match self.sdn_config {
+            MockSdnConfig::Valid | MockSdnConfig::InvalidIpam => {
+                Box::new(include_str!("input/.running-config.json").as_bytes())
+            }
+            MockSdnConfig::Invalid => Box::new("{ invalid".as_bytes()),
+            MockSdnConfig::ReadError => Box::new(std::io::BufReader::new(FailingReader)),
+        }))
     }
 
     fn ipam(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
-        Ok(Some(Box::new(include_str!("input/ipam.db").as_bytes())))
+        Ok(Some(match self.sdn_config {
+            MockSdnConfig::InvalidIpam => Box::new("{ invalid".as_bytes()),
+            _ => Box::new(include_str!("input/ipam.db").as_bytes()),
+        }))
     }
 
     fn bridge_list(&self) -> Result<Vec<BridgeName>, Error> {
@@ -125,4 +155,45 @@ fn test_firewall() {
     let firewall = Firewall::new(firewall_config);
 
     insta::assert_json_snapshot!(firewall.full_host_fw().expect("firewall can be generated"));
+}
+
+#[test]
+fn test_invalid_sdn_config_is_ignored() {
+    let loader = MockFirewallConfigLoader::with_sdn_config(MockSdnConfig::Invalid);
+
+    let firewall_config = FirewallConfig::new(&loader, &MockNftConfigLoader::new())
+        .expect("an invalid SDN configuration does not fail the update");
+
+    assert!(firewall_config.sdn().is_none());
+    assert!(firewall_config.ipam().is_some());
+
+    let commands = Firewall::new(firewall_config)
+        .full_host_fw()
+        .expect("firewall can be generated without the SDN configuration");
+
+    // rules referencing the ipsets of the IPAM state are still generated
+    let commands = serde_json::to_string(&commands).expect("commands can be serialized");
+    assert!(commands.contains("\"@v4-sdn/guest-ipam-101\""));
+}
+
+#[test]
+fn test_invalid_ipam_is_ignored() {
+    let loader = MockFirewallConfigLoader::with_sdn_config(MockSdnConfig::InvalidIpam);
+
+    let firewall_config = FirewallConfig::new(&loader, &MockNftConfigLoader::new())
+        .expect("an invalid IPAM state does not fail the update");
+
+    assert!(firewall_config.sdn().is_some());
+    assert!(firewall_config.ipam().is_none());
+
+    Firewall::new(firewall_config)
+        .full_host_fw()
+        .expect("firewall can be generated without the IPAM state");
+}
+
+#[test]
+fn test_sdn_read_error_fails() {
+    let loader = MockFirewallConfigLoader::with_sdn_config(MockSdnConfig::ReadError);
+
+    assert!(FirewallConfig::new(&loader, &MockNftConfigLoader::new()).is_err());
 }

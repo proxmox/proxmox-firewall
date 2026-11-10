@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::default::Default;
 use std::fs::{self, DirEntry, File, ReadDir};
-use std::io::{self, BufReader};
+use std::io::{self, BufReader, Read};
 
 use anyhow::{Context, Error, bail, format_err};
 
@@ -104,6 +104,19 @@ fn fw_name(dir_entry: DirEntry) -> Option<String> {
 fn bridge_name_from_fw_name(name: &str) -> Result<BridgeName, Error> {
     VnetName::new(name.to_string())?;
     Ok(BridgeName::new(name.to_string())?)
+}
+
+/// Reads the whole content of a configuration file.
+///
+/// Reading the content before parsing it separates read errors, which are most likely transient,
+/// from errors in the content.
+fn read_config(data: Option<Box<dyn io::BufRead>>) -> Result<Option<Vec<u8>>, io::Error> {
+    data.map(|mut data| {
+        let mut content = Vec::new();
+        data.read_to_end(&mut content)?;
+        Ok(content)
+    })
+    .transpose()
 }
 
 const CLUSTER_CONFIG_PATH: &str = "/etc/pve/firewall/cluster.fw";
@@ -372,13 +385,13 @@ impl FirewallConfig {
         Ok(guests)
     }
 
-    pub fn parse_sdn(
-        firewall_loader: &dyn FirewallConfigLoader,
-    ) -> Result<Option<FirewallSdnConfig>, Error> {
-        Ok(match firewall_loader.sdn_running_config()? {
+    pub fn parse_sdn(data: Option<&[u8]>) -> Result<Option<FirewallSdnConfig>, Error> {
+        Ok(match data {
             Some(data) => {
-                let running_config: RunningConfig = serde_json::from_reader(data)?;
-                let config = SdnConfig::try_from(running_config)?;
+                let running_config: RunningConfig = serde_json::from_slice(data)
+                    .context("failed to parse the SDN running configuration")?;
+                let config = SdnConfig::try_from(running_config)
+                    .context("invalid SDN running configuration")?;
 
                 let ipsets = config
                     .ipsets(None)
@@ -394,13 +407,12 @@ impl FirewallConfig {
         })
     }
 
-    pub fn parse_ipam(
-        firewall_loader: &dyn FirewallConfigLoader,
-    ) -> Result<Option<FirewallIpamConfig>, Error> {
-        Ok(match firewall_loader.ipam()? {
+    pub fn parse_ipam(data: Option<&[u8]>) -> Result<Option<FirewallIpamConfig>, Error> {
+        Ok(match data {
             Some(data) => {
-                let raw_ipam: IpamJson = serde_json::from_reader(data)?;
-                let ipam = Ipam::try_from(raw_ipam)?;
+                let raw_ipam: IpamJson =
+                    serde_json::from_slice(data).context("failed to parse the IPAM state")?;
+                let ipam = Ipam::try_from(raw_ipam).context("invalid IPAM state")?;
 
                 let ipsets = ipam
                     .ipsets(None)
@@ -450,17 +462,56 @@ impl FirewallConfig {
         Ok(bridge_config)
     }
 
+    /// Loads the SDN running configuration and the IPAM state, which provide the SDN ipsets.
+    ///
+    /// Read errors are most likely transient, so they fail the update, as for all other
+    /// configuration files, which keeps the previous ruleset. If a file cannot be parsed, it is
+    /// treated as if it did not exist, so that it does not prevent generating the rest of the
+    /// ruleset. Rules referencing the ipsets of that file cannot be generated in that case.
+    fn parse_sdn_and_ipam(
+        firewall_loader: &dyn FirewallConfigLoader,
+    ) -> Result<(Option<FirewallSdnConfig>, Option<FirewallIpamConfig>), Error> {
+        let sdn_data = read_config(firewall_loader.sdn_running_config()?)
+            .context("failed to read the SDN running configuration")?;
+        let ipam_data =
+            read_config(firewall_loader.ipam()?).context("failed to read the IPAM state")?;
+
+        let sdn_config = Self::parse_sdn(sdn_data.as_deref()).unwrap_or_else(|err| {
+            log::error!(
+                "{err:#} - generating the ruleset without its ipsets, rules referencing them will \
+                 be skipped"
+            );
+            None
+        });
+
+        let ipam_config = Self::parse_ipam(ipam_data.as_deref()).unwrap_or_else(|err| {
+            log::error!(
+                "{err:#} - generating the ruleset without its ipsets, rules referencing them will \
+                 be skipped"
+            );
+            None
+        });
+
+        Ok((sdn_config, ipam_config))
+    }
+
     pub fn new(
         firewall_loader: &dyn FirewallConfigLoader,
         nft_loader: &dyn NftConfigLoader,
     ) -> Result<Self, Error> {
+        let cluster_config = Self::parse_cluster(firewall_loader)?;
+        let host_config = Self::parse_host(firewall_loader)?;
+        let guest_config = Self::parse_guests(firewall_loader)?;
+        let bridge_config = Self::parse_bridges(firewall_loader)?;
+        let (sdn_config, ipam_config) = Self::parse_sdn_and_ipam(firewall_loader)?;
+
         Ok(Self {
-            cluster_config: Self::parse_cluster(firewall_loader)?,
-            host_config: Self::parse_host(firewall_loader)?,
-            guest_config: Self::parse_guests(firewall_loader)?,
-            bridge_config: Self::parse_bridges(firewall_loader)?,
-            sdn_config: Self::parse_sdn(firewall_loader)?,
-            ipam_config: Self::parse_ipam(firewall_loader)?,
+            cluster_config,
+            host_config,
+            guest_config,
+            bridge_config,
+            sdn_config,
+            ipam_config,
             nft_config: Self::parse_nft(nft_loader)?,
             interface_mapping: firewall_loader.interface_mapping()?,
         })

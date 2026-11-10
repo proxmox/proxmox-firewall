@@ -30,6 +30,11 @@ use proxmox_ve_config::sdn::{
 };
 
 pub trait FirewallConfigLoader {
+    /// Checks that the configuration files are available.
+    ///
+    /// Missing configuration files are treated as not configured, so loading the configuration
+    /// must fail if they are missing only because the underlying file system is not available.
+    fn check_mounted(&self) -> Result<(), Error>;
     fn cluster(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn host(&self) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn guest_list(&self) -> Result<GuestMap, Error>;
@@ -126,8 +131,21 @@ const BRIDGE_CONFIG_PATH: &str = "/etc/pve/sdn/firewall";
 const SDN_RUNNING_CONFIG_PATH: &str = "/etc/pve/sdn/.running-config";
 const SDN_IPAM_PATH: &str = "/etc/pve/sdn/pve-ipam-state.json";
 const SDN_IPAM_PATH_LEGACY: &str = "/etc/pve/priv/ipam.db"; // TODO: remove with PVE 9+
+const PMXCFS_LOCAL_NODE_PATH: &str = "/etc/pve/local";
 
 impl FirewallConfigLoader for PveFirewallConfigLoader {
+    fn check_mounted(&self) -> Result<(), Error> {
+        // pmxcfs provides a symlink to the directory of the local node whenever it is mounted,
+        // independent of quorum, like PVE::Cluster::check_cfs_is_mounted checks
+        match fs::symlink_metadata(PMXCFS_LOCAL_NODE_PATH) {
+            Ok(metadata) if metadata.file_type().is_symlink() => Ok(()),
+            Ok(_) => bail!("pmxcfs is not mounted, {PMXCFS_LOCAL_NODE_PATH} is not a symlink"),
+            Err(err) => Err(anyhow::Error::new(err).context(format!(
+                "pmxcfs is not mounted, cannot access {PMXCFS_LOCAL_NODE_PATH}"
+            ))),
+        }
+    }
+
     fn cluster(&self) -> Result<Option<Box<dyn io::BufRead>>, Error> {
         log::info!("loading cluster config");
 
@@ -499,11 +517,19 @@ impl FirewallConfig {
         firewall_loader: &dyn FirewallConfigLoader,
         nft_loader: &dyn NftConfigLoader,
     ) -> Result<Self, Error> {
+        // Without pmxcfs, all configuration files appear to be missing, so the default datacenter
+        // configuration would disable the firewall. Check after reading the configuration as well,
+        // since pmxcfs could have been unmounted in between, which would make the remaining files
+        // appear to be missing.
+        firewall_loader.check_mounted()?;
+
         let cluster_config = Self::parse_cluster(firewall_loader)?;
         let host_config = Self::parse_host(firewall_loader)?;
         let guest_config = Self::parse_guests(firewall_loader)?;
         let bridge_config = Self::parse_bridges(firewall_loader)?;
         let (sdn_config, ipam_config) = Self::parse_sdn_and_ipam(firewall_loader)?;
+
+        firewall_loader.check_mounted()?;
 
         Ok(Self {
             cluster_config,

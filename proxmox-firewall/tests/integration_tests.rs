@@ -28,6 +28,7 @@ impl std::io::Read for FailingReader {
 }
 
 struct MockFirewallConfigLoader {
+    mounted: bool,
     sdn_config: MockSdnConfig,
 }
 
@@ -37,11 +38,22 @@ impl MockFirewallConfigLoader {
     }
 
     pub fn with_sdn_config(sdn_config: MockSdnConfig) -> Self {
-        Self { sdn_config }
+        Self {
+            mounted: true,
+            sdn_config,
+        }
     }
 }
 
 impl FirewallConfigLoader for MockFirewallConfigLoader {
+    fn check_mounted(&self) -> Result<(), Error> {
+        if !self.mounted {
+            anyhow::bail!("not mounted");
+        }
+
+        Ok(())
+    }
+
     fn cluster(&self) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         Ok(Some(Box::new(include_str!("input/cluster.fw").as_bytes())))
     }
@@ -194,6 +206,16 @@ fn test_invalid_ipam_is_ignored() {
 #[test]
 fn test_sdn_read_error_fails() {
     let loader = MockFirewallConfigLoader::with_sdn_config(MockSdnConfig::ReadError);
+
+    assert!(FirewallConfig::new(&loader, &MockNftConfigLoader::new()).is_err());
+}
+
+#[test]
+fn test_unmounted_config_fails() {
+    let loader = MockFirewallConfigLoader {
+        mounted: false,
+        ..MockFirewallConfigLoader::new()
+    };
 
     assert!(FirewallConfig::new(&loader, &MockNftConfigLoader::new()).is_err());
 }

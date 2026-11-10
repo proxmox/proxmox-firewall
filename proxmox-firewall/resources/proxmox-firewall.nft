@@ -138,7 +138,6 @@ table inet proxmox-firewall {
     chain block-synflood {
         tcp flags & (fin|syn|rst|ack) != syn return
         jump ratelimit-synflood
-        drop
     }
 
     chain log-invalid-tcp {}

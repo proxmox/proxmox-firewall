@@ -498,6 +498,26 @@ fn handle_ipfilter(
     Ok(())
 }
 
+/// Removes the rules that are restricted to another address family than `family`.
+///
+/// A match on an address of `family` can never match in such a rule, e.g. in the ICMPv6 rule of
+/// the macro Ping if the source is an IPv4 address. Fails if no rule is left, e.g. for an IPv4 source
+/// and an IPv6 destination, so that the config rule is skipped with a warning that names it.
+fn check_family(rules: &mut Vec<NftRule>, family: Family) -> Result<(), Error> {
+    let count = rules.len();
+
+    rules.retain(|rule| {
+        rule.family()
+            .is_none_or(|rule_family| rule_family == family)
+    });
+
+    if count > 0 && rules.is_empty() {
+        bail!("it mixes IPv4 and IPv6 matches and can never match");
+    }
+
+    Ok(())
+}
+
 fn handle_match(
     rules: &mut Vec<NftRule>,
     ip: &IpAddrMatch,
@@ -515,18 +535,11 @@ fn handle_match(
                 Family::V6 => Payload::field("ip6", field_name),
             };
 
-            for rule in rules {
-                match rule.family() {
-                    None => {
-                        rule.push(Match::new_eq(field.clone(), Expression::from(list)).into());
+            check_family(rules, list.family())?;
 
-                        rule.set_family(list.family());
-                    }
-                    Some(rule_family) if rule_family == list.family() => {
-                        rule.push(Match::new_eq(field.clone(), Expression::from(list)).into());
-                    }
-                    _ => (),
-                };
+            for rule in rules {
+                rule.push(Match::new_eq(field.clone(), Expression::from(list)).into());
+                rule.set_family(list.family());
             }
 
             Ok(())
@@ -545,30 +558,17 @@ fn handle_match(
                 Family::V6 => Payload::field("ip6", field_name),
             };
 
-            for rule in rules {
-                match rule.family() {
-                    None => {
-                        rule.push(
-                            Match::new_eq(
-                                field.clone(),
-                                Expression::from(Prefix::from(alias.address())),
-                            )
-                            .into(),
-                        );
+            check_family(rules, alias.address().family())?;
 
-                        rule.set_family(alias.address().family());
-                    }
-                    Some(rule_family) if rule_family == alias.address().family() => {
-                        rule.push(
-                            Match::new_eq(
-                                field.clone(),
-                                Expression::from(Prefix::from(alias.address())),
-                            )
-                            .into(),
-                        );
-                    }
-                    _ => (),
-                }
+            for rule in rules {
+                rule.push(
+                    Match::new_eq(
+                        field.clone(),
+                        Expression::from(Prefix::from(alias.address())),
+                    )
+                    .into(),
+                );
+                rule.set_family(alias.address().family());
             }
 
             Ok(())

@@ -4008,6 +4008,49 @@ expression: "firewall.full_host_fw().expect(\"firewall can be generated\")"
               "match": {
                 "op": "==",
                 "left": {
+                  "payload": {
+                    "protocol": "icmp",
+                    "field": "type"
+                  }
+                },
+                "right": "echo-request"
+              }
+            },
+            {
+              "match": {
+                "op": "==",
+                "left": {
+                  "payload": {
+                    "protocol": "ip",
+                    "field": "saddr"
+                  }
+                },
+                "right": {
+                  "prefix": {
+                    "addr": "192.0.2.1",
+                    "len": 32
+                  }
+                }
+              }
+            },
+            {
+              "accept": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "add": {
+        "rule": {
+          "family": "inet",
+          "table": "proxmox-firewall",
+          "chain": "host-in",
+          "expr": [
+            {
+              "match": {
+                "op": "==",
+                "left": {
                   "meta": {
                     "key": "l4proto"
                   }

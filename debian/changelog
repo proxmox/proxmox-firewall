@@ -1,3 +1,56 @@
+proxmox-firewall (1.2.5) trixie; urgency=medium
+
+  * update to proxmox-ve-config 0.12, so that the following no longer make
+    updating the firewall rules fail on a node:
+    - a guest with a net31 network device, or with a line starting with
+      'net' that is not a valid network device key.
+    - a rule using the ICMPv6 type 'reject-route'.
+    - IPAM entries without a MAC address, and SDN zone or DHCP types it does
+      not know, like the faucet zone.
+    - a SYN flood rate or burst of 0, for which the defaults are used now.
+    Also, IPAM entries with a numeric VMID are now attributed to their guest,
+    and failing to determine the management IPs no longer makes the daemon
+    panic, with the error now pointing to the local_network alias, which
+    avoids this lookup.
+
+  * SYN flood protection: fix the generated rate limit, which made nftables
+    reject the whole ruleset, and only drop new TCP connections exceeding the
+    limit, instead of all new TCP connections to the host.
+
+  * fix rules that use a macro with both an IPv4 and an IPv6 variant, like
+    Ping, together with a source or destination address. The variant of the
+    other address family was generated without the address, so for example
+    'IN Ping(ACCEPT) -source 192.0.2.1' also accepted ICMPv6 echo requests
+    from any source. Rules whose matches can never apply to the same address
+    family are now skipped with a warning.
+
+  * service: restart the daemon if it exits unexpectedly, e.g. after a panic,
+    instead of keeping the last applied rules without applying any changes.
+
+  * skip VNet firewall configuration files whose name is not a valid VNet
+    name with an error, instead of failing the whole update. A file named
+    '*.fw', for example, generated an invalid wildcard entry for the bridge
+    maps.
+
+  * if the SDN running configuration or the IPAM state cannot be parsed, log
+    an error and generate the rules without its ipsets, skipping the rules
+    referencing them. Before, no changes were applied at all, and no rules
+    after a graceful restart of the service or a reboot. Rules referencing
+    IPAM ipsets no longer depend on the SDN running configuration.
+
+  * fail the update and keep the previously applied rules if the cluster
+    file system (pmxcfs) is not mounted before or after reading the
+    configuration. Without it, all configuration files appear to be missing,
+    which could disable the firewall or generate rules without the
+    configuration of guests and VNets.
+
+  * skip host and datacenter rules with an interface name longer than 15
+    bytes with a warning, instead of failing the whole update. nftables
+    rejects such names, and such an interface cannot exist on the node, for
+    example an altname that only exists on other nodes.
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 11 Nov 2026 01:28:12 +0100
+
 proxmox-firewall (1.2.4) trixie; urgency=medium
 
   * fix #7584: update to proxmox-ve-config 0.11, which recognizes all

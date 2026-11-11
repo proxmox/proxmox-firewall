@@ -542,8 +542,8 @@ impl FirewallConfig {
         match name {
             RuleIpsetName::Scoped(ipset_name) => match ipset_name.scope() {
                 IpsetScope::Sdn => self
-                    .sdn()?
-                    .ipset(ipset_name.name())
+                    .sdn()
+                    .and_then(|sdn| sdn.ipset(ipset_name.name()))
                     .or_else(|| self.ipam()?.ipset(ipset_name.name())),
                 IpsetScope::Datacenter => self.cluster().ipset(ipset_name.name()),
                 IpsetScope::Guest => {

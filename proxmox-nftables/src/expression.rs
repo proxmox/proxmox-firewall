@@ -293,6 +293,22 @@ pub struct Map {
     data: Expression,
 }
 
+impl Map {
+    pub fn new(key: impl Into<Expression>, data: impl Into<Expression>) -> Self {
+        Self {
+            key: key.into(),
+            data: data.into(),
+        }
+    }
+}
+
+impl From<Map> for Expression {
+    #[inline]
+    fn from(map: Map) -> Self {
+        Expression::Map(Box::new(map))
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ct {
     key: String,

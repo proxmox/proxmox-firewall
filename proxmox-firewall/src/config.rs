@@ -26,6 +26,7 @@ use proxmox_nftables::types::ListChain;
 use proxmox_ve_config::sdn::{
     VnetName,
     config::{RunningConfig, SdnConfig},
+    conntrack::VrfCtZone,
     ipam::{Ipam, IpamJson},
 };
 
@@ -319,6 +320,13 @@ impl FirewallSdnConfig {
         &self.config
     }
 
+    /// The vnets of zones with a dedicated VRF, together with the conntrack zone of the VRF.
+    pub fn vnet_ct_zones(&self) -> impl Iterator<Item = (&VnetName, VrfCtZone)> + '_ {
+        self.config
+            .vnets()
+            .filter_map(|(zone, vnet)| Some((vnet.name(), zone.ct_zone()?)))
+    }
+
     pub fn ipsets(&self) -> &BTreeMap<String, Ipset> {
         &self.ipsets
     }
@@ -352,6 +360,7 @@ pub struct FirewallConfig {
     sdn_config: Option<FirewallSdnConfig>,
     ipam_config: Option<FirewallIpamConfig>,
     interface_mapping: AltnameMapping,
+    sdn_invalid: bool,
 }
 
 impl FirewallConfig {
@@ -491,17 +500,19 @@ impl FirewallConfig {
     /// ruleset. Rules referencing the ipsets of that file cannot be generated in that case.
     fn parse_sdn_and_ipam(
         firewall_loader: &dyn FirewallConfigLoader,
-    ) -> Result<(Option<FirewallSdnConfig>, Option<FirewallIpamConfig>), Error> {
+    ) -> Result<(Option<FirewallSdnConfig>, Option<FirewallIpamConfig>, bool), Error> {
         let sdn_data = read_config(firewall_loader.sdn_running_config()?)
             .context("failed to read the SDN running configuration")?;
         let ipam_data =
             read_config(firewall_loader.ipam()?).context("failed to read the IPAM state")?;
 
+        let mut sdn_invalid = false;
         let sdn_config = Self::parse_sdn(sdn_data.as_deref()).unwrap_or_else(|err| {
             log::error!(
                 "{err:#} - generating the ruleset without its ipsets, rules referencing them will \
-                 be skipped"
+                 be skipped, the conntrack zone map of zone VRFs is left unchanged"
             );
+            sdn_invalid = true;
             None
         });
 
@@ -513,7 +524,7 @@ impl FirewallConfig {
             None
         });
 
-        Ok((sdn_config, ipam_config))
+        Ok((sdn_config, ipam_config, sdn_invalid))
     }
 
     pub fn new(
@@ -530,7 +541,7 @@ impl FirewallConfig {
         let host_config = Self::parse_host(firewall_loader)?;
         let guest_config = Self::parse_guests(firewall_loader)?;
         let bridge_config = Self::parse_bridges(firewall_loader)?;
-        let (sdn_config, ipam_config) = Self::parse_sdn_and_ipam(firewall_loader)?;
+        let (sdn_config, ipam_config, sdn_invalid) = Self::parse_sdn_and_ipam(firewall_loader)?;
 
         firewall_loader.check_mounted()?;
 
@@ -543,6 +554,7 @@ impl FirewallConfig {
             ipam_config,
             nft_config: Self::parse_nft(nft_loader)?,
             interface_mapping: firewall_loader.interface_mapping()?,
+            sdn_invalid,
         })
     }
 
@@ -568,6 +580,11 @@ impl FirewallConfig {
 
     pub fn sdn(&self) -> Option<&FirewallSdnConfig> {
         self.sdn_config.as_ref()
+    }
+
+    /// Whether the SDN running configuration exists but could not be parsed.
+    pub fn sdn_invalid(&self) -> bool {
+        self.sdn_invalid
     }
 
     pub fn ipam(&self) -> Option<&FirewallIpamConfig> {

@@ -61,7 +61,7 @@ fn handle_firewall() -> Result<(), Error> {
     }
 
     log::info!("creating the firewall skeleton");
-    NftClient::run_commands(RULE_BASE)?;
+    NftClient::run_commands(&skeleton(&firewall))?;
 
     let commands = firewall.full_host_fw()?;
 
@@ -170,6 +170,14 @@ impl std::str::FromStr for Command {
     }
 }
 
+/// The base ruleset, including the conntrack zones of vnets in a zone VRF.
+///
+/// Creating the guest table makes bridge conntrack track guest traffic, so its conntrack zone map
+/// needs to be filled in the same transaction.
+fn skeleton(firewall: &Firewall) -> String {
+    format!("{RULE_BASE}\n{}", firewall.sdn_ct_zone_commands())
+}
+
 fn run_command(command: Command, args: &mut Arguments) -> Result<(), Error> {
     init_logger(command)?;
 
@@ -183,9 +191,13 @@ fn run_command(command: Command, args: &mut Arguments) -> Result<(), Error> {
 
             println!("{json}");
         }
-        Command::Skeleton => {
-            println!("{}", RULE_BASE);
-        }
+        Command::Skeleton => match create_firewall_instance() {
+            Ok(firewall) => println!("{}", skeleton(&firewall)),
+            Err(err) => {
+                log::warn!("printing the skeleton without SDN conntrack zones - {err:#}");
+                println!("{RULE_BASE}");
+            }
+        },
         Command::Start => run_firewall()?,
         Command::Localnet => {
             let management_ips = HostConfig::management_ips()?;

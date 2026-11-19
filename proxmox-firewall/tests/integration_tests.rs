@@ -170,6 +170,21 @@ fn test_firewall() {
 }
 
 #[test]
+fn test_sdn_ct_zone_commands() {
+    let firewall_config = FirewallConfig::new(
+        &MockFirewallConfigLoader::new(),
+        &MockNftConfigLoader::new(),
+    )
+    .expect("valid mock configuration");
+
+    assert_eq!(
+        Firewall::new(firewall_config).sdn_ct_zone_commands(),
+        "flush map bridge proxmox-firewall-guests sdn-ct-zones\n\
+         add element bridge proxmox-firewall-guests sdn-ct-zones { \"public\" : 16384 }\n",
+    );
+}
+
+#[test]
 fn test_invalid_sdn_config_is_ignored() {
     let loader = MockFirewallConfigLoader::with_sdn_config(MockSdnConfig::Invalid);
 
@@ -179,7 +194,12 @@ fn test_invalid_sdn_config_is_ignored() {
     assert!(firewall_config.sdn().is_none());
     assert!(firewall_config.ipam().is_some());
 
-    let commands = Firewall::new(firewall_config)
+    let firewall = Firewall::new(firewall_config);
+
+    // the conntrack zones are unknown, so the current ones are kept
+    assert_eq!(firewall.sdn_ct_zone_commands(), "");
+
+    let commands = firewall
         .full_host_fw()
         .expect("firewall can be generated without the SDN configuration");
 

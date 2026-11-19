@@ -44,6 +44,7 @@ add chain bridge proxmox-firewall-guests pre-vm-in
 add chain bridge proxmox-firewall-guests vm-in {type filter hook postrouting priority 0; policy accept;}
 add chain bridge proxmox-firewall-guests before-bridge
 add chain bridge proxmox-firewall-guests forward {type filter hook forward priority 0; policy accept;}
+add chain bridge proxmox-firewall-guests sdn-ct-zone {type filter hook prerouting priority -310; policy accept;}
 
 flush chain inet proxmox-firewall do-reject
 flush chain inet proxmox-firewall accept-management
@@ -84,6 +85,7 @@ flush chain bridge proxmox-firewall-guests pre-vm-in
 flush chain bridge proxmox-firewall-guests vm-in
 flush chain bridge proxmox-firewall-guests before-bridge
 flush chain bridge proxmox-firewall-guests forward
+flush chain bridge proxmox-firewall-guests sdn-ct-zone
 
 table inet proxmox-firewall {
     chain do-reject {
@@ -294,6 +296,17 @@ table bridge proxmox-firewall-guests {
 
     map vm-map-out {
         typeof iifname : verdict
+    }
+
+    map sdn-ct-zones {
+        typeof meta ibrname : ct zone
+    }
+
+    # Bridge conntrack tracks the connections of the guests, and routed packets keep the entry in
+    # the inet hooks, so the conntrack zone of their VRF has to be set before it (priority -200).
+    chain sdn-ct-zone {
+        type filter hook prerouting priority -310; policy accept;
+        ct zone set meta ibrname map @sdn-ct-zones
     }
 
     chain allow-dhcp-in {

@@ -35,7 +35,9 @@
       "test": {
         "dhcp": "dnsmasq",
         "ipam": "pve",
-        "type": "simple"
+        "type": "simple",
+        "dedicated-vrf": 1,
+        "ct-zone": 16384
       }
     }
   },

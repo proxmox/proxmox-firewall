@@ -240,6 +240,9 @@ table inet proxmox-firewall {
     chain host-bridge-input {
         type filter hook input priority filter - 1; policy accept;
         meta iifname vmap @bridge-map
+        # traffic received in a VRF has the VRF device as input interface, the bridge it
+        # arrived on is the slave device
+        meta sdifname vmap @bridge-map
     }
 
     chain host-bridge-output {

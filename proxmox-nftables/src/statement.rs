@@ -394,6 +394,13 @@ impl Mangle {
             value: value.into(),
         }
     }
+
+    pub fn ct_zone(value: impl Into<Expression>) -> Self {
+        Self {
+            key: Ct::new("zone", None).into(),
+            value: value.into(),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]

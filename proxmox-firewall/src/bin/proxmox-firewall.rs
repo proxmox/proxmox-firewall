@@ -5,10 +5,14 @@ use std::time::{Duration, Instant};
 use anyhow::{Context, Error, bail, format_err};
 use pico_args::Arguments;
 
-use proxmox_firewall::config::{FirewallConfig, PveFirewallConfigLoader, PveNftConfigLoader};
+use proxmox_firewall::config::{
+    FirewallConfig, FirewallSdnConfig, PveFirewallConfigLoader, PveNftConfigLoader,
+};
 use proxmox_firewall::firewall::Firewall;
+use proxmox_firewall::sdn::{load_sdn_config, vrf_ct_zones, vrf_ct_zones_commands};
 use proxmox_log as log;
 use proxmox_log::{LevelFilter, Logger};
+use proxmox_network_api::get_network_interfaces;
 use proxmox_nftables::{NftClient, client::NftError};
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
@@ -22,6 +26,9 @@ COMMANDS:
   compile           Compile and print firewall rules as accepted by 'nft -j -f -'
   start             Execute proxmox-firewall service in foreground
   localnet          Print the contents of the management ipset
+  sdn-ct-zones      Apply the conntrack zones of SDN zone VRFs (internal, run by
+                    pve-manager when applying the network configuration)
+                    --print: Print the rules as accepted by 'nft -j -f -' instead
 "#;
 
 const RULE_BASE: &str = include_str!("../../resources/proxmox-firewall.nft");
@@ -67,6 +74,23 @@ fn handle_firewall() -> Result<(), Error> {
 
     if let Some(output) = response {
         log::debug!("got response from nftables: {output:?}");
+    }
+
+    Ok(())
+}
+
+fn handle_sdn_ct_zones(print: bool) -> Result<(), Error> {
+    let sdn = load_sdn_config(&PveFirewallConfigLoader::new())?;
+    let links = get_network_interfaces()?.into_values();
+
+    let ct_zones = vrf_ct_zones(sdn.as_ref().map(FirewallSdnConfig::config), links);
+    let commands = vrf_ct_zones_commands(&ct_zones);
+
+    if print {
+        println!("{}", serde_json::to_string_pretty(&commands)?);
+    } else {
+        NftClient::run_json_commands(&commands)
+            .context("could not apply the conntrack zones of SDN zone VRFs")?;
     }
 
     Ok(())
@@ -125,6 +149,7 @@ pub enum Command {
     Skeleton,
     Start,
     Localnet,
+    SdnCtZones,
 }
 
 impl std::str::FromStr for Command {
@@ -137,6 +162,7 @@ impl std::str::FromStr for Command {
             "skeleton" => Command::Skeleton,
             "start" => Command::Start,
             "localnet" => Command::Localnet,
+            "sdn-ct-zones" => Command::SdnCtZones,
             cmd => {
                 bail!("{cmd} is not a valid command")
             }
@@ -144,7 +170,7 @@ impl std::str::FromStr for Command {
     }
 }
 
-fn run_command(command: Command) -> Result<(), Error> {
+fn run_command(command: Command, args: &mut Arguments) -> Result<(), Error> {
     init_logger(command)?;
 
     match command {
@@ -169,6 +195,7 @@ fn run_command(command: Command) -> Result<(), Error> {
                 println!("{ip}");
             }
         }
+        Command::SdnCtZones => handle_sdn_ct_zones(args.contains("--print"))?,
     };
 
     Ok(())
@@ -183,7 +210,7 @@ fn main() -> Result<(), Error> {
         .parse();
 
     if let Ok(command) = parsed_command {
-        run_command(command)
+        run_command(command, &mut args)
     } else {
         eprintln!("Invalid command specified!\n{}", HELP);
         std::process::exit(1);

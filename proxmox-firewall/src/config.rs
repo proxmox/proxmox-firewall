@@ -115,7 +115,9 @@ fn bridge_name_from_fw_name(name: &str) -> Result<BridgeName, Error> {
 ///
 /// Reading the content before parsing it separates read errors, which are most likely transient,
 /// from errors in the content.
-fn read_config(data: Option<Box<dyn io::BufRead>>) -> Result<Option<Vec<u8>>, io::Error> {
+pub(crate) fn read_config(
+    data: Option<Box<dyn io::BufRead>>,
+) -> Result<Option<Vec<u8>>, io::Error> {
     data.map(|mut data| {
         let mut content = Vec::new();
         data.read_to_end(&mut content)?;
@@ -308,11 +310,15 @@ impl NftConfigLoader for PveNftConfigLoader {
 }
 
 pub struct FirewallSdnConfig {
-    _config: SdnConfig,
+    config: SdnConfig,
     ipsets: BTreeMap<String, Ipset>,
 }
 
 impl FirewallSdnConfig {
+    pub fn config(&self) -> &SdnConfig {
+        &self.config
+    }
+
     pub fn ipsets(&self) -> &BTreeMap<String, Ipset> {
         &self.ipsets
     }
@@ -416,10 +422,7 @@ impl FirewallConfig {
                     .map(|ipset| (ipset.name().name().to_string(), ipset))
                     .collect();
 
-                Some(FirewallSdnConfig {
-                    _config: config,
-                    ipsets,
-                })
+                Some(FirewallSdnConfig { config, ipsets })
             }
             _ => None,
         })

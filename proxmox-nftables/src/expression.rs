@@ -14,6 +14,8 @@ use proxmox_ve_config::firewall::types::rule_match::{IcmpCode, IcmpType, Icmpv6C
 use proxmox_ve_config::guest::types::Vmid;
 #[cfg(feature = "config-ext")]
 use proxmox_ve_config::host::types::BridgeName;
+#[cfg(feature = "config-ext")]
+use proxmox_ve_config::sdn::conntrack::VrfCtZones;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -276,6 +278,16 @@ impl From<Vmid> for Expression {
     }
 }
 
+/// The interfaces of the zone VRFs with their conntrack zone, for use as data of a map lookup.
+#[cfg(feature = "config-ext")]
+impl From<&VrfCtZones> for Expression {
+    fn from(value: &VrfCtZones) -> Self {
+        Expression::set(value.interfaces().map(|(interface, ct_zone)| {
+            Expression::List(vec![interface.into(), ct_zone.id().into()])
+        }))
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Meta {
     key: String,
@@ -431,4 +443,45 @@ pub struct Element {
     #[serde(flatten)]
     config: ElemConfig,
     val: Expression,
+}
+
+#[cfg(all(test, feature = "config-ext"))]
+mod tests {
+    use std::str::FromStr;
+
+    use proxmox_ve_config::sdn::ZoneName;
+    use proxmox_ve_config::sdn::config::{ZoneConfig, ZoneType};
+    use proxmox_ve_config::sdn::conntrack::VrfCtZone;
+    use serde_json::json;
+
+    use super::*;
+
+    #[test]
+    fn vrf_ct_zones_map_data() {
+        let mut ct_zones = VrfCtZones::default();
+
+        assert_eq!(
+            serde_json::to_value(Expression::from(&ct_zones)).unwrap(),
+            json!({ "set": [] })
+        );
+
+        for (name, ct_zone) in [("red", 16384), ("blue", 16389)] {
+            let mut zone = ZoneConfig::new(ZoneName::from_str(name).unwrap(), ZoneType::Simple);
+            zone.set_ct_zone(VrfCtZone::new(ct_zone));
+            ct_zones.add_zone(&zone);
+        }
+
+        ct_zones.add_interface("vrf_red", "vnetr1");
+        ct_zones.add_interface("vrf_blue", "vnetb");
+
+        assert_eq!(
+            serde_json::to_value(Expression::from(&ct_zones)).unwrap(),
+            json!({ "set": [
+                ["vrf_blue", 16389],
+                ["vnetb", 16389],
+                ["vrf_red", 16384],
+                ["vnetr1", 16384],
+            ]})
+        );
+    }
 }

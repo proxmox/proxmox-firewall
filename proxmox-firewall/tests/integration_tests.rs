@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use proxmox_firewall::config::{FirewallConfig, FirewallConfigLoader, NftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
-use proxmox_network_api::{AltnameMapping, IpLink};
+use proxmox_network_api::IpLink;
 use proxmox_nftables::command::CommandOutput;
 use proxmox_sys::nodename;
 use proxmox_ve_config::guest::types::Vmid;
@@ -133,10 +133,6 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
         _bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn std::io::BufRead>>, Error> {
         Ok(None)
-    }
-
-    fn interface_mapping(&self) -> Result<AltnameMapping, Error> {
-        Ok(AltnameMapping::from_iter(vec![]))
     }
 
     fn network_links(&self) -> Result<Vec<IpLink>, Error> {

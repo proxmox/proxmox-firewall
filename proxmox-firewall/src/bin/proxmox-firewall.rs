@@ -81,9 +81,9 @@ fn handle_firewall() -> Result<(), Error> {
 
 fn handle_sdn_ct_zones(print: bool) -> Result<(), Error> {
     let sdn = load_sdn_config(&PveFirewallConfigLoader::new())?;
-    let links = get_network_interfaces()?.into_values();
+    let links = get_network_interfaces()?;
 
-    let ct_zones = vrf_ct_zones(sdn.as_ref().map(FirewallSdnConfig::config), links);
+    let ct_zones = vrf_ct_zones(sdn.as_ref().map(FirewallSdnConfig::config), links.values());
     let commands = vrf_ct_zones_commands(&ct_zones);
 
     if print {

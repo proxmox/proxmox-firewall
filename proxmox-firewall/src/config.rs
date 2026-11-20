@@ -26,7 +26,6 @@ use proxmox_nftables::types::ListChain;
 use proxmox_ve_config::sdn::{
     VnetName,
     config::{RunningConfig, SdnConfig},
-    conntrack::VrfCtZones,
     ipam::{Ipam, IpamJson},
 };
 
@@ -54,7 +53,6 @@ pub trait FirewallConfigLoader {
         &self,
         bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
-    fn interface_mapping(&self) -> Result<AltnameMapping, Error>;
     /// The network interfaces of the host, as reported by the kernel.
     fn network_links(&self) -> Result<Vec<IpLink>, Error>;
 }
@@ -281,12 +279,6 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
         }
 
         Ok(None)
-    }
-
-    fn interface_mapping(&self) -> Result<AltnameMapping, Error> {
-        Ok(AltnameMapping::from_iter(
-            get_network_interfaces()?.into_values(),
-        ))
     }
 
     fn network_links(&self) -> Result<Vec<IpLink>, Error> {
@@ -545,13 +537,12 @@ impl FirewallConfig {
         let bridge_config = Self::parse_bridges(firewall_loader)?;
         let (sdn_config, ipam_config, sdn_invalid) = Self::parse_sdn_and_ipam(firewall_loader)?;
 
-        // only query the kernel if there is any zone with a conntrack zone
-        let bridge_ct_zones = match &sdn_config {
-            Some(sdn) if !VrfCtZones::from(sdn.config()).is_empty() => {
-                BridgeCtZones::new(sdn.config(), firewall_loader.network_links()?)
-            }
-            _ => BridgeCtZones::default(),
-        };
+        let links = firewall_loader.network_links()?;
+
+        let bridge_ct_zones = sdn_config
+            .as_ref()
+            .map(|sdn| BridgeCtZones::new(sdn.config(), &links))
+            .unwrap_or_default();
 
         firewall_loader.check_mounted()?;
 
@@ -563,7 +554,7 @@ impl FirewallConfig {
             sdn_config,
             ipam_config,
             nft_config: Self::parse_nft(nft_loader)?,
-            interface_mapping: firewall_loader.interface_mapping()?,
+            interface_mapping: AltnameMapping::from_iter(links),
             sdn_invalid,
             bridge_ct_zones,
         })

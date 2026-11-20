@@ -1,3 +1,21 @@
+proxmox-firewall (1.2.6) trixie; urgency=medium
+
+  * vnet firewall: also apply the rules for traffic from guests to the host
+    for vnets in a VRF, such as the vnets of EVPN zones. They were silently
+    skipped before.
+
+  * sdn: put the traffic of SDN zones with a dedicated VRF into the conntrack
+    zone of their VRF, so that connections in different VRFs do not share
+    conntrack entries:
+    - add the 'sdn-ct-zones' command for internal use, which pve-manager runs
+      after applying the network configuration, for the VRF devices and their
+      members.
+    - set the conntrack zone of bridged traffic before bridge conntrack: for
+      vnets and other bridges in a zone VRF, and for frames to the host on
+      802.1Q VLAN interfaces in a zone VRF on top of a bridge.
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 20 Nov 2026 05:44:26 +0100
+
 proxmox-firewall (1.2.5) trixie; urgency=medium
 
   * update to proxmox-ve-config 0.12, so that the following no longer make

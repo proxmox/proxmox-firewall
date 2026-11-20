@@ -43,15 +43,19 @@ pub fn load_sdn_config(
     FirewallConfig::parse_sdn(data.as_deref())
 }
 
-/// Collects the zone VRFs with a conntrack zone and the interfaces that are enslaved to them.
+/// Collects the zone VRFs with a conntrack zone on `node` and the interfaces that are enslaved to
+/// them.
 ///
 /// The members are taken from the kernel, which reflects all sources that put an interface into a
 /// VRF once the network configuration got applied.
 pub fn vrf_ct_zones<'a>(
     sdn: Option<&SdnConfig>,
+    node: &str,
     links: impl IntoIterator<Item = &'a IpLink>,
 ) -> VrfCtZones {
-    let mut ct_zones = sdn.map(VrfCtZones::from).unwrap_or_default();
+    let mut ct_zones = sdn
+        .map(|sdn| VrfCtZones::for_node(sdn, node))
+        .unwrap_or_default();
 
     for link in links {
         if let Some(master) = link.master() {
@@ -83,12 +87,12 @@ pub struct BridgeCtZones {
 
 impl BridgeCtZones {
     /// Collects the conntrack zones from the interfaces that the kernel reports as enslaved to a
-    /// zone VRF.
+    /// zone VRF on `node`.
     ///
     /// Vnets are taken from the kernel as well, not from the SDN config, so that their conntrack
     /// zone follows the VRF their traffic is routed in, as for the inet hooks, and a bridge on a
     /// node that is not part of the zone does not get it just because of its name.
-    pub fn new(sdn: &SdnConfig, links: &[IpLink]) -> Self {
+    pub fn new(sdn: &SdnConfig, node: &str, links: &[IpLink]) -> Self {
         let mut ct_zones = Self::default();
 
         let links: HashMap<&str, &IpLink> = links.iter().map(|link| (link.name(), link)).collect();
@@ -101,7 +105,7 @@ impl BridgeCtZones {
                 .is_some_and(|kind| kind == "bridge")
         };
 
-        let vrf_ct_zones = vrf_ct_zones(Some(sdn), links.values().copied());
+        let vrf_ct_zones = vrf_ct_zones(Some(sdn), node, links.values().copied());
 
         for (_, entry) in vrf_ct_zones.iter() {
             for name in entry.interfaces() {
@@ -216,6 +220,12 @@ mod tests {
                     "red": { "type": "simple", "dedicated-vrf": 1, "ct-zone": 16384 },
                     "blue": { "type": "simple", "dedicated-vrf": 1, "ct-zone": "16389" },
                     "green": { "type": "simple" },
+                    "white": {
+                        "type": "simple",
+                        "dedicated-vrf": 1,
+                        "ct-zone": 16390,
+                        "nodes": { "pve2": 1 },
+                    },
                 },
             },
         }))
@@ -234,10 +244,13 @@ mod tests {
             link("ens18", Some("vmbr0")),
             link("eth5", Some("vrf_other")),
             link("vnetg", Some("vrf_green")),
+            // a VRF with the name of the VRF of a zone that does not exist on this node
+            link("vrf_white", None),
+            link("eth6", Some("vrf_white")),
             link("lo", None),
         ];
 
-        let interfaces: Vec<_> = vrf_ct_zones(Some(&sdn_config()), &links)
+        let interfaces: Vec<_> = vrf_ct_zones(Some(&sdn_config()), "pve1", &links)
             .interfaces()
             .map(|(interface, ct_zone)| (interface.to_string(), ct_zone.id()))
             .collect();
@@ -253,7 +266,7 @@ mod tests {
             ]
         );
 
-        assert!(vrf_ct_zones(None, &[link("vnetr1", Some("vrf_red"))]).is_empty());
+        assert!(vrf_ct_zones(None, "pve1", &[link("vnetr1", Some("vrf_red"))]).is_empty());
     }
 
     #[test]
@@ -280,7 +293,14 @@ mod tests {
 
         let running_config: RunningConfig = serde_json::from_value(json!({
             "zones": {
-                "ids": { "red": { "type": "simple", "dedicated-vrf": 1, "ct-zone": 16384 } },
+                "ids": {
+                    "red": {
+                        "type": "simple",
+                        "dedicated-vrf": 1,
+                        "ct-zone": 16384,
+                        "nodes": { "pve1": 1 },
+                    },
+                },
             },
             "vnets": {
                 "ids": {
@@ -305,7 +325,7 @@ mod tests {
             link("eth1.62", vlan("802.1Q", 62), Some("vrf_red")),
         ];
 
-        let ct_zones = BridgeCtZones::new(&sdn, &links);
+        let ct_zones = BridgeCtZones::new(&sdn, "pve1", &links);
 
         assert_eq!(
             ct_zones
@@ -320,6 +340,12 @@ mod tests {
                 .map(|(bridge, vlan_id, ct_zone)| (bridge.to_string(), vlan_id, ct_zone.id()))
                 .collect::<Vec<_>>(),
             [("vmbr0".to_string(), 60, 16384)]
+        );
+
+        // the same interfaces on a node that is not part of the zone
+        assert_eq!(
+            BridgeCtZones::new(&sdn, "pve2", &links),
+            BridgeCtZones::default()
         );
     }
 
@@ -338,7 +364,11 @@ mod tests {
 
     #[test]
     fn vrf_ct_zones_commands_with_zones() {
-        let ct_zones = vrf_ct_zones(Some(&sdn_config()), &[link("vnetb", Some("vrf_blue"))]);
+        let ct_zones = vrf_ct_zones(
+            Some(&sdn_config()),
+            "pve1",
+            &[link("vnetb", Some("vrf_blue"))],
+        );
 
         let elements = json!({"set": [
             ["vrf_blue", 16389],

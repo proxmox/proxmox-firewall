@@ -22,8 +22,8 @@ proxmox-log.workspace = true
 proxmox-network-types.workspace = true
 proxmox-network-api = { workspace = true, features = [ "impl" ] }
 proxmox-nftables = { workspace = true, features = [ "config-ext" ] }
+proxmox-sys.workspace = true
 proxmox-ve-config.workspace = true
 
 [dev-dependencies]
 insta = { workspace = true, features = [ "json" ] }
-proxmox-sys.workspace = true

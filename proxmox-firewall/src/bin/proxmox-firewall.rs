@@ -14,6 +14,7 @@ use proxmox_log as log;
 use proxmox_log::{LevelFilter, Logger};
 use proxmox_network_api::get_network_interfaces;
 use proxmox_nftables::{NftClient, client::NftError};
+use proxmox_sys::nodename;
 use proxmox_ve_config::firewall::host::Config as HostConfig;
 
 const HELP: &str = r#"
@@ -83,7 +84,11 @@ fn handle_sdn_ct_zones(print: bool) -> Result<(), Error> {
     let sdn = load_sdn_config(&PveFirewallConfigLoader::new())?;
     let links = get_network_interfaces()?;
 
-    let ct_zones = vrf_ct_zones(sdn.as_ref().map(FirewallSdnConfig::config), links.values());
+    let ct_zones = vrf_ct_zones(
+        sdn.as_ref().map(FirewallSdnConfig::config),
+        nodename(),
+        links.values(),
+    );
     let commands = vrf_ct_zones_commands(&ct_zones);
 
     if print {

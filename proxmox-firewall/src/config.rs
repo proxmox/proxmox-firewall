@@ -23,6 +23,7 @@ use proxmox_network_api::{AltnameMapping, IpLink, get_network_interfaces};
 use proxmox_nftables::NftClient;
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
+use proxmox_sys::nodename;
 use proxmox_ve_config::sdn::{
     VnetName,
     config::{RunningConfig, SdnConfig},
@@ -541,7 +542,7 @@ impl FirewallConfig {
 
         let bridge_ct_zones = sdn_config
             .as_ref()
-            .map(|sdn| BridgeCtZones::new(sdn.config(), &links))
+            .map(|sdn| BridgeCtZones::new(sdn.config(), nodename(), &links))
             .unwrap_or_default();
 
         firewall_loader.check_mounted()?;

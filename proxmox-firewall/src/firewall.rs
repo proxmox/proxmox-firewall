@@ -455,33 +455,49 @@ impl Firewall {
         Ok(())
     }
 
-    /// Commands in nft syntax that put the traffic of vnets in zones with a dedicated VRF into the
+    /// Commands in nft syntax that put bridged traffic of zones with a dedicated VRF into the
     /// conntrack zone of the VRF.
     ///
     /// They have to run in the same transaction as the skeleton: creating the guest table makes
-    /// bridge conntrack track guest traffic, which would end up in conntrack zone 0 while the map
-    /// is empty, whereas the inet hooks use the conntrack zone of the VRF.
+    /// bridge conntrack track guest traffic, which would end up in conntrack zone 0 while the maps
+    /// are empty, whereas the inet hooks use the conntrack zone of the VRF.
     pub fn sdn_ct_zone_commands(&self) -> String {
         // without a valid SDN configuration the conntrack zones are unknown, not absent, so leave
-        // the map unchanged instead of emptying it
+        // the maps unchanged instead of emptying them
         if self.config.sdn_invalid() {
             return String::new();
         }
 
-        let mut commands = format!("flush map bridge {GUEST_TABLE_NAME} sdn-ct-zones\n");
+        let ct_zones = self.config.bridge_ct_zones();
 
-        let elements: Vec<String> = self
-            .config
-            .sdn()
-            .into_iter()
-            .flat_map(|sdn| sdn.vnet_ct_zones())
-            .map(|(vnet, ct_zone)| format!("\"{vnet}\" : {}", ct_zone.id()))
+        let mut commands = format!(
+            "flush map bridge {GUEST_TABLE_NAME} sdn-ct-zones\n\
+             flush map bridge {GUEST_TABLE_NAME} sdn-ct-zones-vlan\n"
+        );
+
+        let bridges: Vec<String> = ct_zones
+            .bridges()
+            .map(|(bridge, ct_zone)| format!("\"{bridge}\" : {}", ct_zone.id()))
             .collect();
 
-        if !elements.is_empty() {
+        if !bridges.is_empty() {
             commands.push_str(&format!(
                 "add element bridge {GUEST_TABLE_NAME} sdn-ct-zones {{ {} }}\n",
-                elements.join(", ")
+                bridges.join(", ")
+            ));
+        }
+
+        let vlans: Vec<String> = ct_zones
+            .vlans()
+            .map(|(bridge, vlan_id, ct_zone)| {
+                format!("\"{bridge}\" . {vlan_id} : {}", ct_zone.id())
+            })
+            .collect();
+
+        if !vlans.is_empty() {
+            commands.push_str(&format!(
+                "add element bridge {GUEST_TABLE_NAME} sdn-ct-zones-vlan {{ {} }}\n",
+                vlans.join(", ")
             ));
         }
 

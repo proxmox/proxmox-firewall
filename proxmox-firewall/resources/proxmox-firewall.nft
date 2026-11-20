@@ -302,10 +302,19 @@ table bridge proxmox-firewall-guests {
         typeof meta ibrname : ct zone
     }
 
+    map sdn-ct-zones-vlan {
+        typeof meta ibrname . vlan id : ct zone
+    }
+
     # Bridge conntrack tracks the connections of the guests, and routed packets keep the entry in
     # the inet hooks, so the conntrack zone of their VRF has to be set before it (priority -200).
+    # Besides vnets and bridges in a zone VRF, this covers VLAN interfaces in a zone VRF on top of
+    # a bridge, whose traffic passes the bridge with the VLAN tag. Only frames for the host belong
+    # to such a VLAN interface, others with the same VLAN ID are switched to guests and must not
+    # change their conntrack zone. The first match sets the zone, so the specific rule comes first.
     chain sdn-ct-zone {
         type filter hook prerouting priority -310; policy accept;
+        meta pkttype host ct zone set meta ibrname . vlan id map @sdn-ct-zones-vlan
         ct zone set meta ibrname map @sdn-ct-zones
     }
 

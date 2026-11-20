@@ -4,9 +4,11 @@
 //! relies on conntrack as well, so the rules are independent of the firewall and live in a table of
 //! their own.
 
+use std::collections::{BTreeMap, HashMap};
+
 use anyhow::{Context, Error};
 
-use proxmox_network_api::IpLink;
+use proxmox_network_api::{IpLink, LinkInfo};
 use proxmox_nftables::command::{Add, Commands, Delete};
 use proxmox_nftables::expression::{Map, Meta};
 use proxmox_nftables::statement::Mangle;
@@ -16,7 +18,7 @@ use proxmox_nftables::types::{
 };
 use proxmox_nftables::{Expression, Statement};
 use proxmox_ve_config::sdn::config::SdnConfig;
-use proxmox_ve_config::sdn::conntrack::VrfCtZones;
+use proxmox_ve_config::sdn::conntrack::{VrfCtZone, VrfCtZones};
 
 use crate::config::{FirewallConfig, FirewallConfigLoader, FirewallSdnConfig, read_config};
 
@@ -58,6 +60,90 @@ pub fn vrf_ct_zones(
     }
 
     ct_zones
+}
+
+/// Whether an interface name can be put into nft syntax without quoting issues.
+fn is_plain_ifname(name: &str) -> bool {
+    !name.is_empty()
+        && name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-' | '.'))
+}
+
+/// The conntrack zones of bridged traffic in zone VRFs, by bridge and by bridge and VLAN ID.
+///
+/// Bridge conntrack tracks packets before they reach a VRF, so the conntrack zone of a zone VRF
+/// has to be set on the bridge already: for bridges in the VRF, including vnets, and, for VLAN
+/// interfaces in the VRF, for their VLAN on the bridge they are stacked on.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct BridgeCtZones {
+    bridges: BTreeMap<String, VrfCtZone>,
+    vlans: BTreeMap<(String, u16), VrfCtZone>,
+}
+
+impl BridgeCtZones {
+    /// Collects the conntrack zones from the interfaces that the kernel reports as enslaved to a
+    /// zone VRF.
+    ///
+    /// Vnets are taken from the kernel as well, not from the SDN config, so that their conntrack
+    /// zone follows the VRF their traffic is routed in, as for the inet hooks, and a bridge on a
+    /// node that is not part of the zone does not get it just because of its name.
+    pub fn new(sdn: &SdnConfig, links: Vec<IpLink>) -> Self {
+        let mut ct_zones = Self::default();
+
+        let links: HashMap<String, IpLink> = links
+            .into_iter()
+            .map(|link| (link.name().to_string(), link))
+            .collect();
+
+        let is_bridge = |name: &str| {
+            links
+                .get(name)
+                .and_then(IpLink::linkinfo)
+                .and_then(LinkInfo::info_kind)
+                .is_some_and(|kind| kind == "bridge")
+        };
+
+        let vrf_ct_zones = vrf_ct_zones(Some(sdn), links.values().cloned());
+
+        for (_, entry) in vrf_ct_zones.iter() {
+            for name in entry.interfaces() {
+                if is_bridge(name) {
+                    if is_plain_ifname(name) {
+                        ct_zones.bridges.insert(name.to_string(), entry.ct_zone());
+                    }
+                } else if let Some(link) = links.get(name)
+                    && let Some(linkinfo) = link.linkinfo()
+                    // the map matches 802.1Q tags, an 802.1ad interface must not claim their VLAN
+                    && linkinfo.vlan_protocol() == Some("802.1Q")
+                    && let Some(vlan_id) = linkinfo.vlan_id()
+                    && let Some(parent) = link.link()
+                    && is_plain_ifname(parent)
+                    && is_bridge(parent)
+                {
+                    ct_zones
+                        .vlans
+                        .insert((parent.to_string(), vlan_id), entry.ct_zone());
+                }
+            }
+        }
+
+        ct_zones
+    }
+
+    /// The bridges whose traffic belongs to the conntrack zone of a zone VRF.
+    pub fn bridges(&self) -> impl Iterator<Item = (&str, VrfCtZone)> + '_ {
+        self.bridges
+            .iter()
+            .map(|(bridge, ct_zone)| (bridge.as_str(), *ct_zone))
+    }
+
+    /// The VLANs on bridges whose traffic belongs to the conntrack zone of a zone VRF.
+    pub fn vlans(&self) -> impl Iterator<Item = (&str, u16, VrfCtZone)> + '_ {
+        self.vlans
+            .iter()
+            .map(|((bridge, vlan_id), ct_zone)| (bridge.as_str(), *vlan_id, *ct_zone))
+    }
 }
 
 /// Generates the commands that atomically replace the table for the conntrack zones.
@@ -171,6 +257,73 @@ mod tests {
         );
 
         assert!(vrf_ct_zones(None, [link("vnetr1", Some("vrf_red"))]).is_empty());
+    }
+
+    #[test]
+    fn bridge_ct_zones_from_links() {
+        let link = |name: &str, linkinfo: serde_json::Value, master: Option<&str>| -> IpLink {
+            let parent = name.split_once('.').map(|(parent, _)| parent);
+
+            serde_json::from_value(json!({
+                "ifindex": 1,
+                "ifname": name,
+                "link_type": "ether",
+                "operstate": "UP",
+                "master": master,
+                "link": parent,
+                "linkinfo": linkinfo,
+            }))
+            .unwrap()
+        };
+        let bridge = json!({ "info_kind": "bridge" });
+        let vlan = |protocol: &str, id: u16| {
+            let info_data = json!({ "protocol": protocol, "id": id });
+            json!({ "info_kind": "vlan", "info_data": info_data })
+        };
+
+        let running_config: RunningConfig = serde_json::from_value(json!({
+            "zones": {
+                "ids": { "red": { "type": "simple", "dedicated-vrf": 1, "ct-zone": 16384 } },
+            },
+            "vnets": {
+                "ids": {
+                    "vnetr": { "type": "vnet", "zone": "red" },
+                    "vnetx": { "type": "vnet", "zone": "red" },
+                },
+            },
+        }))
+        .unwrap();
+        let sdn = SdnConfig::try_from(running_config).unwrap();
+
+        let links = vec![
+            link("vrf_red", json!({ "info_kind": "vrf" }), None),
+            link("vnetr", bridge.clone(), Some("vrf_red")),
+            // a configured vnet whose bridge is not in the VRF, or a same-name bridge on a node
+            // that is not part of the zone
+            link("vnetx", bridge.clone(), None),
+            link("vmbr0", bridge.clone(), None),
+            link("vmbr0.60", vlan("802.1Q", 60), Some("vrf_red")),
+            link("vmbr0.61", vlan("802.1ad", 61), Some("vrf_red")),
+            link("eth1", json!(null), None),
+            link("eth1.62", vlan("802.1Q", 62), Some("vrf_red")),
+        ];
+
+        let ct_zones = BridgeCtZones::new(&sdn, links);
+
+        assert_eq!(
+            ct_zones
+                .bridges()
+                .map(|(bridge, ct_zone)| (bridge.to_string(), ct_zone.id()))
+                .collect::<Vec<_>>(),
+            [("vnetr".to_string(), 16384)]
+        );
+        assert_eq!(
+            ct_zones
+                .vlans()
+                .map(|(bridge, vlan_id, ct_zone)| (bridge.to_string(), vlan_id, ct_zone.id()))
+                .collect::<Vec<_>>(),
+            [("vmbr0".to_string(), 60, 16384)]
+        );
     }
 
     #[test]

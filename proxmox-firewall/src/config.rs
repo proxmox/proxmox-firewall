@@ -19,16 +19,18 @@ use proxmox_ve_config::guest::types::Vmid;
 use proxmox_ve_config::guest::{GuestEntry, GuestMap};
 use proxmox_ve_config::host::types::BridgeName;
 
-use proxmox_network_api::{AltnameMapping, get_network_interfaces};
+use proxmox_network_api::{AltnameMapping, IpLink, get_network_interfaces};
 use proxmox_nftables::NftClient;
 use proxmox_nftables::command::{CommandOutput, Commands, List, ListOutput};
 use proxmox_nftables::types::ListChain;
 use proxmox_ve_config::sdn::{
     VnetName,
     config::{RunningConfig, SdnConfig},
-    conntrack::VrfCtZone,
+    conntrack::VrfCtZones,
     ipam::{Ipam, IpamJson},
 };
+
+use crate::sdn::BridgeCtZones;
 
 pub trait FirewallConfigLoader {
     /// Checks that the configuration files are available.
@@ -53,6 +55,8 @@ pub trait FirewallConfigLoader {
         bridge_name: &BridgeName,
     ) -> Result<Option<Box<dyn io::BufRead>>, Error>;
     fn interface_mapping(&self) -> Result<AltnameMapping, Error>;
+    /// The network interfaces of the host, as reported by the kernel.
+    fn network_links(&self) -> Result<Vec<IpLink>, Error>;
 }
 
 #[derive(Default)]
@@ -284,6 +288,10 @@ impl FirewallConfigLoader for PveFirewallConfigLoader {
             get_network_interfaces()?.into_values(),
         ))
     }
+
+    fn network_links(&self) -> Result<Vec<IpLink>, Error> {
+        Ok(get_network_interfaces()?.into_values().collect())
+    }
 }
 
 pub trait NftConfigLoader {
@@ -320,13 +328,6 @@ impl FirewallSdnConfig {
         &self.config
     }
 
-    /// The vnets of zones with a dedicated VRF, together with the conntrack zone of the VRF.
-    pub fn vnet_ct_zones(&self) -> impl Iterator<Item = (&VnetName, VrfCtZone)> + '_ {
-        self.config
-            .vnets()
-            .filter_map(|(zone, vnet)| Some((vnet.name(), zone.ct_zone()?)))
-    }
-
     pub fn ipsets(&self) -> &BTreeMap<String, Ipset> {
         &self.ipsets
     }
@@ -361,6 +362,7 @@ pub struct FirewallConfig {
     ipam_config: Option<FirewallIpamConfig>,
     interface_mapping: AltnameMapping,
     sdn_invalid: bool,
+    bridge_ct_zones: BridgeCtZones,
 }
 
 impl FirewallConfig {
@@ -510,7 +512,7 @@ impl FirewallConfig {
         let sdn_config = Self::parse_sdn(sdn_data.as_deref()).unwrap_or_else(|err| {
             log::error!(
                 "{err:#} - generating the ruleset without its ipsets, rules referencing them will \
-                 be skipped, the conntrack zone map of zone VRFs is left unchanged"
+                 be skipped, the conntrack zone maps of zone VRFs are left unchanged"
             );
             sdn_invalid = true;
             None
@@ -543,6 +545,14 @@ impl FirewallConfig {
         let bridge_config = Self::parse_bridges(firewall_loader)?;
         let (sdn_config, ipam_config, sdn_invalid) = Self::parse_sdn_and_ipam(firewall_loader)?;
 
+        // only query the kernel if there is any zone with a conntrack zone
+        let bridge_ct_zones = match &sdn_config {
+            Some(sdn) if !VrfCtZones::from(sdn.config()).is_empty() => {
+                BridgeCtZones::new(sdn.config(), firewall_loader.network_links()?)
+            }
+            _ => BridgeCtZones::default(),
+        };
+
         firewall_loader.check_mounted()?;
 
         Ok(Self {
@@ -555,6 +565,7 @@ impl FirewallConfig {
             nft_config: Self::parse_nft(nft_loader)?,
             interface_mapping: firewall_loader.interface_mapping()?,
             sdn_invalid,
+            bridge_ct_zones,
         })
     }
 
@@ -585,6 +596,10 @@ impl FirewallConfig {
     /// Whether the SDN running configuration exists but could not be parsed.
     pub fn sdn_invalid(&self) -> bool {
         self.sdn_invalid
+    }
+
+    pub fn bridge_ct_zones(&self) -> &BridgeCtZones {
+        &self.bridge_ct_zones
     }
 
     pub fn ipam(&self) -> Option<&FirewallIpamConfig> {

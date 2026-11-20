@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use proxmox_firewall::config::{FirewallConfig, FirewallConfigLoader, NftConfigLoader};
 use proxmox_firewall::firewall::Firewall;
-use proxmox_network_api::AltnameMapping;
+use proxmox_network_api::{AltnameMapping, IpLink};
 use proxmox_nftables::command::CommandOutput;
 use proxmox_sys::nodename;
 use proxmox_ve_config::guest::types::Vmid;
@@ -138,6 +138,44 @@ impl FirewallConfigLoader for MockFirewallConfigLoader {
     fn interface_mapping(&self) -> Result<AltnameMapping, Error> {
         Ok(AltnameMapping::from_iter(vec![]))
     }
+
+    fn network_links(&self) -> Result<Vec<IpLink>, Error> {
+        let link = |name: &str, kind: Option<&str>, master: Option<&str>, parent: Option<&str>| {
+            let linkinfo = kind.map(|kind| match kind {
+                "vlan" => serde_json::json!({
+                    "info_kind": kind,
+                    "info_data": { "protocol": "802.1Q", "id": 50 },
+                }),
+                "vlan-ad" => serde_json::json!({
+                    "info_kind": "vlan",
+                    "info_data": { "protocol": "802.1ad", "id": 51 },
+                }),
+                _ => serde_json::json!({ "info_kind": kind }),
+            });
+
+            serde_json::from_value(serde_json::json!({
+                "ifindex": 1,
+                "ifname": name,
+                "link_type": "ether",
+                "operstate": "UP",
+                "master": master,
+                "link": parent,
+                "linkinfo": linkinfo,
+            }))
+            .expect("valid link")
+        };
+
+        Ok(vec![
+            link("vrf_test", Some("vrf"), None, None),
+            link("public", Some("bridge"), Some("vrf_test"), None),
+            link("vmbr0", Some("bridge"), None, None),
+            link("vmbr0.50", Some("vlan"), Some("vrf_test"), Some("vmbr0")),
+            link("vmbr0.51", Some("vlan-ad"), Some("vrf_test"), Some("vmbr0")),
+            link("vmbr1", Some("bridge"), Some("vrf_test"), None),
+            link("eth1", None, None, None),
+            link("eth1.50", Some("vlan"), Some("vrf_test"), Some("eth1")),
+        ])
+    }
 }
 
 struct MockNftConfigLoader {}
@@ -180,7 +218,9 @@ fn test_sdn_ct_zone_commands() {
     assert_eq!(
         Firewall::new(firewall_config).sdn_ct_zone_commands(),
         "flush map bridge proxmox-firewall-guests sdn-ct-zones\n\
-         add element bridge proxmox-firewall-guests sdn-ct-zones { \"public\" : 16384 }\n",
+         flush map bridge proxmox-firewall-guests sdn-ct-zones-vlan\n\
+         add element bridge proxmox-firewall-guests sdn-ct-zones { \"public\" : 16384, \"vmbr1\" : 16384 }\n\
+         add element bridge proxmox-firewall-guests sdn-ct-zones-vlan { \"vmbr0\" . 50 : 16384 }\n",
     );
 }
 

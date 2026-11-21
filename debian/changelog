@@ -1,3 +1,12 @@
+proxmox-firewall (1.2.7) trixie; urgency=medium
+
+  * sdn: only apply the conntrack zones of zones on this node. Before, an
+    interface on another node with the name of the zone VRF, such as a VRF
+    configured in /etc/network/interfaces, and its members also got the
+    conntrack zone of the zone.
+
+ -- Proxmox Support Team <support@proxmox.com>  Sat, 21 Nov 2026 18:52:33 +0100
+
 proxmox-firewall (1.2.6) trixie; urgency=medium
 
   * vnet firewall: also apply the rules for traffic from guests to the host
